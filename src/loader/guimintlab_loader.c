@@ -1,7 +1,7 @@
 /*
  * GuiMintLab IR JSON loader.
  *
- * Walks a cJSON tree shaped like `packages/ui-ir/src/schema.ts` and drives
+ * Walks a cJSON tree shaped like `ui-ir/src/schema.ts` and drives
  * the builder API to assemble the widget tree. Strings referenced by the
  * builder (widget ids, button/label text, action targets, …) are copied
  * into the runtime's string pool so they survive cJSON_Delete.
