@@ -1,0 +1,29 @@
+idf_component_register(
+    SRCS
+        "src/runtime/guimintlab.c"
+        "src/loader/guimintlab_loader.c"
+        "src/internal/guimintlab_builder.c"
+        "src/gui/core/gui_assets.c"
+        "src/gui/core/gui_context.c"
+        "src/gui/core/gui_widget.c"
+        "src/gui/display/gui_display.c"
+        "src/gui/render/gui_renderer.c"
+        "src/gui/theme/gui_theme.c"
+        "src/gui/widgets/gui_button.c"
+        "src/gui/widgets/gui_icon.c"
+        "src/gui/widgets/gui_label.c"
+        "src/gui/widgets/gui_panel.c"
+        "src/gui/generated/gui_assets_generated.c"
+    INCLUDE_DIRS
+        "include"
+    PRIV_INCLUDE_DIRS
+        "src"
+        "src/internal"
+        "src/loader"
+    REQUIRES
+        esp_lcd
+        esp_driver_spi
+        esp_driver_gpio
+        esp_mm
+        cjson
+)

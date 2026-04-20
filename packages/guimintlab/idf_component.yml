@@ -1,0 +1,22 @@
+version: "0.1.0"
+description: |
+  GuiMintLab runtime — single ESP-IDF component that loads UI definitions
+  (JSON IR authored in guimintlab-studio) at runtime and renders them on
+  an SPI TFT display. Includes the display driver, dirty-rect renderer,
+  retained-mode widget tree and JSON loader.
+url: https://github.com/qunetol/guimintlab-core
+
+# Managed targets — tested on ESP32 classic. Should build on every Xtensa/RISC-V
+# target that has esp_lcd + the SPI master peripheral.
+targets:
+  - esp32
+  - esp32s3
+  - esp32c3
+  - esp32c6
+
+dependencies:
+  idf: ">=5.1"
+  # cJSON is pulled from the component registry. On IDF v5.x the built-in
+  # `json` component would also work, but v6.0 dropped it, so we always rely
+  # on the managed component.
+  espressif/cjson: "^1.7.18"
