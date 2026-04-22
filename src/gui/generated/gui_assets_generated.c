@@ -335,54 +335,807 @@ static const gui_font_range_t gui_font_default_5x7_extra_ranges[] = {
 
 const gui_font_t gui_font_default_5x7 = { .first_codepoint = 0x20, .last_codepoint = 0x7E, .line_height = 8, .baseline = 7, .glyphs = gui_font_default_5x7_glyphs, .extra_ranges = gui_font_default_5x7_extra_ranges, .extra_range_count = sizeof(gui_font_default_5x7_extra_ranges) / sizeof(gui_font_default_5x7_extra_ranges[0]) };
 
-static const uint16_t gui_icon_wifi_0_rows[] = {0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0030, 0x0030, 0x0000};
-const gui_icon_asset_t gui_icon_wifi_0 = { .width = 10, .height = 8, .rows = gui_icon_wifi_0_rows };
+static const uint32_t gui_icon_arrow_curved_down_left_rows[] = {0x0004, 0x0002, 0x0002, 0x0003, 0x0017, 0x001E, 0x001C, 0x001E};
+const gui_icon_asset_t gui_icon_arrow_curved_down_left = { .width = 5, .height = 8, .rows = gui_icon_arrow_curved_down_left_rows };
 
-static const uint16_t gui_icon_wifi_1_rows[] = {0x0000, 0x0000, 0x0000, 0x0078, 0x0084, 0x0030, 0x0030, 0x0000};
-const gui_icon_asset_t gui_icon_wifi_1 = { .width = 10, .height = 8, .rows = gui_icon_wifi_1_rows };
+static const uint32_t gui_icon_arrow_curved_down_right_rows[] = {0x0004, 0x0008, 0x0008, 0x0018, 0x001D, 0x000F, 0x0007, 0x000F};
+const gui_icon_asset_t gui_icon_arrow_curved_down_right = { .width = 5, .height = 8, .rows = gui_icon_arrow_curved_down_right_rows };
 
-static const uint16_t gui_icon_wifi_2_rows[] = {0x0000, 0x00FC, 0x0102, 0x0000, 0x0078, 0x0084, 0x0030, 0x0000};
-const gui_icon_asset_t gui_icon_wifi_2 = { .width = 10, .height = 8, .rows = gui_icon_wifi_2_rows };
+static const uint32_t gui_icon_arrow_curved_left_down_5x7_rows[] = {0x0001, 0x0002, 0x0006, 0x0004, 0x001F, 0x000E, 0x0004};
+const gui_icon_asset_t gui_icon_arrow_curved_left_down_5x7 = { .width = 5, .height = 7, .rows = gui_icon_arrow_curved_left_down_5x7_rows };
 
-static const uint16_t gui_icon_wifi_3_rows[] = {0x01FE, 0x0201, 0x0000, 0x00FC, 0x0102, 0x0078, 0x0030, 0x0000};
-const gui_icon_asset_t gui_icon_wifi_3 = { .width = 10, .height = 8, .rows = gui_icon_wifi_3_rows };
+static const uint32_t gui_icon_arrow_curved_left_down_8x5_rows[] = {0x0018, 0x00BE, 0x00F1, 0x00E0, 0x00F0};
+const gui_icon_asset_t gui_icon_arrow_curved_left_down_8x5 = { .width = 8, .height = 5, .rows = gui_icon_arrow_curved_left_down_8x5_rows };
 
-static const uint16_t gui_icon_battery_0_rows[] = {0x07F8, 0x0806, 0x0802, 0x0802, 0x0802, 0x0806, 0x07F8, 0x0000};
-const gui_icon_asset_t gui_icon_battery_0 = { .width = 12, .height = 8, .rows = gui_icon_battery_0_rows };
+static const uint32_t gui_icon_arrow_curved_left_down_up_rows[] = {0x0010, 0x0030, 0x007C, 0x0036, 0x0011};
+const gui_icon_asset_t gui_icon_arrow_curved_left_down_up = { .width = 7, .height = 5, .rows = gui_icon_arrow_curved_left_down_up_rows };
 
-static const uint16_t gui_icon_battery_1_rows[] = {0x07F8, 0x0F06, 0x0F02, 0x0F02, 0x0F02, 0x0F06, 0x07F8, 0x0000};
-const gui_icon_asset_t gui_icon_battery_1 = { .width = 12, .height = 8, .rows = gui_icon_battery_1_rows };
+static const uint32_t gui_icon_arrow_curved_left_up_5x7_rows[] = {0x0004, 0x000E, 0x001F, 0x0004, 0x0006, 0x0002, 0x0001};
+const gui_icon_asset_t gui_icon_arrow_curved_left_up_5x7 = { .width = 5, .height = 7, .rows = gui_icon_arrow_curved_left_up_5x7_rows };
 
-static const uint16_t gui_icon_battery_2_rows[] = {0x07F8, 0x0FC6, 0x0FC2, 0x0FC2, 0x0FC2, 0x0FC6, 0x07F8, 0x0000};
-const gui_icon_asset_t gui_icon_battery_2 = { .width = 12, .height = 8, .rows = gui_icon_battery_2_rows };
+static const uint32_t gui_icon_arrow_curved_left_up_8x5_rows[] = {0x00F0, 0x00E0, 0x00E0, 0x00BE, 0x0018};
+const gui_icon_asset_t gui_icon_arrow_curved_left_up_8x5 = { .width = 8, .height = 5, .rows = gui_icon_arrow_curved_left_up_8x5_rows };
 
-static const uint16_t gui_icon_battery_3_rows[] = {0x07F8, 0x0FF6, 0x0FF2, 0x0FF2, 0x0FF2, 0x0FF6, 0x07F8, 0x0000};
-const gui_icon_asset_t gui_icon_battery_3 = { .width = 12, .height = 8, .rows = gui_icon_battery_3_rows };
+static const uint32_t gui_icon_arrow_curved_left_up_down_rows[] = {0x0011, 0x0036, 0x007C, 0x0030, 0x0010};
+const gui_icon_asset_t gui_icon_arrow_curved_left_up_down = { .width = 7, .height = 5, .rows = gui_icon_arrow_curved_left_up_down_rows };
 
-static const uint16_t gui_icon_battery_4_rows[] = {0x07F8, 0x0FFE, 0x0FFE, 0x0FFE, 0x0FFE, 0x0FFE, 0x07F8, 0x0000};
-const gui_icon_asset_t gui_icon_battery_4 = { .width = 12, .height = 8, .rows = gui_icon_battery_4_rows };
+static const uint32_t gui_icon_arrow_curved_right_down_5x7_rows[] = {0x0010, 0x0008, 0x000C, 0x0004, 0x001F, 0x000E, 0x0004};
+const gui_icon_asset_t gui_icon_arrow_curved_right_down_5x7 = { .width = 5, .height = 7, .rows = gui_icon_arrow_curved_right_down_5x7_rows };
 
-static const uint16_t gui_icon_signal_0_rows[] = {0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000};
-const gui_icon_asset_t gui_icon_signal_0 = { .width = 10, .height = 8, .rows = gui_icon_signal_0_rows };
+static const uint32_t gui_icon_arrow_curved_right_down_8x5_rows[] = {0x0018, 0x007D, 0x008F, 0x0007, 0x000F};
+const gui_icon_asset_t gui_icon_arrow_curved_right_down_8x5 = { .width = 8, .height = 5, .rows = gui_icon_arrow_curved_right_down_8x5_rows };
 
-static const uint16_t gui_icon_signal_1_rows[] = {0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0003, 0x0003, 0x0000};
-const gui_icon_asset_t gui_icon_signal_1 = { .width = 10, .height = 8, .rows = gui_icon_signal_1_rows };
+static const uint32_t gui_icon_arrow_curved_right_down_up_rows[] = {0x0004, 0x0006, 0x001F, 0x0036, 0x0044};
+const gui_icon_asset_t gui_icon_arrow_curved_right_down_up = { .width = 7, .height = 5, .rows = gui_icon_arrow_curved_right_down_up_rows };
 
-static const uint16_t gui_icon_signal_2_rows[] = {0x0000, 0x0000, 0x0000, 0x000C, 0x000C, 0x0003, 0x0003, 0x0000};
-const gui_icon_asset_t gui_icon_signal_2 = { .width = 10, .height = 8, .rows = gui_icon_signal_2_rows };
+static const uint32_t gui_icon_arrow_curved_right_up_5x7_rows[] = {0x0004, 0x000E, 0x001F, 0x0004, 0x000C, 0x0008, 0x0010};
+const gui_icon_asset_t gui_icon_arrow_curved_right_up_5x7 = { .width = 5, .height = 7, .rows = gui_icon_arrow_curved_right_up_5x7_rows };
 
-static const uint16_t gui_icon_signal_3_rows[] = {0x0000, 0x0030, 0x0030, 0x000C, 0x000C, 0x0003, 0x0003, 0x0000};
-const gui_icon_asset_t gui_icon_signal_3 = { .width = 10, .height = 8, .rows = gui_icon_signal_3_rows };
+static const uint32_t gui_icon_arrow_curved_right_up_8x5_rows[] = {0x000F, 0x0007, 0x008F, 0x007D, 0x0018};
+const gui_icon_asset_t gui_icon_arrow_curved_right_up_8x5 = { .width = 8, .height = 5, .rows = gui_icon_arrow_curved_right_up_8x5_rows };
 
-static const uint16_t gui_icon_signal_4_rows[] = {0x00C0, 0x00C0, 0x0030, 0x0030, 0x000C, 0x000C, 0x0003, 0x0003};
-const gui_icon_asset_t gui_icon_signal_4 = { .width = 10, .height = 8, .rows = gui_icon_signal_4_rows };
+static const uint32_t gui_icon_arrow_curved_right_up_down_rows[] = {0x0044, 0x0036, 0x001F, 0x0006, 0x0004};
+const gui_icon_asset_t gui_icon_arrow_curved_right_up_down = { .width = 7, .height = 5, .rows = gui_icon_arrow_curved_right_up_down_rows };
 
-static const uint16_t gui_icon_chevron_left_rows[] = {0x0010, 0x0030, 0x0060, 0x00C0, 0x00C0, 0x0060, 0x0030, 0x0010};
+static const uint32_t gui_icon_arrow_curved_up_left_rows[] = {0x001E, 0x001C, 0x001E, 0x0017, 0x0003, 0x0002, 0x0002, 0x0004};
+const gui_icon_asset_t gui_icon_arrow_curved_up_left = { .width = 5, .height = 8, .rows = gui_icon_arrow_curved_up_left_rows };
+
+static const uint32_t gui_icon_arrow_curved_up_right_rows[] = {0x000F, 0x0007, 0x000F, 0x001D, 0x0018, 0x0008, 0x0008, 0x0004};
+const gui_icon_asset_t gui_icon_arrow_curved_up_right = { .width = 5, .height = 8, .rows = gui_icon_arrow_curved_up_right_rows };
+
+static const uint32_t gui_icon_arrow_diagonal_left_down_rows[] = {0x0001, 0x0012, 0x0014, 0x0018, 0x001E};
+const gui_icon_asset_t gui_icon_arrow_diagonal_left_down = { .width = 5, .height = 5, .rows = gui_icon_arrow_diagonal_left_down_rows };
+
+static const uint32_t gui_icon_arrow_diagonal_left_up_rows[] = {0x001E, 0x0018, 0x0014, 0x0012, 0x0001};
+const gui_icon_asset_t gui_icon_arrow_diagonal_left_up = { .width = 5, .height = 5, .rows = gui_icon_arrow_diagonal_left_up_rows };
+
+static const uint32_t gui_icon_arrow_diagonal_right_down_rows[] = {0x0010, 0x0009, 0x0005, 0x0003, 0x000F};
+const gui_icon_asset_t gui_icon_arrow_diagonal_right_down = { .width = 5, .height = 5, .rows = gui_icon_arrow_diagonal_right_down_rows };
+
+static const uint32_t gui_icon_arrow_diagonal_right_up_rows[] = {0x000F, 0x0003, 0x0005, 0x0009, 0x0010};
+const gui_icon_asset_t gui_icon_arrow_diagonal_right_up = { .width = 5, .height = 5, .rows = gui_icon_arrow_diagonal_right_up_rows };
+
+static const uint32_t gui_icon_arrow_down_rows[] = {0x0004, 0x0004, 0x0004, 0x0004, 0x0015, 0x000E, 0x0004};
+const gui_icon_asset_t gui_icon_arrow_down = { .width = 5, .height = 7, .rows = gui_icon_arrow_down_rows };
+
+static const uint32_t gui_icon_arrow_left_rows[] = {0x0010, 0x0020, 0x007F, 0x0020, 0x0010};
+const gui_icon_asset_t gui_icon_arrow_left = { .width = 7, .height = 5, .rows = gui_icon_arrow_left_rows };
+
+static const uint32_t gui_icon_arrow_right_rows[] = {0x0004, 0x0002, 0x007F, 0x0002, 0x0004};
+const gui_icon_asset_t gui_icon_arrow_right = { .width = 7, .height = 5, .rows = gui_icon_arrow_right_rows };
+
+static const uint32_t gui_icon_arrow_up_rows[] = {0x0004, 0x000E, 0x0015, 0x0004, 0x0004, 0x0004, 0x0004};
+const gui_icon_asset_t gui_icon_arrow_up = { .width = 5, .height = 7, .rows = gui_icon_arrow_up_rows };
+
+static const uint32_t gui_icon_battery_0_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x104041, 0x702081, 0x801101, 0x800A01, 0x800401, 0x800A01, 0x801101, 0x702081, 0x104041, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_0 = { .width = 24, .height = 16, .rows = gui_icon_battery_0_rows };
+
+static const uint32_t gui_icon_battery_10_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x100005, 0x700005, 0x800005, 0x800005, 0x800005, 0x800005, 0x800005, 0x700005, 0x100005, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_10 = { .width = 24, .height = 16, .rows = gui_icon_battery_10_rows };
+
+static const uint32_t gui_icon_battery_100_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x155555, 0x755555, 0x855555, 0x855555, 0x855555, 0x855555, 0x855555, 0x755555, 0x155555, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_100 = { .width = 24, .height = 16, .rows = gui_icon_battery_100_rows };
+
+static const uint32_t gui_icon_battery_17_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x10000D, 0x70000D, 0x80000D, 0x80000D, 0x80000D, 0x80000D, 0x80000D, 0x70000D, 0x10000D, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_17 = { .width = 24, .height = 16, .rows = gui_icon_battery_17_rows };
+
+static const uint32_t gui_icon_battery_20_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x100015, 0x700015, 0x800015, 0x800015, 0x800015, 0x800015, 0x800015, 0x700015, 0x100015, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_20 = { .width = 24, .height = 16, .rows = gui_icon_battery_20_rows };
+
+static const uint32_t gui_icon_battery_30_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x100055, 0x700055, 0x800055, 0x800055, 0x800055, 0x800055, 0x800055, 0x700055, 0x100055, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_30 = { .width = 24, .height = 16, .rows = gui_icon_battery_30_rows };
+
+static const uint32_t gui_icon_battery_33_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x10006D, 0x70006D, 0x80006D, 0x80006D, 0x80006D, 0x80006D, 0x80006D, 0x70006D, 0x10006D, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_33 = { .width = 24, .height = 16, .rows = gui_icon_battery_33_rows };
+
+static const uint32_t gui_icon_battery_40_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x100155, 0x700155, 0x800155, 0x800155, 0x800155, 0x800155, 0x800155, 0x700155, 0x100155, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_40 = { .width = 24, .height = 16, .rows = gui_icon_battery_40_rows };
+
+static const uint32_t gui_icon_battery_50_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x10036D, 0x70036D, 0x80036D, 0x80036D, 0x80036D, 0x80036D, 0x80036D, 0x70036D, 0x10036D, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_50 = { .width = 24, .height = 16, .rows = gui_icon_battery_50_rows };
+
+static const uint32_t gui_icon_battery_50_2_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x100555, 0x700555, 0x800555, 0x800555, 0x800555, 0x800555, 0x800555, 0x700555, 0x100555, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_50_2 = { .width = 24, .height = 16, .rows = gui_icon_battery_50_2_rows };
+
+static const uint32_t gui_icon_battery_60_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x101555, 0x701555, 0x801555, 0x801555, 0x801555, 0x801555, 0x801555, 0x701555, 0x101555, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_60 = { .width = 24, .height = 16, .rows = gui_icon_battery_60_rows };
+
+static const uint32_t gui_icon_battery_67_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x101B6D, 0x701B6D, 0x801B6D, 0x801B6D, 0x801B6D, 0x801B6D, 0x801B6D, 0x701B6D, 0x101B6D, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_67 = { .width = 24, .height = 16, .rows = gui_icon_battery_67_rows };
+
+static const uint32_t gui_icon_battery_70_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x105555, 0x705555, 0x805555, 0x805555, 0x805555, 0x805555, 0x805555, 0x705555, 0x105555, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_70 = { .width = 24, .height = 16, .rows = gui_icon_battery_70_rows };
+
+static const uint32_t gui_icon_battery_80_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x115555, 0x715555, 0x815555, 0x815555, 0x815555, 0x815555, 0x815555, 0x715555, 0x115555, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_80 = { .width = 24, .height = 16, .rows = gui_icon_battery_80_rows };
+
+static const uint32_t gui_icon_battery_83_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x10DB6D, 0x70DB6D, 0x80DB6D, 0x80DB6D, 0x80DB6D, 0x80DB6D, 0x80DB6D, 0x70DB6D, 0x10DB6D, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_83 = { .width = 24, .height = 16, .rows = gui_icon_battery_83_rows };
+
+static const uint32_t gui_icon_battery_90_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x115555, 0x715555, 0x815555, 0x815555, 0x855555, 0x855555, 0x855555, 0x755555, 0x155555, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_90 = { .width = 24, .height = 16, .rows = gui_icon_battery_90_rows };
+
+static const uint32_t gui_icon_battery_charger_connected_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x100101, 0x700701, 0x803DF1, 0x806101, 0x87C101, 0x806101, 0x803DF1, 0x700701, 0x100101, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_charger_connected = { .width = 24, .height = 16, .rows = gui_icon_battery_charger_connected_rows };
+
+static const uint32_t gui_icon_battery_charging_rows[] = {0x000200, 0x0FE4FE, 0x100C01, 0x100801, 0x701801, 0x803001, 0x803F81, 0x807F01, 0x800301, 0x800601, 0x700401, 0x100C01, 0x100801, 0x0FD3FE, 0x001000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_charging = { .width = 24, .height = 16, .rows = gui_icon_battery_charging_rows };
+
+static const uint32_t gui_icon_battery_empty_rows[] = {0x000000, 0x0FFFFF, 0x100001, 0x100001, 0x700001, 0x800001, 0x800001, 0x800001, 0x800001, 0x800001, 0x700001, 0x100001, 0x100001, 0x07FFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_empty = { .width = 24, .height = 16, .rows = gui_icon_battery_empty_rows };
+
+static const uint32_t gui_icon_battery_full_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x16DB6D, 0x76DB6D, 0x86DB6D, 0x86DB6D, 0x86DB6D, 0x86DB6D, 0x86DB6D, 0x76DB6D, 0x16DB6D, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_full = { .width = 24, .height = 16, .rows = gui_icon_battery_full_rows };
+
+static const uint32_t gui_icon_battery_full_2_rows[] = {0x000000, 0x0FFFFE, 0x100001, 0x155555, 0x715555, 0x855555, 0x815555, 0x855555, 0x815555, 0x855555, 0x715555, 0x155555, 0x100001, 0x0FFFFE, 0x000000, 0x000000};
+const gui_icon_asset_t gui_icon_battery_full_2 = { .width = 24, .height = 16, .rows = gui_icon_battery_full_2_rows };
+
+static const uint32_t gui_icon_bike_rows[] = {0x00000, 0x00000, 0x00000, 0x00000, 0x00000, 0x00038, 0x00E08, 0x00410, 0x0F3F0, 0x0765C, 0x08AB2, 0x10749, 0x12649, 0x10541, 0x089A2, 0x0701C};
+const gui_icon_asset_t gui_icon_bike = { .width = 17, .height = 16, .rows = gui_icon_bike_rows };
+
+static const uint32_t gui_icon_bluetooth_rows[] = {0x0040, 0x00A0, 0x0090, 0x0888, 0x0488, 0x0290, 0x01A0, 0x00C0, 0x01A0, 0x0290, 0x0488, 0x0888, 0x0090, 0x00A0, 0x0040, 0x0000};
+const gui_icon_asset_t gui_icon_bluetooth = { .width = 14, .height = 16, .rows = gui_icon_bluetooth_rows };
+
+static const uint32_t gui_icon_bluetooth_connected_rows[] = {0x0040, 0x00A0, 0x0090, 0x0888, 0x0488, 0x1292, 0x09A4, 0x0CCC, 0x09A4, 0x1292, 0x0488, 0x0888, 0x0090, 0x00A0, 0x0040, 0x0000};
+const gui_icon_asset_t gui_icon_bluetooth_connected = { .width = 14, .height = 16, .rows = gui_icon_bluetooth_connected_rows };
+
+static const uint32_t gui_icon_bluetooth_not_connected_rows[] = {0x0080, 0x20C0, 0x10A0, 0x0890, 0x0488, 0x0208, 0x0110, 0x0080, 0x0140, 0x02A0, 0x0490, 0x0888, 0x0094, 0x00A2, 0x0041, 0x0000};
+const gui_icon_asset_t gui_icon_bluetooth_not_connected = { .width = 14, .height = 16, .rows = gui_icon_bluetooth_not_connected_rows };
+
+static const uint32_t gui_icon_calculator_rows[] = {0x07FE, 0x0801, 0x0BFD, 0x0A01, 0x0BFD, 0x0801, 0x0B6D, 0x0B6D, 0x0801, 0x0B6D, 0x0B6D, 0x0801, 0x0B6D, 0x0B6D, 0x0801, 0x07FE};
+const gui_icon_asset_t gui_icon_calculator = { .width = 12, .height = 16, .rows = gui_icon_calculator_rows };
+
+static const uint32_t gui_icon_calendar_rows[] = {0x0490, 0x3B6E, 0x7FFF, 0x7FFF, 0x4001, 0x436D, 0x436D, 0x4001, 0x5B6D, 0x5B6D, 0x4001, 0x5B61, 0x5B61, 0x4001, 0x3FFE, 0x0000};
+const gui_icon_asset_t gui_icon_calendar = { .width = 15, .height = 16, .rows = gui_icon_calendar_rows };
+
+static const uint32_t gui_icon_camera_rows[] = {0x000F0, 0x06108, 0x0FEF6, 0x18001, 0x1238D, 0x10C61, 0x10BA1, 0x11451, 0x11451, 0x11451, 0x10BA1, 0x10C61, 0x1238D, 0x18001, 0x0FFFE, 0x00000};
+const gui_icon_asset_t gui_icon_camera = { .width = 17, .height = 16, .rows = gui_icon_camera_rows };
+
+static const uint32_t gui_icon_car_rows[] = {0x00000, 0x00000, 0x00000, 0x00000, 0x00000, 0x00000, 0x00000, 0x00000, 0x03FC0, 0x06440, 0x0C420, 0x3FFFE, 0x7BFED, 0x75FD7, 0x2AFAA, 0x04010};
+const gui_icon_asset_t gui_icon_car = { .width = 19, .height = 16, .rows = gui_icon_car_rows };
+
+static const uint32_t gui_icon_cards_clubs_rows[] = {0x01C0, 0x03E0, 0x07F0, 0x07F0, 0x07F0, 0x03E0, 0x1DDC, 0x3FFE, 0x7FFF, 0x7FFF, 0x7FFF, 0x7F7F, 0x3EBE, 0x1C9C, 0x01C0, 0x03E0};
+const gui_icon_asset_t gui_icon_cards_clubs = { .width = 15, .height = 16, .rows = gui_icon_cards_clubs_rows };
+
+static const uint32_t gui_icon_cards_diamonds_rows[] = {0x0080, 0x01C0, 0x01C0, 0x03E0, 0x07F0, 0x07F0, 0x0FF8, 0x1FFC, 0x3FFE, 0x1FFC, 0x0FF8, 0x07F0, 0x07F0, 0x03E0, 0x01C0, 0x0080};
+const gui_icon_asset_t gui_icon_cards_diamonds = { .width = 15, .height = 16, .rows = gui_icon_cards_diamonds_rows };
+
+static const uint32_t gui_icon_cards_hearts_rows[] = {0x0000, 0x0000, 0x1C1C, 0x3E3E, 0x7F7F, 0x7FFF, 0x7FFF, 0x7FFF, 0x3FFE, 0x1FFC, 0x0FF8, 0x07F0, 0x03E0, 0x01C0, 0x0080, 0x0000};
+const gui_icon_asset_t gui_icon_cards_hearts = { .width = 15, .height = 16, .rows = gui_icon_cards_hearts_rows };
+
+static const uint32_t gui_icon_cards_spades_rows[] = {0x0080, 0x01C0, 0x03E0, 0x07F0, 0x0FF8, 0x1FFC, 0x3FFE, 0x7FFF, 0x7FFF, 0x7FFF, 0x7EBF, 0x3DDE, 0x19CC, 0x01E0, 0x01E0, 0x01E0};
+const gui_icon_asset_t gui_icon_cards_spades = { .width = 15, .height = 16, .rows = gui_icon_cards_spades_rows };
+
+static const uint32_t gui_icon_chart_rows[] = {0x0000, 0x2000, 0x20F0, 0x20F0, 0x20F0, 0x20FF, 0x20FF, 0x20FF, 0x2FFF, 0x2FFF, 0x2FFF, 0x2FFF, 0x2FFF, 0x2000, 0x3FFF, 0x0000};
+const gui_icon_asset_t gui_icon_chart = { .width = 14, .height = 16, .rows = gui_icon_chart_rows };
+
+static const uint32_t gui_icon_check_rows[] = {0x0000, 0x0000, 0x0000, 0x0000, 0x0001, 0x0003, 0x0006, 0x080C, 0x0C18, 0x0630, 0x0360, 0x01C0, 0x0080, 0x0000, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_check = { .width = 12, .height = 16, .rows = gui_icon_check_rows };
+
+static const uint32_t gui_icon_check_contour_rows[] = {0x0000, 0x0000, 0x0000, 0x0004, 0x000A, 0x0411, 0x0A22, 0x1144, 0x0888, 0x0410, 0x0220, 0x0140, 0x0080, 0x0000, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_check_contour = { .width = 13, .height = 16, .rows = gui_icon_check_contour_rows };
+
+static const uint32_t gui_icon_checked_rows[] = {0x0000, 0x0000, 0x0000, 0x0001, 0x0003, 0x0007, 0x200E, 0x301C, 0x3818, 0x1C70, 0x0EE0, 0x07C0, 0x0380, 0x0100, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_checked = { .width = 14, .height = 16, .rows = gui_icon_checked_rows };
+
+static const uint32_t gui_icon_choice_bullet_off_rows[] = {0x03E0, 0x0E38, 0x180C, 0x3006, 0x2002, 0x6003, 0x4001, 0x4001, 0x4001, 0x6003, 0x2002, 0x3006, 0x180C, 0x0E38, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_choice_bullet_off = { .width = 15, .height = 16, .rows = gui_icon_choice_bullet_off_rows };
+
+static const uint32_t gui_icon_choice_bullet_on_rows[] = {0x01E0, 0x0E38, 0x19CC, 0x37F6, 0x2FFA, 0x6FFB, 0x5FFD, 0x5FFD, 0x5FFD, 0x6FFB, 0x2FFA, 0x37F6, 0x19CC, 0x0E38, 0x01E0, 0x0000};
+const gui_icon_asset_t gui_icon_choice_bullet_on = { .width = 15, .height = 16, .rows = gui_icon_choice_bullet_on_rows };
+
+static const uint32_t gui_icon_choice_right_rows[] = {0x03C0, 0x0C30, 0x1188, 0x2664, 0x4812, 0x500A, 0x9029, 0xA445, 0xA285, 0x9109, 0x500A, 0x4812, 0x2664, 0x1188, 0x0C30, 0x03C0};
+const gui_icon_asset_t gui_icon_choice_right = { .width = 16, .height = 16, .rows = gui_icon_choice_right_rows };
+
+static const uint32_t gui_icon_choice_wrong_rows[] = {0x07F0, 0x0808, 0x13E4, 0x2412, 0x4809, 0x5225, 0x5145, 0x5085, 0x5145, 0x5225, 0x4809, 0x2412, 0x13E4, 0x0808, 0x07F0, 0x0000};
+const gui_icon_asset_t gui_icon_choice_wrong = { .width = 15, .height = 16, .rows = gui_icon_choice_wrong_rows };
+
+static const uint32_t gui_icon_clock_rows[] = {0x03E0, 0x0C18, 0x1494, 0x2082, 0x3086, 0x4081, 0x4081, 0x7087, 0x4041, 0x4021, 0x3016, 0x2002, 0x1494, 0x0C98, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_clock = { .width = 15, .height = 16, .rows = gui_icon_clock_rows };
+
+static const uint32_t gui_icon_clock_alarm_rows[] = {0x3C9E, 0x59CD, 0x76B7, 0x680B, 0x5005, 0x2082, 0x2082, 0x4081, 0x6083, 0x4101, 0x2202, 0x2402, 0x1004, 0x0808, 0x16B4, 0x21C2};
+const gui_icon_asset_t gui_icon_clock_alarm = { .width = 15, .height = 16, .rows = gui_icon_clock_alarm_rows };
+
+static const uint32_t gui_icon_clock_quarters_rows[] = {0x03E0, 0x0C98, 0x1084, 0x2002, 0x2082, 0x4081, 0x4081, 0x7087, 0x4041, 0x4021, 0x2002, 0x2002, 0x1084, 0x0C98, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_clock_quarters = { .width = 15, .height = 16, .rows = gui_icon_clock_quarters_rows };
+
+static const uint32_t gui_icon_clockface_rows[] = {0x03E0, 0x0C98, 0x1494, 0x2002, 0x3006, 0x4001, 0x4001, 0x7087, 0x4001, 0x4001, 0x3006, 0x2002, 0x1494, 0x0C98, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_clockface = { .width = 15, .height = 16, .rows = gui_icon_clockface_rows };
+
+static const uint32_t gui_icon_clockface_quarters_rows[] = {0x03E0, 0x0C98, 0x1084, 0x2002, 0x2002, 0x4001, 0x4001, 0x7007, 0x4001, 0x4001, 0x2002, 0x2002, 0x1084, 0x0C98, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_clockface_quarters = { .width = 15, .height = 16, .rows = gui_icon_clockface_quarters_rows };
+
+static const uint32_t gui_icon_cloud_rows[] = {0x00000, 0x00FC0, 0x01040, 0x02020, 0x06010, 0x0801C, 0x10002, 0x10001, 0x08001, 0x07FFE, 0x00000, 0x00000, 0x00000, 0x00000, 0x00000, 0x00000};
+const gui_icon_asset_t gui_icon_cloud = { .width = 17, .height = 16, .rows = gui_icon_cloud_rows };
+
+static const uint32_t gui_icon_cloud_download_rows[] = {0x00000, 0x00F80, 0x01040, 0x02020, 0x06010, 0x0801C, 0x10002, 0x10001, 0x08101, 0x0793E, 0x00100, 0x00100, 0x007C0, 0x00380, 0x00100, 0x00000};
+const gui_icon_asset_t gui_icon_cloud_download = { .width = 17, .height = 16, .rows = gui_icon_cloud_download_rows };
+
+static const uint32_t gui_icon_cloud_download_fat_rows[] = {0x00000, 0x00F80, 0x01040, 0x02020, 0x06010, 0x0801C, 0x10002, 0x10201, 0x08101, 0x0713E, 0x00180, 0x00B80, 0x00F00, 0x00E00, 0x00F00, 0x00000};
+const gui_icon_asset_t gui_icon_cloud_download_fat = { .width = 17, .height = 16, .rows = gui_icon_cloud_download_fat_rows };
+
+static const uint32_t gui_icon_cloud_sync_rows[] = {0x00000, 0x00F80, 0x01040, 0x02020, 0x06010, 0x0801C, 0x10002, 0x10441, 0x08E41, 0x05F5E, 0x00440, 0x005F0, 0x004E0, 0x00440, 0x00000, 0x00000};
+const gui_icon_asset_t gui_icon_cloud_sync = { .width = 17, .height = 16, .rows = gui_icon_cloud_sync_rows };
+
+static const uint32_t gui_icon_cloud_upload_2_rows[] = {0x00000, 0x00F80, 0x01040, 0x02020, 0x06010, 0x0801C, 0x10002, 0x10001, 0x08201, 0x0673E, 0x00F80, 0x00200, 0x00600, 0x00400, 0x00800, 0x00000};
+const gui_icon_asset_t gui_icon_cloud_upload_2 = { .width = 17, .height = 16, .rows = gui_icon_cloud_upload_2_rows };
+
+static const uint32_t gui_icon_cross_contour_rows[] = {0x0000, 0x0000, 0x0000, 0x0104, 0x028A, 0x0451, 0x0222, 0x0104, 0x0088, 0x0104, 0x0222, 0x0451, 0x028A, 0x0104, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_cross_contour = { .width = 11, .height = 16, .rows = gui_icon_cross_contour_rows };
+
+static const uint32_t gui_icon_cross_small_rows[] = {0x0000, 0x0000, 0x0000, 0x0000, 0x0301, 0x0186, 0x00CC, 0x0078, 0x0030, 0x0078, 0x00CC, 0x0186, 0x0301, 0x0000, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_cross_small = { .width = 10, .height = 16, .rows = gui_icon_cross_small_rows };
+
+static const uint32_t gui_icon_crossed_rows[] = {0x0000, 0x0000, 0x0601, 0x0601, 0x038E, 0x01DC, 0x00F8, 0x0070, 0x00F8, 0x01DC, 0x038E, 0x0703, 0x0603, 0x0000, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_crossed = { .width = 11, .height = 16, .rows = gui_icon_crossed_rows };
+
+static const uint32_t gui_icon_crosshairs_11x16_rows[] = {0x0000, 0x0000, 0x0020, 0x0020, 0x0070, 0x00A8, 0x0124, 0x07DF, 0x0124, 0x00A8, 0x0070, 0x0020, 0x0020, 0x0000, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_crosshairs_11x16 = { .width = 11, .height = 16, .rows = gui_icon_crosshairs_11x16_rows };
+
+static const uint32_t gui_icon_crosshairs_15x16_rows[] = {0x0080, 0x01C0, 0x06B0, 0x0888, 0x1004, 0x1004, 0x2082, 0x794F, 0x2082, 0x1004, 0x1004, 0x0888, 0x06B0, 0x01C0, 0x0080, 0x0000};
+const gui_icon_asset_t gui_icon_crosshairs_15x16 = { .width = 15, .height = 16, .rows = gui_icon_crosshairs_15x16_rows };
+
+static const uint32_t gui_icon_cursor_rows[] = {0x0200, 0x0300, 0x0280, 0x0240, 0x0220, 0x0210, 0x0208, 0x0204, 0x0202, 0x021F, 0x0250, 0x02C8, 0x0328, 0x0224, 0x0014, 0x0018};
+const gui_icon_asset_t gui_icon_cursor = { .width = 10, .height = 16, .rows = gui_icon_cursor_rows };
+
+static const uint32_t gui_icon_cursor_black_rows[] = {0x0000, 0x0000, 0x0040, 0x0060, 0x0070, 0x0078, 0x007C, 0x007E, 0x007F, 0x0078, 0x006C, 0x004C, 0x0006, 0x0004, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_cursor_black = { .width = 7, .height = 16, .rows = gui_icon_cursor_black_rows };
+
+static const uint32_t gui_icon_cursor_black_white_rows[] = {0x0400, 0x0600, 0x0700, 0x0580, 0x05C0, 0x04E0, 0x04F0, 0x0478, 0x047C, 0x043E, 0x047F, 0x0480, 0x0500, 0x0600, 0x0400, 0x0000};
+const gui_icon_asset_t gui_icon_cursor_black_white = { .width = 11, .height = 16, .rows = gui_icon_cursor_black_white_rows };
+
+static const uint32_t gui_icon_date_day_rows[] = {0x0000, 0x0490, 0x3FFE, 0x6493, 0x4001, 0x4611, 0x4931, 0x4951, 0x4111, 0x4211, 0x4411, 0x4811, 0x4F79, 0x6001, 0x3FFE, 0x0000};
+const gui_icon_asset_t gui_icon_date_day = { .width = 15, .height = 16, .rows = gui_icon_date_day_rows };
+
+static const uint32_t gui_icon_date_day_empty_rows[] = {0x0000, 0x0490, 0x3FFE, 0x6493, 0x4001, 0x4001, 0x4001, 0x4001, 0x4001, 0x4001, 0x4001, 0x4001, 0x4001, 0x6003, 0x3FFE, 0x0000};
+const gui_icon_asset_t gui_icon_date_day_empty = { .width = 15, .height = 16, .rows = gui_icon_date_day_empty_rows };
+
+static const uint32_t gui_icon_device_key_rows[] = {0x0078, 0x0104, 0x021A, 0x0225, 0x0225, 0x0219, 0x0201, 0x0401, 0x0902, 0x12FC, 0x2580, 0x4A00, 0x5600, 0x4800, 0x7800, 0x0000};
+const gui_icon_asset_t gui_icon_device_key = { .width = 15, .height = 16, .rows = gui_icon_device_key_rows };
+
+static const uint32_t gui_icon_device_key_retro_rows[] = {0x0038, 0x0044, 0x0092, 0x00A9, 0x0095, 0x0049, 0x00A2, 0x015C, 0x0280, 0x0500, 0x0A00, 0x1400, 0x2A00, 0x5100, 0x2A00, 0x0400};
+const gui_icon_asset_t gui_icon_device_key_retro = { .width = 15, .height = 16, .rows = gui_icon_device_key_retro_rows };
+
+static const uint32_t gui_icon_device_lock_rows[] = {0x01F0, 0x0208, 0x04E4, 0x0912, 0x0A0A, 0x0A0A, 0x0FFE, 0x1801, 0x14E5, 0x1111, 0x1111, 0x10A1, 0x10A1, 0x1445, 0x1801, 0x0FFE};
+const gui_icon_asset_t gui_icon_device_lock = { .width = 13, .height = 16, .rows = gui_icon_device_lock_rows };
+
+static const uint32_t gui_icon_device_power_button_rows[] = {0x0080, 0x0080, 0x0C98, 0x12A4, 0x2492, 0x288A, 0x5085, 0x5005, 0x5005, 0x5005, 0x5005, 0x280A, 0x2412, 0x13E4, 0x0C18, 0x03E0};
+const gui_icon_asset_t gui_icon_device_power_button = { .width = 15, .height = 16, .rows = gui_icon_device_power_button_rows };
+
+static const uint32_t gui_icon_device_reset_11x16_rows[] = {0x0000, 0x0000, 0x0000, 0x00CF, 0x010E, 0x020E, 0x0409, 0x0401, 0x0401, 0x0401, 0x0401, 0x0202, 0x0104, 0x00F8, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_device_reset_11x16 = { .width = 11, .height = 16, .rows = gui_icon_device_reset_11x16_rows };
+
+static const uint32_t gui_icon_device_reset_13x16_rows[] = {0x0000, 0x0000, 0x009F, 0x031C, 0x041C, 0x0812, 0x0812, 0x1001, 0x1001, 0x1001, 0x0802, 0x0802, 0x0404, 0x0318, 0x00E0, 0x0000};
+const gui_icon_asset_t gui_icon_device_reset_13x16 = { .width = 13, .height = 16, .rows = gui_icon_device_reset_13x16_rows };
+
+static const uint32_t gui_icon_device_sleep_mode_black_rows[] = {0x0200, 0x0E07, 0x1C01, 0x3C02, 0x38F7, 0x7820, 0x7840, 0x78F0, 0x7C00, 0x7C03, 0x3F0E, 0x3FFE, 0x1FFC, 0x0FF8, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_device_sleep_mode_black = { .width = 15, .height = 16, .rows = gui_icon_device_sleep_mode_black_rows };
+
+static const uint32_t gui_icon_device_sleep_mode_white_rows[] = {0x0200, 0x0E07, 0x1401, 0x2402, 0x28F7, 0x4820, 0x4840, 0x48F0, 0x4400, 0x4403, 0x230E, 0x20F2, 0x1004, 0x0C18, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_device_sleep_mode_white = { .width = 15, .height = 16, .rows = gui_icon_device_sleep_mode_white_rows };
+
+static const uint32_t gui_icon_display_brightness_rows[] = {0x0080, 0x1084, 0x0808, 0x01C0, 0x4631, 0x2412, 0x0808, 0x0808, 0x0808, 0x2412, 0x4631, 0x01C0, 0x0808, 0x1084, 0x0080, 0x0000};
+const gui_icon_asset_t gui_icon_display_brightness = { .width = 15, .height = 16, .rows = gui_icon_display_brightness_rows };
+
+static const uint32_t gui_icon_display_contrast_rows[] = {0x03E0, 0x0E18, 0x1984, 0x3782, 0x2F82, 0x6F81, 0x5F81, 0x5F81, 0x5F81, 0x6F81, 0x2F82, 0x3782, 0x1984, 0x0E18, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_display_contrast = { .width = 15, .height = 16, .rows = gui_icon_display_contrast_rows };
+
+static const uint32_t gui_icon_door_closed_rows[] = {0x1FFF, 0x1001, 0x1001, 0x13FD, 0x1301, 0x1309, 0x13F9, 0x1001, 0x1001, 0x13F9, 0x1201, 0x1201, 0x127F, 0x1001, 0x1001, 0x1001};
+const gui_icon_asset_t gui_icon_door_closed = { .width = 13, .height = 16, .rows = gui_icon_door_closed_rows };
+
+static const uint32_t gui_icon_door_open_rows[] = {0x03FE, 0x0C03, 0x081D, 0x087D, 0x09FD, 0x09FD, 0x09FD, 0x09FD, 0x09FD, 0x09FD, 0x09FD, 0x09FD, 0x09FD, 0x01F8, 0x01E0, 0x0180};
+const gui_icon_asset_t gui_icon_door_open = { .width = 12, .height = 16, .rows = gui_icon_door_open_rows };
+
+static const uint32_t gui_icon_earth_rows[] = {0x03E0, 0x0F38, 0x13FC, 0x30F2, 0x21F2, 0x43E5, 0x4FFB, 0x6FC1, 0x6FC1, 0x71E1, 0x30FA, 0x387A, 0x18FC, 0x0DF8, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_earth = { .width = 15, .height = 16, .rows = gui_icon_earth_rows };
+
+static const uint32_t gui_icon_envelope_rows[] = {0x00000, 0x0FFFE, 0x18001, 0x18001, 0x14005, 0x12009, 0x11011, 0x10821, 0x10441, 0x10BA1, 0x11011, 0x12009, 0x14005, 0x18001, 0x0FFFE, 0x00000};
+const gui_icon_asset_t gui_icon_envelope = { .width = 17, .height = 16, .rows = gui_icon_envelope_rows };
+
+static const uint32_t gui_icon_file_rows[] = {0x07F8, 0x080C, 0x080A, 0x080F, 0x0801, 0x09FD, 0x0801, 0x0801, 0x09FD, 0x0801, 0x0801, 0x09FD, 0x0801, 0x0801, 0x07FE, 0x0000};
+const gui_icon_asset_t gui_icon_file = { .width = 12, .height = 16, .rows = gui_icon_file_rows };
+
+static const uint32_t gui_icon_file_delete_bin_rows[] = {0x00E0, 0x0318, 0x1BFB, 0x1FFF, 0x1801, 0x0802, 0x0802, 0x0C06, 0x0554, 0x0554, 0x0554, 0x0554, 0x0554, 0x0404, 0x01F8, 0x0000};
+const gui_icon_asset_t gui_icon_file_delete_bin = { .width = 13, .height = 16, .rows = gui_icon_file_delete_bin_rows };
+
+static const uint32_t gui_icon_file_download_rows[] = {0x0000, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0490, 0x01E0, 0x71C7, 0x5085, 0x5FFD, 0x4001, 0x4001, 0x7FFF, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_file_download = { .width = 15, .height = 16, .rows = gui_icon_file_download_rows };
+
+static const uint32_t gui_icon_file_edit_rows[] = {0x0008, 0x0014, 0x0022, 0x0051, 0x008A, 0x0104, 0x0208, 0x0410, 0x0820, 0x1040, 0x2080, 0x4100, 0x8200, 0x8400, 0x8800, 0xF000};
+const gui_icon_asset_t gui_icon_file_edit = { .width = 16, .height = 16, .rows = gui_icon_file_edit_rows };
+
+static const uint32_t gui_icon_file_film_dia_rows[] = {0x7FFF, 0x5FFD, 0x7003, 0x5001, 0x7003, 0x5001, 0x7003, 0x5FFD, 0x7FFF, 0x5005, 0x7007, 0x5005, 0x7007, 0x5005, 0x7FFF, 0x5FFD};
+const gui_icon_asset_t gui_icon_file_film_dia = { .width = 15, .height = 16, .rows = gui_icon_file_film_dia_rows };
+
+static const uint32_t gui_icon_file_image_rows[] = {0x7FFF, 0x4001, 0x4F01, 0x5F01, 0x5F01, 0x5F01, 0x4F03, 0x4003, 0x4003, 0x4003, 0x4003, 0x4003, 0x4FFF, 0x5FFF, 0x7FFF, 0x7FFF};
+const gui_icon_asset_t gui_icon_file_image = { .width = 15, .height = 16, .rows = gui_icon_file_image_rows };
+
+static const uint32_t gui_icon_file_movie_rows[] = {0x001C, 0x00CE, 0x0E66, 0x7330, 0x5980, 0xF000, 0xFCCD, 0x5999, 0x7333, 0x4001, 0x4001, 0x4FF9, 0x4001, 0x4FF9, 0x4001, 0x7FFF};
+const gui_icon_asset_t gui_icon_file_movie = { .width = 16, .height = 16, .rows = gui_icon_file_movie_rows };
+
+static const uint32_t gui_icon_file_print_rows[] = {0x1FF8, 0x1008, 0x1008, 0x300C, 0x300C, 0x7FFE, 0x8001, 0xA001, 0x8001, 0x8001, 0x8001, 0xBFFD, 0xB00D, 0x700E, 0x1008, 0x1FF8};
+const gui_icon_asset_t gui_icon_file_print = { .width = 16, .height = 16, .rows = gui_icon_file_print_rows };
+
+static const uint32_t gui_icon_file_save_rows[] = {0x7FFC, 0x90AA, 0x90A9, 0x90E9, 0x9009, 0x8FF1, 0x8001, 0x8001, 0x8001, 0x9FF9, 0x9009, 0x97E9, 0x9009, 0xD7EB, 0x9009, 0x7FFE};
+const gui_icon_asset_t gui_icon_file_save = { .width = 16, .height = 16, .rows = gui_icon_file_save_rows };
+
+static const uint32_t gui_icon_file_save_flipped_rows[] = {0x7FFE, 0x9009, 0xD7EB, 0x9009, 0x97E9, 0x9009, 0x9FF9, 0x8001, 0x8001, 0x8001, 0x8FF1, 0x9009, 0x9709, 0x9509, 0x5509, 0x3FFE};
+const gui_icon_asset_t gui_icon_file_save_flipped = { .width = 16, .height = 16, .rows = gui_icon_file_save_flipped_rows };
+
+static const uint32_t gui_icon_file_search_rows[] = {0x0078, 0x0104, 0x0202, 0x0401, 0x0401, 0x0405, 0x0405, 0x0409, 0x0232, 0x0504, 0x0AF8, 0x1400, 0x2800, 0x5000, 0x6000, 0x0000};
+const gui_icon_asset_t gui_icon_file_search = { .width = 15, .height = 16, .rows = gui_icon_file_search_rows };
+
+static const uint32_t gui_icon_file_share_rows[] = {0x0000, 0x0006, 0x0009, 0x0009, 0x0036, 0x00C0, 0x1B00, 0x2400, 0x2400, 0x1B00, 0x00C0, 0x0036, 0x0009, 0x0009, 0x0006, 0x0000};
+const gui_icon_asset_t gui_icon_file_share = { .width = 14, .height = 16, .rows = gui_icon_file_share_rows };
+
+static const uint32_t gui_icon_file_upload_rows[] = {0x0000, 0x0080, 0x01C0, 0x03E0, 0x0490, 0x0080, 0x0080, 0x0080, 0x7887, 0x7807, 0x7FFF, 0x7000, 0x7000, 0x7FFF, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_file_upload = { .width = 15, .height = 16, .rows = gui_icon_file_upload_rows };
+
+static const uint32_t gui_icon_flag_rows[] = {0x00E0, 0x8310, 0xCC08, 0xB007, 0x8001, 0x8001, 0x8001, 0x8001, 0x8001, 0x8001, 0x8001, 0x80E1, 0x8311, 0x4C0F, 0x3000, 0x0000};
+const gui_icon_asset_t gui_icon_flag = { .width = 16, .height = 16, .rows = gui_icon_flag_rows };
+
+static const uint32_t gui_icon_flag_stick_rows[] = {0x1C0C0, 0x08221, 0x0CC13, 0x0F00D, 0x08001, 0x0C001, 0x0A001, 0x0A001, 0x0A001, 0x0A001, 0x0A001, 0x0A1E1, 0x0C222, 0x0CC1C, 0x0B000, 0x08000};
+const gui_icon_asset_t gui_icon_flag_stick = { .width = 17, .height = 16, .rows = gui_icon_flag_stick_rows };
+
+static const uint32_t gui_icon_flower_rows[] = {0x001C, 0x003E, 0x00F2, 0x30F7, 0x7C7F, 0xFE7C, 0xCEBC, 0xFC80, 0x7A4F, 0x3253, 0x0D22, 0x0DE0, 0x10C0, 0x0040, 0x0040, 0x0040};
+const gui_icon_asset_t gui_icon_flower = { .width = 16, .height = 16, .rows = gui_icon_flower_rows };
+
+static const uint32_t gui_icon_folder_explorer_rows[] = {0x07800, 0x08400, 0x101FE, 0x10001, 0x17FFD, 0x18001, 0x10001, 0x10001, 0x10001, 0x10001, 0x10001, 0x10001, 0x10001, 0x10001, 0x10001, 0x0FFFE};
+const gui_icon_asset_t gui_icon_folder_explorer = { .width = 17, .height = 16, .rows = gui_icon_folder_explorer_rows };
+
+static const uint32_t gui_icon_folder_file_rows[] = {0x07FF0, 0x04010, 0x05FD0, 0x1C010, 0x25FD0, 0x24018, 0x25FD4, 0x24014, 0x25FFF, 0x26001, 0x26001, 0x24002, 0x24002, 0x28004, 0x28004, 0x1FFF8};
+const gui_icon_asset_t gui_icon_folder_file = { .width = 18, .height = 16, .rows = gui_icon_folder_file_rows };
+
+static const uint32_t gui_icon_folder_open_rows[] = {0x0000D, 0x00013, 0x00027, 0x0F000, 0x207F0, 0x20008, 0x20008, 0x20008, 0x21FFF, 0x22001, 0x22001, 0x24002, 0x24002, 0x28004, 0x28004, 0x1FFF8};
+const gui_icon_asset_t gui_icon_folder_open = { .width = 18, .height = 16, .rows = gui_icon_folder_open_rows };
+
+static const uint32_t gui_icon_folder_open_file_rows[] = {0x00000, 0x1F800, 0x207F0, 0x20008, 0x20008, 0x21FFC, 0x24002, 0x25FFF, 0x29001, 0x2A001, 0x32002, 0x34002, 0x24004, 0x28004, 0x1FFF8, 0x00000};
+const gui_icon_asset_t gui_icon_folder_open_file = { .width = 18, .height = 16, .rows = gui_icon_folder_open_file_rows };
+
+static const uint32_t gui_icon_hand_high_five_rows[] = {0x00180, 0x03298, 0x02AA8, 0x02AA8, 0x02AA8, 0x026D3, 0x016D5, 0x0129A, 0x0D832, 0x12BF4, 0x19808, 0x044D8, 0x06308, 0x03110, 0x01910, 0x00C20};
+const gui_icon_asset_t gui_icon_hand_high_five = { .width = 17, .height = 16, .rows = gui_icon_hand_high_five_rows };
+
+static const uint32_t gui_icon_hand_notice_rows[] = {0x00C0, 0x0140, 0x0140, 0x0140, 0x0140, 0x017E, 0x0156, 0x01D5, 0x0235, 0x02F5, 0x048B, 0x0441, 0x0221, 0x0222, 0x0102, 0x0184};
+const gui_icon_asset_t gui_icon_hand_notice = { .width = 11, .height = 16, .rows = gui_icon_hand_notice_rows };
+
+static const uint32_t gui_icon_hand_peace_sign_rows[] = {0x0082, 0x0145, 0x0145, 0x0145, 0x0129, 0x00AA, 0x00AA, 0x0192, 0x029C, 0x0242, 0x0572, 0x04C9, 0x0291, 0x0322, 0x0222, 0x0104};
+const gui_icon_asset_t gui_icon_hand_peace_sign = { .width = 11, .height = 16, .rows = gui_icon_hand_peace_sign_rows };
+
+static const uint32_t gui_icon_hand_pointer_rows[] = {0x0080, 0x0140, 0x0140, 0x0140, 0x0140, 0x0160, 0x0158, 0x0156, 0x0D55, 0x0905, 0x0401, 0x0401, 0x0201, 0x0202, 0x0102, 0x0084};
+const gui_icon_asset_t gui_icon_hand_pointer = { .width = 12, .height = 16, .rows = gui_icon_hand_pointer_rows };
+
+static const uint32_t gui_icon_hand_stop_rows[] = {0x0180, 0x0360, 0x0550, 0x0550, 0x0D50, 0x1550, 0x1550, 0x1553, 0x1555, 0x1419, 0x1012, 0x1004, 0x1004, 0x0808, 0x0810, 0x0430};
+const gui_icon_asset_t gui_icon_hand_stop = { .width = 13, .height = 16, .rows = gui_icon_hand_stop_rows };
+
+static const uint32_t gui_icon_hand_thumbs_down_rows[] = {0x3F9F, 0x6071, 0x4011, 0xA011, 0xC011, 0xA011, 0xC015, 0xA031, 0xC05F, 0x7C80, 0x0900, 0x0A00, 0x1200, 0x1400, 0x1400, 0x0800};
+const gui_icon_asset_t gui_icon_hand_thumbs_down = { .width = 16, .height = 16, .rows = gui_icon_hand_thumbs_down_rows };
+
+static const uint32_t gui_icon_hand_thumbs_up_rows[] = {0x0010, 0x0028, 0x0028, 0x0048, 0x0050, 0x0090, 0x013E, 0xFA03, 0x8C05, 0x8803, 0x8805, 0x8803, 0x8805, 0xA802, 0x8E06, 0xF9FC};
+const gui_icon_asset_t gui_icon_hand_thumbs_up = { .width = 16, .height = 16, .rows = gui_icon_hand_thumbs_up_rows };
+
+static const uint32_t gui_icon_heart_rows[] = {0x1C1C, 0x3636, 0x2362, 0x61C3, 0x4081, 0x4001, 0x4001, 0x6003, 0x2002, 0x3006, 0x1004, 0x180C, 0x0C18, 0x0630, 0x0360, 0x01C0};
+const gui_icon_asset_t gui_icon_heart = { .width = 15, .height = 16, .rows = gui_icon_heart_rows };
+
+static const uint32_t gui_icon_hour_glass_75_rows[] = {0x07FF, 0x0202, 0x0202, 0x028A, 0x02FA, 0x0174, 0x00A8, 0x0050, 0x0050, 0x0088, 0x0124, 0x0222, 0x0272, 0x02FA, 0x03FE, 0x07FF};
+const gui_icon_asset_t gui_icon_hour_glass_75 = { .width = 11, .height = 16, .rows = gui_icon_hour_glass_75_rows };
+
+static const uint32_t gui_icon_lamp_off_rows[] = {0x0040, 0x00E0, 0x00A0, 0x0110, 0x0110, 0x0110, 0x060C, 0x0802, 0x1001, 0x0FFE, 0x0110, 0x00E0, 0x0000, 0x0000, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_lamp_off = { .width = 13, .height = 16, .rows = gui_icon_lamp_off_rows };
+
+static const uint32_t gui_icon_lamp_on_rows[] = {0x0040, 0x00E0, 0x00A0, 0x0110, 0x0110, 0x0110, 0x060C, 0x0802, 0x1001, 0x0FFE, 0x0110, 0x18E3, 0x0000, 0x0208, 0x0444, 0x0040};
+const gui_icon_asset_t gui_icon_lamp_on = { .width = 13, .height = 16, .rows = gui_icon_lamp_on_rows };
+
+static const uint32_t gui_icon_light_rows[] = {0x2004, 0x13C8, 0x0420, 0x0810, 0xA915, 0x0990, 0x0910, 0x2424, 0x4242, 0x0100, 0x03C0, 0x0000, 0x03C0, 0x0000, 0x0180, 0x0000};
+const gui_icon_asset_t gui_icon_light = { .width = 16, .height = 16, .rows = gui_icon_light_rows };
+
+static const uint32_t gui_icon_link_rows[] = {0x003C, 0x007E, 0x00E7, 0x01C3, 0x0183, 0x0307, 0x0B4E, 0x1B6C, 0x3968, 0x7060, 0x60C0, 0x61C0, 0x7380, 0x3F00, 0x1E00, 0x0000};
+const gui_icon_asset_t gui_icon_link = { .width = 15, .height = 16, .rows = gui_icon_link_rows };
+
+static const uint32_t gui_icon_location_rows[] = {0x01F0, 0x060C, 0x0802, 0x08E2, 0x1111, 0x1209, 0x1209, 0x0A0A, 0x0912, 0x04E4, 0x0404, 0x0208, 0x0110, 0x00A0, 0x00E0, 0x0040};
+const gui_icon_asset_t gui_icon_location = { .width = 13, .height = 16, .rows = gui_icon_location_rows };
+
+static const uint32_t gui_icon_location_map_rows[] = {0x01C0, 0x0220, 0x0490, 0x0948, 0x0948, 0x0888, 0x0410, 0x0220, 0x0220, 0x0D58, 0x1084, 0x1084, 0x2002, 0x2002, 0x4E39, 0x71C7};
+const gui_icon_asset_t gui_icon_location_map = { .width = 15, .height = 16, .rows = gui_icon_location_map_rows };
+
+static const uint32_t gui_icon_map_rows[] = {0x300E0, 0x28158, 0x26246, 0x21C41, 0x20841, 0x20841, 0x20841, 0x20841, 0x20841, 0x20841, 0x20841, 0x308A1, 0x08919, 0x06A05, 0x01C03, 0x00000};
+const gui_icon_asset_t gui_icon_map = { .width = 18, .height = 16, .rows = gui_icon_map_rows };
+
+static const uint32_t gui_icon_map_arrow_rows[] = {0x300E0, 0x28158, 0x26246, 0x21C41, 0x20841, 0x20841, 0x2E841, 0x26841, 0x2A841, 0x30841, 0x20841, 0x308A1, 0x08919, 0x06A05, 0x01C03, 0x00000};
+const gui_icon_asset_t gui_icon_map_arrow = { .width = 18, .height = 16, .rows = gui_icon_map_arrow_rows };
+
+static const uint32_t gui_icon_menu_rows[] = {0x0000, 0x0000, 0xFFFF, 0xFFFF, 0x0000, 0x0000, 0x0000, 0xFFFF, 0xFFFF, 0x0000, 0x0000, 0x0000, 0xFFFF, 0xFFFF, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_menu = { .width = 16, .height = 16, .rows = gui_icon_menu_rows };
+
+static const uint32_t gui_icon_menu_arrow_down_left_3x3_rows[] = {0x0004, 0x0006, 0x0007};
+const gui_icon_asset_t gui_icon_menu_arrow_down_left_3x3 = { .width = 3, .height = 3, .rows = gui_icon_menu_arrow_down_left_3x3_rows };
+
+static const uint32_t gui_icon_menu_arrow_down_left_4x4_rows[] = {0x0008, 0x000C, 0x000E, 0x000F};
+const gui_icon_asset_t gui_icon_menu_arrow_down_left_4x4 = { .width = 4, .height = 4, .rows = gui_icon_menu_arrow_down_left_4x4_rows };
+
+static const uint32_t gui_icon_menu_arrow_down_right_3x3_rows[] = {0x0001, 0x0003, 0x0007};
+const gui_icon_asset_t gui_icon_menu_arrow_down_right_3x3 = { .width = 3, .height = 3, .rows = gui_icon_menu_arrow_down_right_3x3_rows };
+
+static const uint32_t gui_icon_menu_arrow_down_right_4x4_rows[] = {0x0001, 0x0003, 0x0007, 0x000F};
+const gui_icon_asset_t gui_icon_menu_arrow_down_right_4x4 = { .width = 4, .height = 4, .rows = gui_icon_menu_arrow_down_right_4x4_rows };
+
+static const uint32_t gui_icon_menu_arrow_up_left_3x3_rows[] = {0x0007, 0x0006, 0x0004};
+const gui_icon_asset_t gui_icon_menu_arrow_up_left_3x3 = { .width = 3, .height = 3, .rows = gui_icon_menu_arrow_up_left_3x3_rows };
+
+static const uint32_t gui_icon_menu_arrow_up_left_4x4_rows[] = {0x000F, 0x000E, 0x000C, 0x0008};
+const gui_icon_asset_t gui_icon_menu_arrow_up_left_4x4 = { .width = 4, .height = 4, .rows = gui_icon_menu_arrow_up_left_4x4_rows };
+
+static const uint32_t gui_icon_menu_arrow_up_right_3x3_rows[] = {0x0007, 0x0003, 0x0001};
+const gui_icon_asset_t gui_icon_menu_arrow_up_right_3x3 = { .width = 3, .height = 3, .rows = gui_icon_menu_arrow_up_right_3x3_rows };
+
+static const uint32_t gui_icon_menu_arrow_up_right_4x4_rows[] = {0x000F, 0x0007, 0x0003, 0x0001};
+const gui_icon_asset_t gui_icon_menu_arrow_up_right_4x4 = { .width = 4, .height = 4, .rows = gui_icon_menu_arrow_up_right_4x4_rows };
+
+static const uint32_t gui_icon_menu_help_sign_rows[] = {0x0000, 0x00F0, 0x030C, 0x0462, 0x04F2, 0x0891, 0x0831, 0x0861, 0x0861, 0x0402, 0x0462, 0x030C, 0x00F0, 0x0000, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_menu_help_sign = { .width = 12, .height = 16, .rows = gui_icon_menu_help_sign_rows };
+
+static const uint32_t gui_icon_menu_help_sign_black_rows[] = {0x03E0, 0x0C18, 0x11C4, 0x23E2, 0x27F2, 0x4671, 0x4071, 0x40E1, 0x41C1, 0x41C1, 0x2002, 0x21C2, 0x11C4, 0x0C18, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_menu_help_sign_black = { .width = 15, .height = 16, .rows = gui_icon_menu_help_sign_black_rows };
+
+static const uint32_t gui_icon_menu_help_sign_white_rows[] = {0x03E0, 0x0C18, 0x11C4, 0x2222, 0x25D2, 0x4651, 0x4051, 0x40A1, 0x4141, 0x41C1, 0x2002, 0x2142, 0x11C4, 0x0C18, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_menu_help_sign_white = { .width = 15, .height = 16, .rows = gui_icon_menu_help_sign_white_rows };
+
+static const uint32_t gui_icon_menu_home_rows[] = {0x0080, 0x0940, 0x0E20, 0x0C90, 0x0948, 0x1224, 0x2412, 0x4809, 0x3306, 0x1304, 0x1074, 0x1054, 0x1074, 0x1054, 0x1FFC, 0x0000};
+const gui_icon_asset_t gui_icon_menu_home = { .width = 15, .height = 16, .rows = gui_icon_menu_home_rows };
+
+static const uint32_t gui_icon_menu_information_sign_rows[] = {0x03E0, 0x0C18, 0x1004, 0x2182, 0x2182, 0x4001, 0x41C1, 0x4181, 0x4181, 0x4181, 0x2182, 0x21C2, 0x1004, 0x0C18, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_menu_information_sign = { .width = 15, .height = 16, .rows = gui_icon_menu_information_sign_rows };
+
+static const uint32_t gui_icon_menu_information_sign_white_rows[] = {0x03E0, 0x0C18, 0x1184, 0x2142, 0x2182, 0x4001, 0x41C1, 0x4141, 0x4141, 0x4141, 0x2142, 0x21C2, 0x1004, 0x0C18, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_menu_information_sign_white = { .width = 15, .height = 16, .rows = gui_icon_menu_information_sign_white_rows };
+
+static const uint32_t gui_icon_menu_options_rows[] = {0x0000, 0x3BFF, 0x2A01, 0x3BFF, 0x0000, 0x0000, 0x3BFF, 0x2A01, 0x3BFF, 0x0000, 0x0000, 0x3BFF, 0x2A01, 0x3BFF, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_menu_options = { .width = 14, .height = 16, .rows = gui_icon_menu_options_rows };
+
+static const uint32_t gui_icon_menu_settings_gear_rows[] = {0x03C0, 0x1248, 0x2C34, 0x4002, 0x23C4, 0x2424, 0xC813, 0x8811, 0x8811, 0xC813, 0x2424, 0x23C4, 0x4002, 0x2C34, 0x1248, 0x03C0};
+const gui_icon_asset_t gui_icon_menu_settings_gear = { .width = 16, .height = 16, .rows = gui_icon_menu_settings_gear_rows };
+
+static const uint32_t gui_icon_menu_settings_sliders_rows[] = {0x0E00, 0x1100, 0x31FF, 0x1100, 0x0E00, 0x001C, 0x0022, 0x3FE3, 0x0022, 0x001C, 0x0E00, 0x1100, 0x31FF, 0x1100, 0x0E00, 0x0000};
+const gui_icon_asset_t gui_icon_menu_settings_sliders = { .width = 14, .height = 16, .rows = gui_icon_menu_settings_sliders_rows };
+
+static const uint32_t gui_icon_menu_settings_sliders_square_rows[] = {0x0000, 0x1F00, 0x33FF, 0x1E00, 0x0000, 0x0000, 0x001F, 0x3FF3, 0x001E, 0x0000, 0x0000, 0x1F00, 0x33FF, 0x1E00, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_menu_settings_sliders_square = { .width = 14, .height = 16, .rows = gui_icon_menu_settings_sliders_square_rows };
+
+static const uint32_t gui_icon_menu_settings_sliders_two_rows[] = {0x0000, 0x0000, 0x0000, 0x0E00, 0x1100, 0x31FF, 0x1100, 0x0E00, 0x001C, 0x0022, 0x3FE3, 0x0022, 0x001C, 0x0000, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_menu_settings_sliders_two = { .width = 14, .height = 16, .rows = gui_icon_menu_settings_sliders_two_rows };
+
+static const uint32_t gui_icon_menu_tool_wrench_rows[] = {0x0000, 0x003C, 0x007C, 0x00A0, 0x00A3, 0x00C3, 0x00AD, 0x0092, 0x017C, 0x0280, 0x0500, 0x0A00, 0x1400, 0x2800, 0x3000, 0x0000};
+const gui_icon_asset_t gui_icon_menu_tool_wrench = { .width = 14, .height = 16, .rows = gui_icon_menu_tool_wrench_rows };
+
+static const uint32_t gui_icon_menu_tools_rows[] = {0x2038, 0x3058, 0x10A0, 0x08A3, 0x04C3, 0x02AD, 0x0192, 0x017C, 0x02C0, 0x0538, 0x0A6C, 0x1436, 0x281B, 0x300D, 0x0003, 0x0000};
+const gui_icon_asset_t gui_icon_menu_tools = { .width = 14, .height = 16, .rows = gui_icon_menu_tools_rows };
+
+static const uint32_t gui_icon_message_rows[] = {0x7FFE, 0x8002, 0x8001, 0x96D1, 0x9FF9, 0x8001, 0x8001, 0x95B1, 0x9FF9, 0x8001, 0x8001, 0x63FE, 0x1400, 0x0800, 0x1000, 0x0000};
+const gui_icon_asset_t gui_icon_message = { .width = 16, .height = 16, .rows = gui_icon_message_rows };
+
+static const uint32_t gui_icon_message_mail_rows[] = {0x00000, 0x0FFFE, 0x18001, 0x18001, 0x1600D, 0x13019, 0x11831, 0x10C61, 0x106C1, 0x10BA1, 0x11011, 0x12009, 0x14005, 0x18001, 0x0FFFE, 0x00000};
+const gui_icon_asset_t gui_icon_message_mail = { .width = 17, .height = 16, .rows = gui_icon_message_mail_rows };
+
+static const uint32_t gui_icon_message_mail_open_rows[] = {0x07FFC, 0x04004, 0x05FFC, 0x0C006, 0x1DFF7, 0x14005, 0x12FE9, 0x11011, 0x10BA1, 0x10441, 0x10BA1, 0x11011, 0x12009, 0x14005, 0x18001, 0x0FFFE};
+const gui_icon_asset_t gui_icon_message_mail_open = { .width = 17, .height = 16, .rows = gui_icon_message_mail_open_rows };
+
+static const uint32_t gui_icon_message_memo_rows[] = {0x0FFFE, 0x10001, 0x10001, 0x11831, 0x12449, 0x14285, 0x14285, 0x12449, 0x11FF1, 0x10001, 0x10001, 0x18003, 0x0C7FE, 0x02800, 0x03000, 0x04000};
+const gui_icon_asset_t gui_icon_message_memo = { .width = 17, .height = 16, .rows = gui_icon_message_memo_rows };
+
+static const uint32_t gui_icon_message_voice_recorder_rows[] = {0x0400, 0x0C06, 0x0953, 0x0803, 0x0952, 0x0803, 0x0902, 0x0A4B, 0x0AAA, 0x0A4A, 0x0A0A, 0x0A4A, 0x0AAA, 0x0B5A, 0x0C06, 0x0400};
+const gui_icon_asset_t gui_icon_message_voice_recorder = { .width = 12, .height = 16, .rows = gui_icon_message_voice_recorder_rows };
+
+static const uint32_t gui_icon_micro_sd_rows[] = {0x0FF0, 0x1808, 0x1008, 0x1008, 0x11CC, 0x1224, 0x13E2, 0x1002, 0x1244, 0x12A4, 0x1122, 0x1002, 0x11E2, 0x161A, 0x0DEC, 0x0000};
+const gui_icon_asset_t gui_icon_micro_sd = { .width = 14, .height = 16, .rows = gui_icon_micro_sd_rows };
+
+static const uint32_t gui_icon_micro_sd_no_card_rows[] = {0x07F0, 0x2808, 0x1008, 0x1808, 0x14CC, 0x1224, 0x1322, 0x1082, 0x1244, 0x12A4, 0x1132, 0x100A, 0x11E4, 0x161A, 0x0DF5, 0x0000};
+const gui_icon_asset_t gui_icon_micro_sd_no_card = { .width = 14, .height = 16, .rows = gui_icon_micro_sd_no_card_rows };
+
+static const uint32_t gui_icon_microphone_rows[] = {0x01C0, 0x03E0, 0x02A0, 0x03E0, 0x02A0, 0x03E0, 0x02A0, 0x03E0, 0x0BE8, 0x09C8, 0x0410, 0x03E0, 0x0080, 0x0080, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_microphone = { .width = 15, .height = 16, .rows = gui_icon_microphone_rows };
+
+static const uint32_t gui_icon_microphone_muted_rows[] = {0x4380, 0x27C0, 0x1340, 0x09C0, 0x04C0, 0x0240, 0x0500, 0x0680, 0x1750, 0x13A0, 0x0810, 0x07C8, 0x0104, 0x0102, 0x07C1, 0x0000};
+const gui_icon_asset_t gui_icon_microphone_muted = { .width = 15, .height = 16, .rows = gui_icon_microphone_muted_rows };
+
+static const uint32_t gui_icon_microphone_recording_rows[] = {0x11C4, 0x0BE8, 0x02A0, 0x33E6, 0x02A0, 0x0BE8, 0x12A4, 0x03E0, 0x03E0, 0x09C8, 0x0410, 0x03E0, 0x0080, 0x0080, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_microphone_recording = { .width = 15, .height = 16, .rows = gui_icon_microphone_recording_rows };
+
+static const uint32_t gui_icon_monitor_rows[] = {0x0000, 0xFFFF, 0x8001, 0xBFFD, 0xA001, 0xA001, 0xA001, 0xA001, 0xA001, 0xBFFD, 0x8001, 0xFFFF, 0x03C0, 0x03C0, 0x0FF0, 0x0000};
+const gui_icon_asset_t gui_icon_monitor = { .width = 16, .height = 16, .rows = gui_icon_monitor_rows };
+
+static const uint32_t gui_icon_moon_rows[] = {0x0410, 0x1C10, 0x3854, 0x7838, 0x716D, 0xF038, 0xF054, 0xF010, 0xF810, 0xF806, 0x7E1C, 0x7FFC, 0x3FF8, 0x1FF0, 0x07C0, 0x0000};
+const gui_icon_asset_t gui_icon_moon = { .width = 16, .height = 16, .rows = gui_icon_moon_rows };
+
+static const uint32_t gui_icon_moon_white_rows[] = {0x0410, 0x1C10, 0x2854, 0x4838, 0x516D, 0x9038, 0x9054, 0x9010, 0x8810, 0x8806, 0x461C, 0x41E4, 0x2008, 0x1830, 0x07C0, 0x0000};
+const gui_icon_asset_t gui_icon_moon_white = { .width = 16, .height = 16, .rows = gui_icon_moon_white_rows };
+
+static const uint32_t gui_icon_music_rows[] = {0x001F, 0x03E1, 0x0201, 0x021F, 0x03F1, 0x0201, 0x0201, 0x0201, 0x0201, 0x0201, 0x020E, 0x1C11, 0x2211, 0x220E, 0x1C00, 0x0000};
+const gui_icon_asset_t gui_icon_music = { .width = 14, .height = 16, .rows = gui_icon_music_rows };
+
+static const uint32_t gui_icon_music_fast_backward_rows[] = {0x00000, 0x00000, 0x00000, 0x00201, 0x00603, 0x01A0D, 0x06231, 0x182C1, 0x06231, 0x01A0D, 0x00603, 0x00201, 0x00000, 0x00000, 0x00000, 0x00000};
+const gui_icon_asset_t gui_icon_music_fast_backward = { .width = 17, .height = 16, .rows = gui_icon_music_fast_backward_rows };
+
+static const uint32_t gui_icon_music_fast_backward_button_rows[] = {0x03E0, 0x0C18, 0x1004, 0x2002, 0x2002, 0x4319, 0x4D69, 0x5189, 0x4D69, 0x4319, 0x2002, 0x2002, 0x1004, 0x0C18, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_music_fast_backward_button = { .width = 15, .height = 16, .rows = gui_icon_music_fast_backward_button_rows };
+
+static const uint32_t gui_icon_music_fast_forward_rows[] = {0x00000, 0x00000, 0x00000, 0x10080, 0x180C0, 0x160B0, 0x1188C, 0x10683, 0x1188C, 0x160B0, 0x180C0, 0x10080, 0x00000, 0x00000, 0x00000, 0x00000};
+const gui_icon_asset_t gui_icon_music_fast_forward = { .width = 17, .height = 16, .rows = gui_icon_music_fast_forward_rows };
+
+static const uint32_t gui_icon_music_fast_forward_button_rows[] = {0x03E0, 0x0C18, 0x1004, 0x2002, 0x2002, 0x4C61, 0x4B59, 0x48C5, 0x4B59, 0x4C61, 0x2002, 0x2002, 0x1004, 0x0C18, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_music_fast_forward_button = { .width = 15, .height = 16, .rows = gui_icon_music_fast_forward_button_rows };
+
+static const uint32_t gui_icon_music_headphones_rows[] = {0x03E0, 0x0F78, 0x1C1C, 0x3006, 0x2002, 0x4001, 0x4001, 0x4001, 0x3006, 0x4809, 0x4C19, 0x6413, 0x2222, 0x3226, 0x1C1C, 0x0000};
+const gui_icon_asset_t gui_icon_music_headphones = { .width = 15, .height = 16, .rows = gui_icon_music_headphones_rows };
+
+static const uint32_t gui_icon_music_next_rows[] = {0x0000, 0xE00F, 0x9009, 0x8C09, 0x8209, 0x8189, 0x8049, 0x8039, 0x8039, 0x8049, 0x8189, 0x8209, 0x8C09, 0x9009, 0xE00F, 0x0000};
+const gui_icon_asset_t gui_icon_music_next = { .width = 16, .height = 16, .rows = gui_icon_music_next_rows };
+
+static const uint32_t gui_icon_music_next_button_rows[] = {0x03E0, 0x0C18, 0x1004, 0x2802, 0x2C3A, 0x4B29, 0x49A9, 0x48E9, 0x49A9, 0x4B29, 0x2C3A, 0x2802, 0x1004, 0x0C18, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_music_next_button = { .width = 15, .height = 16, .rows = gui_icon_music_next_button_rows };
+
+static const uint32_t gui_icon_music_pause_rows[] = {0x0F9F, 0x0891, 0x0891, 0x0891, 0x0891, 0x0891, 0x0891, 0x0891, 0x0891, 0x0891, 0x0891, 0x0891, 0x0891, 0x0891, 0x0F9F, 0x0000};
+const gui_icon_asset_t gui_icon_music_pause = { .width = 12, .height = 16, .rows = gui_icon_music_pause_rows };
+
+static const uint32_t gui_icon_music_pause_button_rows[] = {0x03E0, 0x0C18, 0x1004, 0x2002, 0x2772, 0x4551, 0x4551, 0x4551, 0x4551, 0x4551, 0x2772, 0x2002, 0x1004, 0x0C18, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_music_pause_button = { .width = 15, .height = 16, .rows = gui_icon_music_pause_button_rows };
+
+static const uint32_t gui_icon_music_play_rows[] = {0x6000, 0x7000, 0x4C00, 0x4300, 0x40C0, 0x4030, 0x400C, 0x4001, 0x4004, 0x4010, 0x4040, 0x4100, 0x4400, 0x7000, 0x6000, 0x0000};
+const gui_icon_asset_t gui_icon_music_play = { .width = 15, .height = 16, .rows = gui_icon_music_play_rows };
+
+static const uint32_t gui_icon_music_play_button_rows[] = {0x03E0, 0x0C18, 0x1004, 0x2002, 0x2602, 0x45C1, 0x4431, 0x440D, 0x4431, 0x45C1, 0x2602, 0x2002, 0x1004, 0x0C18, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_music_play_button = { .width = 15, .height = 16, .rows = gui_icon_music_play_button_rows };
+
+static const uint32_t gui_icon_music_previous_rows[] = {0x0000, 0xF007, 0x9009, 0x9031, 0x9041, 0x9181, 0x9201, 0x9C01, 0x9C01, 0x9201, 0x9181, 0x9041, 0x9031, 0x9009, 0xF007, 0x0000};
+const gui_icon_asset_t gui_icon_music_previous = { .width = 16, .height = 16, .rows = gui_icon_music_previous_rows };
+
+static const uint32_t gui_icon_music_previous_button_rows[] = {0x03E0, 0x0C18, 0x1004, 0x200A, 0x2E1A, 0x4A69, 0x4AC9, 0x4B89, 0x4AC9, 0x4A69, 0x2E1A, 0x200A, 0x1004, 0x0C18, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_music_previous_button = { .width = 15, .height = 16, .rows = gui_icon_music_previous_button_rows };
+
+static const uint32_t gui_icon_music_radio_rows[] = {0x0018, 0x0060, 0x0180, 0x0600, 0x1800, 0x6000, 0x7FFE, 0x9C01, 0xAA7D, 0xC145, 0xEB7D, 0xC101, 0xAA55, 0x9C01, 0x7FFE, 0x0000};
+const gui_icon_asset_t gui_icon_music_radio = { .width = 16, .height = 16, .rows = gui_icon_music_radio_rows };
+
+static const uint32_t gui_icon_music_radio_broadcast_rows[] = {0x03E0, 0x0C18, 0x13E4, 0x2412, 0x49C9, 0x5225, 0x5495, 0x51C5, 0x0360, 0x01C0, 0x0080, 0x01C0, 0x0140, 0x0360, 0x0220, 0x0000};
+const gui_icon_asset_t gui_icon_music_radio_broadcast = { .width = 15, .height = 16, .rows = gui_icon_music_radio_broadcast_rows };
+
+static const uint32_t gui_icon_music_radio_streaming_rows[] = {0x00000, 0x00000, 0x04004, 0x08002, 0x09012, 0x12109, 0x14BA5, 0x15295, 0x14BA5, 0x12109, 0x09012, 0x08002, 0x04004, 0x00000, 0x00000, 0x00000};
+const gui_icon_asset_t gui_icon_music_radio_streaming = { .width = 17, .height = 16, .rows = gui_icon_music_radio_streaming_rows };
+
+static const uint32_t gui_icon_music_record_rows[] = {0x01E0, 0x01E0, 0x01E0, 0x3FFE, 0x3FFE, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x3FFE, 0x3FFE, 0x1FFC, 0x0FF8, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_music_record = { .width = 15, .height = 16, .rows = gui_icon_music_record_rows };
+
+static const uint32_t gui_icon_music_record_button_rows[] = {0x03E0, 0x0C18, 0x1004, 0x21C2, 0x2632, 0x4411, 0x4809, 0x4809, 0x4809, 0x4411, 0x2632, 0x21C2, 0x1004, 0x0C18, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_music_record_button = { .width = 15, .height = 16, .rows = gui_icon_music_record_button_rows };
+
+static const uint32_t gui_icon_music_record_button_black_rows[] = {0x03E0, 0x0C18, 0x1004, 0x21C2, 0x27F2, 0x47F1, 0x4FF9, 0x4FF9, 0x4FF9, 0x47F1, 0x27F2, 0x21C2, 0x1004, 0x0C18, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_music_record_button_black = { .width = 15, .height = 16, .rows = gui_icon_music_record_button_black_rows };
+
+static const uint32_t gui_icon_music_sound_wave_rows[] = {0x00000, 0x00400, 0x00440, 0x00440, 0x00440, 0x01450, 0x01550, 0x05550, 0x15555, 0x01554, 0x01550, 0x01440, 0x00440, 0x00440, 0x00400, 0x00000};
+const gui_icon_asset_t gui_icon_music_sound_wave = { .width = 17, .height = 16, .rows = gui_icon_music_sound_wave_rows };
+
+static const uint32_t gui_icon_music_speaker_rows[] = {0x03FE0, 0x04710, 0x04890, 0x04F90, 0x04890, 0x04710, 0x14014, 0x24712, 0x44891, 0x55755, 0x45551, 0x25752, 0x14894, 0x04710, 0x04010, 0x07FF0};
+const gui_icon_asset_t gui_icon_music_speaker = { .width = 19, .height = 16, .rows = gui_icon_music_speaker_rows };
+
+static const uint32_t gui_icon_music_stop_rows[] = {0x1FFE, 0x2001, 0x2001, 0x2001, 0x2001, 0x2001, 0x2001, 0x2001, 0x2001, 0x2001, 0x2001, 0x2001, 0x2001, 0x2001, 0x1FFE, 0x0000};
+const gui_icon_asset_t gui_icon_music_stop = { .width = 14, .height = 16, .rows = gui_icon_music_stop_rows };
+
+static const uint32_t gui_icon_music_stop_button_rows[] = {0x03E0, 0x0C18, 0x1004, 0x2002, 0x27F2, 0x4411, 0x4411, 0x4411, 0x4411, 0x4411, 0x27F2, 0x2002, 0x1004, 0x0C18, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_music_stop_button = { .width = 15, .height = 16, .rows = gui_icon_music_stop_button_rows };
+
+static const uint32_t gui_icon_network_rows[] = {0x0007, 0x0005, 0x0005, 0x0005, 0x0075, 0x0055, 0x0055, 0x0055, 0x0755, 0x0555, 0x0555, 0x0555, 0x7555, 0x5555, 0x7777, 0x0000};
+const gui_icon_asset_t gui_icon_network = { .width = 15, .height = 16, .rows = gui_icon_network_rows };
+
+static const uint32_t gui_icon_network_1_bar_rows[] = {0x0007, 0x0005, 0x0005, 0x0005, 0x0075, 0x0055, 0x0055, 0x0055, 0x0755, 0x0555, 0x0555, 0x0555, 0x7555, 0x7555, 0x7777, 0x0000};
+const gui_icon_asset_t gui_icon_network_1_bar = { .width = 15, .height = 16, .rows = gui_icon_network_1_bar_rows };
+
+static const uint32_t gui_icon_network_2_bars_rows[] = {0x0007, 0x0005, 0x0005, 0x0005, 0x0075, 0x0055, 0x0055, 0x0055, 0x0755, 0x0755, 0x0755, 0x0755, 0x7755, 0x7755, 0x7777, 0x0000};
+const gui_icon_asset_t gui_icon_network_2_bars = { .width = 15, .height = 16, .rows = gui_icon_network_2_bars_rows };
+
+static const uint32_t gui_icon_network_3_bars_rows[] = {0x0007, 0x0005, 0x0005, 0x0005, 0x0075, 0x0075, 0x0075, 0x0075, 0x0775, 0x0775, 0x0775, 0x0775, 0x7775, 0x7775, 0x7777, 0x0000};
+const gui_icon_asset_t gui_icon_network_3_bars = { .width = 15, .height = 16, .rows = gui_icon_network_3_bars_rows };
+
+static const uint32_t gui_icon_network_4_bars_rows[] = {0x0007, 0x0007, 0x0007, 0x0007, 0x0077, 0x0077, 0x0077, 0x0077, 0x0777, 0x0777, 0x0777, 0x0777, 0x7777, 0x7777, 0x7777, 0x0000};
+const gui_icon_asset_t gui_icon_network_4_bars = { .width = 15, .height = 16, .rows = gui_icon_network_4_bars_rows };
+
+static const uint32_t gui_icon_network_not_connected_rows[] = {0x4107, 0x2205, 0x1405, 0x0805, 0x1475, 0x2255, 0x4155, 0x0055, 0x0755, 0x0555, 0x0555, 0x0555, 0x7555, 0x5555, 0x7777, 0x0000};
+const gui_icon_asset_t gui_icon_network_not_connected = { .width = 15, .height = 16, .rows = gui_icon_network_not_connected_rows };
+
+static const uint32_t gui_icon_network_www_rows[] = {0x03C0, 0x0DB0, 0x324C, 0x2424, 0x4422, 0x7FFE, 0x8811, 0x8811, 0x8811, 0x8811, 0x7FFE, 0x4422, 0x2424, 0x324C, 0x0DB0, 0x03C0};
+const gui_icon_asset_t gui_icon_network_www = { .width = 16, .height = 16, .rows = gui_icon_network_www_rows };
+
+static const uint32_t gui_icon_notification_bell_rows[] = {0x1188, 0x63C6, 0x4422, 0x8C11, 0x8811, 0x1008, 0x1008, 0x1008, 0x1008, 0x2004, 0x2004, 0x4002, 0xFFFF, 0x0660, 0x03C0, 0x0000};
+const gui_icon_asset_t gui_icon_notification_bell = { .width = 16, .height = 16, .rows = gui_icon_notification_bell_rows };
+
+static const uint32_t gui_icon_operation_error_rows[] = {0x03F0, 0x0808, 0x1004, 0x2002, 0x4411, 0x4221, 0x4141, 0x4081, 0x4141, 0x4221, 0x4411, 0x2002, 0x1004, 0x0808, 0x03F0, 0x0000};
+const gui_icon_asset_t gui_icon_operation_error = { .width = 15, .height = 16, .rows = gui_icon_operation_error_rows };
+
+static const uint32_t gui_icon_operation_error_sign_rows[] = {0x03E0, 0x0C18, 0x13E4, 0x2412, 0x29CA, 0x5145, 0x5145, 0x5085, 0x5005, 0x51C5, 0x288A, 0x2412, 0x13E4, 0x0C18, 0x03E0, 0x0000};
+const gui_icon_asset_t gui_icon_operation_error_sign = { .width = 15, .height = 16, .rows = gui_icon_operation_error_sign_rows };
+
+static const uint32_t gui_icon_operation_forbidden_sign_rows[] = {0x01E0, 0x0C18, 0x13E4, 0x2212, 0x210A, 0x5885, 0x5445, 0x5225, 0x5115, 0x508D, 0x2842, 0x2422, 0x13E4, 0x0C18, 0x01E0, 0x0000};
+const gui_icon_asset_t gui_icon_operation_forbidden_sign = { .width = 15, .height = 16, .rows = gui_icon_operation_forbidden_sign_rows };
+
+static const uint32_t gui_icon_operation_undo_rows[] = {0x0000, 0x0000, 0x0000, 0x08F8, 0x0D04, 0x0E02, 0x0F00, 0x0F00, 0x0001, 0x0001, 0x0001, 0x0202, 0x0104, 0x00F8, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_operation_undo = { .width = 12, .height = 16, .rows = gui_icon_operation_undo_rows };
+
+static const uint32_t gui_icon_operation_warning_rows[] = {0x0000, 0x0180, 0x0240, 0x0240, 0x0420, 0x0990, 0x0990, 0x1188, 0x1188, 0x2184, 0x4002, 0x4182, 0x8181, 0x8001, 0x7FFE, 0x0000};
+const gui_icon_asset_t gui_icon_operation_warning = { .width = 16, .height = 16, .rows = gui_icon_operation_warning_rows };
+
+static const uint32_t gui_icon_phone_book_closed_rows[] = {0x3FFE, 0x6003, 0x7FF9, 0x4005, 0x4005, 0x4FF5, 0x4815, 0x4FF5, 0x4005, 0x4005, 0x47C5, 0x4005, 0x4005, 0x47C5, 0x4006, 0x3FFC};
+const gui_icon_asset_t gui_icon_phone_book_closed = { .width = 15, .height = 16, .rows = gui_icon_phone_book_closed_rows };
+
+static const uint32_t gui_icon_phone_book_open_rows[] = {0x1C003, 0x1701D, 0x11C71, 0x146C5, 0x13119, 0x10D61, 0x1610D, 0x11931, 0x14545, 0x13119, 0x10D61, 0x1C107, 0x0F11E, 0x01FF8, 0x00EE0, 0x00380};
+const gui_icon_asset_t gui_icon_phone_book_open = { .width = 17, .height = 16, .rows = gui_icon_phone_book_open_rows };
+
+static const uint32_t gui_icon_phone_call_in_out_rows[] = {0x1C00, 0x2208, 0x4210, 0x42A7, 0x46C3, 0x44E5, 0x2208, 0x2110, 0x1080, 0x185E, 0x0C31, 0x0601, 0x0301, 0x00C2, 0x003C, 0x0000};
+const gui_icon_asset_t gui_icon_phone_call_in_out = { .width = 15, .height = 16, .rows = gui_icon_phone_call_in_out_rows };
+
+static const uint32_t gui_icon_phone_call_in_progress_rows[] = {0x1C78, 0x2204, 0x4272, 0x4209, 0x4665, 0x4415, 0x2214, 0x2100, 0x1080, 0x185E, 0x0C31, 0x0601, 0x0301, 0x00C2, 0x003C, 0x0000};
+const gui_icon_asset_t gui_icon_phone_call_in_progress = { .width = 15, .height = 16, .rows = gui_icon_phone_call_in_progress_rows };
+
+static const uint32_t gui_icon_phone_call_in_progress2_rows[] = {0x1C08, 0x2224, 0x4292, 0x4252, 0x4692, 0x4424, 0x2208, 0x2100, 0x1080, 0x185E, 0x0C31, 0x0601, 0x0301, 0x00C2, 0x003C, 0x0000};
+const gui_icon_asset_t gui_icon_phone_call_in_progress2 = { .width = 15, .height = 16, .rows = gui_icon_phone_call_in_progress2_rows };
+
+static const uint32_t gui_icon_phone_call_incoming_rows[] = {0x1C00, 0x2200, 0x4204, 0x4208, 0x4650, 0x4460, 0x2270, 0x2100, 0x1080, 0x185E, 0x0C31, 0x0601, 0x0301, 0x00C2, 0x003C, 0x0000};
+const gui_icon_asset_t gui_icon_phone_call_incoming = { .width = 15, .height = 16, .rows = gui_icon_phone_call_incoming_rows };
+
+static const uint32_t gui_icon_phone_call_outgoing_rows[] = {0x1C00, 0x2200, 0x421C, 0x420C, 0x4614, 0x4420, 0x2240, 0x2100, 0x1080, 0x185E, 0x0C31, 0x0601, 0x0301, 0x00C2, 0x003C, 0x0000};
+const gui_icon_asset_t gui_icon_phone_call_outgoing = { .width = 15, .height = 16, .rows = gui_icon_phone_call_outgoing_rows };
+
+static const uint32_t gui_icon_phone_connected_rows[] = {0x1C00, 0x2200, 0x4201, 0x4282, 0x4644, 0x4428, 0x2210, 0x2100, 0x1080, 0x185E, 0x0C31, 0x0601, 0x0301, 0x00C2, 0x003C, 0x0000};
+const gui_icon_asset_t gui_icon_phone_connected = { .width = 15, .height = 16, .rows = gui_icon_phone_connected_rows };
+
+static const uint32_t gui_icon_phone_contacts_13x16_rows[] = {0x00E0, 0x0110, 0x0208, 0x0208, 0x0208, 0x0110, 0x00E0, 0x0000, 0x01F8, 0x060C, 0x0802, 0x0802, 0x1001, 0x1001, 0x1001, 0x1FFF};
+const gui_icon_asset_t gui_icon_phone_contacts_13x16 = { .width = 13, .height = 16, .rows = gui_icon_phone_contacts_13x16_rows };
+
+static const uint32_t gui_icon_phone_contacts_15x16_rows[] = {0x1FFE, 0x3001, 0x20E1, 0x5111, 0x2111, 0x2111, 0x50E1, 0x2001, 0x20E1, 0x5319, 0x2209, 0x2405, 0x5405, 0x27FD, 0x3001, 0x1FFE};
+const gui_icon_asset_t gui_icon_phone_contacts_15x16 = { .width = 15, .height = 16, .rows = gui_icon_phone_contacts_15x16_rows };
+
+static const uint32_t gui_icon_phone_not_connected_rows[] = {0x1C41, 0x2222, 0x4214, 0x4208, 0x4614, 0x4422, 0x2241, 0x2100, 0x1080, 0x185E, 0x0C31, 0x0601, 0x0301, 0x00C2, 0x003C, 0x0000};
+const gui_icon_asset_t gui_icon_phone_not_connected = { .width = 15, .height = 16, .rows = gui_icon_phone_not_connected_rows };
+
+static const uint32_t gui_icon_phone_retro_rows[] = {0x001F80, 0x01C07C, 0x040004, 0x087FC2, 0x109121, 0x112091, 0x094A52, 0x06952C, 0x008A20, 0x011510, 0x014A50, 0x014050, 0x013F90, 0x010010, 0x008E20, 0x003FC0};
+const gui_icon_asset_t gui_icon_phone_retro = { .width = 21, .height = 16, .rows = gui_icon_phone_retro_rows };
+
+static const uint32_t gui_icon_plane_rows[] = {0x0007, 0x7009, 0x8E11, 0xC1A2, 0x3044, 0x0C08, 0x0310, 0x0108, 0x02C8, 0x0544, 0x7A24, 0x8C24, 0x6412, 0x1412, 0x140A, 0x080C};
+const gui_icon_asset_t gui_icon_plane = { .width = 16, .height = 16, .rows = gui_icon_plane_rows };
+
+static const uint32_t gui_icon_plant_rows[] = {0x0003, 0x000F, 0x201F, 0x703F, 0xF83F, 0xFC7E, 0xFC7E, 0xFC7C, 0x78F0, 0x30C0, 0x1080, 0x0880, 0x0500, 0x0300, 0x0100, 0x0100};
+const gui_icon_asset_t gui_icon_plant = { .width = 16, .height = 16, .rows = gui_icon_plant_rows };
+
+static const uint32_t gui_icon_refresh_rows[] = {0x0000, 0x01F2, 0x07FA, 0x0E1E, 0x080E, 0x183E, 0x1000, 0x1000, 0x1001, 0x0001, 0x0F81, 0x0E02, 0x0F0E, 0x0BFC, 0x09F0, 0x0000};
+const gui_icon_asset_t gui_icon_refresh = { .width = 13, .height = 16, .rows = gui_icon_refresh_rows };
+
+static const uint32_t gui_icon_satellite_dish_rows[] = {0x0000, 0x003C, 0x1802, 0x1619, 0x3185, 0x5475, 0x4951, 0x4870, 0x4488, 0x4524, 0x2204, 0x2192, 0x1062, 0x181E, 0x0608, 0x01F0};
+const gui_icon_asset_t gui_icon_satellite_dish = { .width = 15, .height = 16, .rows = gui_icon_satellite_dish_rows };
+
+static const uint32_t gui_icon_smartphone_rows[] = {0x00FE, 0x01FF, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x0101, 0x01FF, 0x0145, 0x00FE};
+const gui_icon_asset_t gui_icon_smartphone = { .width = 9, .height = 16, .rows = gui_icon_smartphone_rows };
+
+static const uint32_t gui_icon_star_rows[] = {0x0080, 0x0080, 0x01C0, 0x0140, 0x0360, 0x7E3F, 0x3006, 0x180C, 0x0C18, 0x0410, 0x0490, 0x09C8, 0x0A28, 0x1C1C, 0x180C, 0x1004};
+const gui_icon_asset_t gui_icon_star = { .width = 15, .height = 16, .rows = gui_icon_star_rows };
+
+static const uint32_t gui_icon_stats_rows[] = {0x0000, 0x2000, 0x2000, 0x2006, 0x2186, 0x2186, 0x21B6, 0x21B6, 0x2DB6, 0x2DB6, 0x2DB6, 0x2DB6, 0x2DB6, 0x2000, 0x3FFF, 0x0000};
+const gui_icon_asset_t gui_icon_stats = { .width = 14, .height = 16, .rows = gui_icon_stats_rows };
+
+static const uint32_t gui_icon_toilets_gentlemen_rows[] = {0x0008, 0x001C, 0x001C, 0x0008, 0x0036, 0x007F, 0x0077, 0x007F, 0x0077, 0x007F, 0x003E, 0x0036, 0x0036, 0x0014, 0x0014, 0x0036};
+const gui_icon_asset_t gui_icon_toilets_gentlemen = { .width = 7, .height = 16, .rows = gui_icon_toilets_gentlemen_rows };
+
+static const uint32_t gui_icon_toilets_ladies_rows[] = {0x0010, 0x0038, 0x0038, 0x0010, 0x0028, 0x007C, 0x00FE, 0x00BA, 0x0139, 0x017D, 0x00FE, 0x00FE, 0x01FF, 0x01FF, 0x0028, 0x006C};
+const gui_icon_asset_t gui_icon_toilets_ladies = { .width = 9, .height = 16, .rows = gui_icon_toilets_ladies_rows };
+
+static const uint32_t gui_icon_tree_rows[] = {0x0540, 0x2AD4, 0x5726, 0x31B8, 0x5DEA, 0x8795, 0x6B36, 0xBB68, 0x4FFD, 0x37C6, 0x51A9, 0x2982, 0x0180, 0x0180, 0x03C0, 0x0FF0};
+const gui_icon_asset_t gui_icon_tree = { .width = 16, .height = 16, .rows = gui_icon_tree_rows };
+
+static const uint32_t gui_icon_tv_rows[] = {0x000E0, 0x00700, 0x03800, 0x1FFFF, 0x10001, 0x13FE7, 0x14011, 0x14017, 0x14017, 0x14017, 0x14017, 0x14017, 0x14017, 0x13FE1, 0x10001, 0x1FFFF};
+const gui_icon_asset_t gui_icon_tv = { .width = 17, .height = 16, .rows = gui_icon_tv_rows };
+
+static const uint32_t gui_icon_usb_cable_connected_rows[] = {0x0000, 0x0000, 0x0000, 0x00C0, 0x03E0, 0x04C0, 0x0804, 0xC806, 0xFFFF, 0xC206, 0x0204, 0x0130, 0x00F8, 0x0030, 0x0000, 0x0000};
+const gui_icon_asset_t gui_icon_usb_cable_connected = { .width = 16, .height = 16, .rows = gui_icon_usb_cable_connected_rows };
+
+static const uint32_t gui_icon_video_camera_rows[] = {0x001C0, 0x00220, 0x0E490, 0x11410, 0x15550, 0x0A220, 0x4FFE0, 0x70013, 0x49FD5, 0x49059, 0x71FC9, 0x50009, 0x12009, 0x15819, 0x12015, 0x0FFE3};
+const gui_icon_asset_t gui_icon_video_camera = { .width = 19, .height = 16, .rows = gui_icon_video_camera_rows };
+
+static const uint32_t gui_icon_volume_1_bar_rows[] = {0x01C10, 0x02428, 0x04444, 0x084A2, 0xF0511, 0x80589, 0x805C4, 0x805E4, 0x805C4, 0x80589, 0xF0511, 0x084A2, 0x04444, 0x02428, 0x01C10, 0x00000};
+const gui_icon_asset_t gui_icon_volume_1_bar = { .width = 20, .height = 16, .rows = gui_icon_volume_1_bar_rows };
+
+static const uint32_t gui_icon_volume_2_bars_rows[] = {0x01C10, 0x02428, 0x04444, 0x084E2, 0xF0571, 0x805B9, 0x805D8, 0x804DC, 0x805D8, 0x805B9, 0xF0571, 0x084E2, 0x04444, 0x02428, 0x01C10, 0x00000};
+const gui_icon_asset_t gui_icon_volume_2_bars = { .width = 20, .height = 16, .rows = gui_icon_volume_2_bars_rows };
+
+static const uint32_t gui_icon_volume_3_bars_rows[] = {0x01C10, 0x02438, 0x0445C, 0x084EE, 0xF0577, 0x805BB, 0x805DB, 0x804DD, 0x805DB, 0x805BB, 0xF0577, 0x084EE, 0x0445C, 0x02438, 0x01C10, 0x00000};
+const gui_icon_asset_t gui_icon_volume_3_bars = { .width = 20, .height = 16, .rows = gui_icon_volume_3_bars_rows };
+
+static const uint32_t gui_icon_volume_loud_rows[] = {0x01C10, 0x02408, 0x04444, 0x08422, 0xF0512, 0x80491, 0x80449, 0x80449, 0x80449, 0x80491, 0xF0512, 0x08422, 0x04444, 0x02408, 0x01C10, 0x00000};
+const gui_icon_asset_t gui_icon_volume_loud = { .width = 20, .height = 16, .rows = gui_icon_volume_loud_rows };
+
+static const uint32_t gui_icon_volume_low_rows[] = {0x00700, 0x00900, 0x01100, 0x02100, 0x3C140, 0x20120, 0x20110, 0x20110, 0x20110, 0x20120, 0x3C140, 0x02100, 0x01100, 0x00900, 0x00700, 0x00000};
+const gui_icon_asset_t gui_icon_volume_low = { .width = 18, .height = 16, .rows = gui_icon_volume_low_rows };
+
+static const uint32_t gui_icon_volume_muted_rows[] = {0x00700, 0x00900, 0x01100, 0x02100, 0x3C141, 0x20122, 0x20114, 0x20108, 0x20114, 0x20122, 0x3C141, 0x02100, 0x01100, 0x00900, 0x00700, 0x00000};
+const gui_icon_asset_t gui_icon_volume_muted = { .width = 18, .height = 16, .rows = gui_icon_volume_muted_rows };
+
+static const uint32_t gui_icon_volume_no_sound_rows[] = {0x20380, 0x10480, 0x08880, 0x05080, 0x1E080, 0x11080, 0x10880, 0x10480, 0x10280, 0x10180, 0x1E080, 0x010C0, 0x008A0, 0x00490, 0x00388, 0x00000};
+const gui_icon_asset_t gui_icon_volume_no_sound = { .width = 18, .height = 16, .rows = gui_icon_volume_no_sound_rows };
+
+static const uint32_t gui_icon_volume_normal_rows[] = {0x00700, 0x00900, 0x01108, 0x02104, 0x3C142, 0x20122, 0x20111, 0x20111, 0x20111, 0x20122, 0x3C142, 0x02104, 0x01108, 0x00900, 0x00700, 0x00000};
+const gui_icon_asset_t gui_icon_volume_normal = { .width = 18, .height = 16, .rows = gui_icon_volume_normal_rows };
+
+static const uint32_t gui_icon_weather_cloud_lightning_bolt_rows[] = {0x00000, 0x00F80, 0x01040, 0x02020, 0x06010, 0x0801C, 0x10102, 0x10201, 0x08601, 0x04C7E, 0x01F00, 0x00300, 0x00600, 0x00400, 0x00800, 0x00000};
+const gui_icon_asset_t gui_icon_weather_cloud_lightning_bolt = { .width = 17, .height = 16, .rows = gui_icon_weather_cloud_lightning_bolt_rows };
+
+static const uint32_t gui_icon_weather_cloud_rain_rows[] = {0x00000, 0x00FC0, 0x01040, 0x02020, 0x06010, 0x0801C, 0x10002, 0x10001, 0x08001, 0x07FFE, 0x00220, 0x04444, 0x08908, 0x12250, 0x04480, 0x00100};
+const gui_icon_asset_t gui_icon_weather_cloud_rain = { .width = 17, .height = 16, .rows = gui_icon_weather_cloud_rain_rows };
+
+static const uint32_t gui_icon_weather_cloud_snow_rows[] = {0x00000, 0x00FC0, 0x01040, 0x02020, 0x06010, 0x0801C, 0x10002, 0x10001, 0x08001, 0x07FFE, 0x00000, 0x01294, 0x04000, 0x01120, 0x04488, 0x00000};
+const gui_icon_asset_t gui_icon_weather_cloud_snow = { .width = 17, .height = 16, .rows = gui_icon_weather_cloud_snow_rows };
+
+static const uint32_t gui_icon_weather_cloud_sunny_rows[] = {0x00040, 0x00404, 0x000E0, 0x00318, 0x01209, 0x00404, 0x00404, 0x00F04, 0x01089, 0x02058, 0x06060, 0x0C03C, 0x10006, 0x10002, 0x10002, 0x0FFFC};
+const gui_icon_asset_t gui_icon_weather_cloud_sunny = { .width = 17, .height = 16, .rows = gui_icon_weather_cloud_sunny_rows };
+
+static const uint32_t gui_icon_weather_frost_rows[] = {0x0080, 0x09C8, 0x188C, 0x39CE, 0x0490, 0x02A0, 0x29CA, 0x7F7F, 0x29CA, 0x02A0, 0x0490, 0x39CE, 0x188C, 0x09C8, 0x0080, 0x0000};
+const gui_icon_asset_t gui_icon_weather_frost = { .width = 15, .height = 16, .rows = gui_icon_weather_frost_rows };
+
+static const uint32_t gui_icon_weather_humidity_rows[] = {0x0020, 0x0020, 0x0060, 0x0070, 0x00F0, 0x00F8, 0x01FC, 0x01FC, 0x03F6, 0x03FA, 0x07FB, 0x07FF, 0x03FE, 0x03FE, 0x01FC, 0x0078};
+const gui_icon_asset_t gui_icon_weather_humidity = { .width = 11, .height = 16, .rows = gui_icon_weather_humidity_rows };
+
+static const uint32_t gui_icon_weather_humidity_white_rows[] = {0x0020, 0x0020, 0x0060, 0x0050, 0x0090, 0x0088, 0x0104, 0x0104, 0x020A, 0x0206, 0x0405, 0x0401, 0x0202, 0x0202, 0x0184, 0x0078};
+const gui_icon_asset_t gui_icon_weather_humidity_white = { .width = 11, .height = 16, .rows = gui_icon_weather_humidity_white_rows };
+
+static const uint32_t gui_icon_weather_sun_rows[] = {0x0080, 0x1084, 0x0808, 0x01C0, 0x4631, 0x2412, 0x0808, 0x0808, 0x0808, 0x2412, 0x4631, 0x01C0, 0x0808, 0x1084, 0x0080, 0x0000};
+const gui_icon_asset_t gui_icon_weather_sun = { .width = 15, .height = 16, .rows = gui_icon_weather_sun_rows };
+
+static const uint32_t gui_icon_weather_temperature_rows[] = {0x1C00, 0x2202, 0x2B05, 0x2A02, 0x2B38, 0x2A60, 0x2B40, 0x2A40, 0x2A60, 0x4938, 0x9C80, 0xAE80, 0xBE80, 0x9C80, 0x4100, 0x3E00};
+const gui_icon_asset_t gui_icon_weather_temperature = { .width = 16, .height = 16, .rows = gui_icon_weather_temperature_rows };
+
+static const uint32_t gui_icon_weather_umbrella_rows[] = {0x0000, 0x0080, 0x03E0, 0x0FF8, 0x1FFC, 0x3FFE, 0x7FFF, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0280, 0x0100, 0x0000};
+const gui_icon_asset_t gui_icon_weather_umbrella = { .width = 15, .height = 16, .rows = gui_icon_weather_umbrella_rows };
+
+static const uint32_t gui_icon_weather_wind_rows[] = {0x0000, 0x0000, 0x0018, 0x01C4, 0x0222, 0x0222, 0x0022, 0x0044, 0x7F99, 0x0000, 0x56C1, 0x0030, 0x0008, 0x0008, 0x0090, 0x0060};
+const gui_icon_asset_t gui_icon_weather_wind = { .width = 15, .height = 16, .rows = gui_icon_weather_wind_rows };
+
+static const uint32_t gui_icon_weather_windsock_rows[] = {0x0000, 0x1000, 0x19E0, 0x16DE, 0x156D, 0x156D, 0x12FE, 0x1380, 0x1400, 0x1800, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x0000};
+const gui_icon_asset_t gui_icon_weather_windsock = { .width = 13, .height = 16, .rows = gui_icon_weather_windsock_rows };
+
+static const uint32_t gui_icon_wifi_rows[] = {0x00F80, 0x03060, 0x0C018, 0x10F84, 0x23062, 0x44011, 0x08708, 0x118C4, 0x02020, 0x04210, 0x00D80, 0x01040, 0x00200, 0x00500, 0x00200, 0x00000};
+const gui_icon_asset_t gui_icon_wifi = { .width = 19, .height = 16, .rows = gui_icon_wifi_rows };
+
+static const uint32_t gui_icon_wifi_2_bars_rows[] = {0x00F80, 0x03060, 0x0C018, 0x10F84, 0x23062, 0x44011, 0x08708, 0x118C4, 0x02020, 0x04210, 0x00F80, 0x01DC0, 0x00A80, 0x00700, 0x00200, 0x00000};
+const gui_icon_asset_t gui_icon_wifi_2_bars = { .width = 19, .height = 16, .rows = gui_icon_wifi_2_bars_rows };
+
+static const uint32_t gui_icon_wifi_25_rows[] = {0x00F80, 0x03060, 0x0C018, 0x10F84, 0x23062, 0x44011, 0x2870A, 0x118C4, 0x0A028, 0x04710, 0x02FA0, 0x01DC0, 0x00A80, 0x00700, 0x00200, 0x00000};
+const gui_icon_asset_t gui_icon_wifi_25 = { .width = 19, .height = 16, .rows = gui_icon_wifi_25_rows };
+
+static const uint32_t gui_icon_wifi_3_bars_rows[] = {0x00F80, 0x03060, 0x0C018, 0x10F84, 0x23062, 0x44011, 0x08708, 0x11FC4, 0x038E0, 0x06230, 0x02FA0, 0x01DC0, 0x00A80, 0x00700, 0x00200, 0x00000};
+const gui_icon_asset_t gui_icon_wifi_3_bars = { .width = 19, .height = 16, .rows = gui_icon_wifi_3_bars_rows };
+
+static const uint32_t gui_icon_wifi_4_bars_rows[] = {0x00F80, 0x03060, 0x0C018, 0x10F84, 0x23DE2, 0x47071, 0x0C718, 0x19FCC, 0x0B8E8, 0x06230, 0x02FA0, 0x01DC0, 0x00A80, 0x00700, 0x00200, 0x00000};
+const gui_icon_asset_t gui_icon_wifi_4_bars = { .width = 19, .height = 16, .rows = gui_icon_wifi_4_bars_rows };
+
+static const uint32_t gui_icon_wifi_5_bars_rows[] = {0x00F80, 0x03DE0, 0x0F078, 0x18F8C, 0x3BDEE, 0x67073, 0x2C71A, 0x19FCC, 0x0B8E8, 0x06230, 0x02FA0, 0x01DC0, 0x00A80, 0x00700, 0x00200, 0x00000};
+const gui_icon_asset_t gui_icon_wifi_5_bars = { .width = 19, .height = 16, .rows = gui_icon_wifi_5_bars_rows };
+
+static const uint32_t gui_icon_wifi_50_rows[] = {0x00F80, 0x03060, 0x0C018, 0x10F84, 0x23062, 0x44011, 0x2870A, 0x11FC4, 0x0B8E8, 0x07770, 0x02FA0, 0x01DC0, 0x00A80, 0x00700, 0x00200, 0x00000};
+const gui_icon_asset_t gui_icon_wifi_50 = { .width = 19, .height = 16, .rows = gui_icon_wifi_50_rows };
+
+static const uint32_t gui_icon_wifi_75_rows[] = {0x00F80, 0x03060, 0x0C018, 0x10F84, 0x23FE2, 0x478F1, 0x2E73A, 0x1DFDC, 0x0B8E8, 0x07770, 0x02FA0, 0x01DC0, 0x00A80, 0x00700, 0x00200, 0x00000};
+const gui_icon_asset_t gui_icon_wifi_75 = { .width = 19, .height = 16, .rows = gui_icon_wifi_75_rows };
+
+static const uint32_t gui_icon_wifi_full_rows[] = {0x00F80, 0x03FE0, 0x0F078, 0x1CF9C, 0x3BFEE, 0x778F7, 0x2E73A, 0x1DFDC, 0x0B8E8, 0x07770, 0x02FA0, 0x01DC0, 0x00A80, 0x00700, 0x00200, 0x00000};
+const gui_icon_asset_t gui_icon_wifi_full = { .width = 19, .height = 16, .rows = gui_icon_wifi_full_rows };
+
+static const uint32_t gui_icon_wifi_not_connected_rows[] = {0x10F80, 0x0B060, 0x04018, 0x12F84, 0x21062, 0x44811, 0x08508, 0x11AC4, 0x02120, 0x04290, 0x00D40, 0x01020, 0x00210, 0x00508, 0x00204, 0x00000};
+const gui_icon_asset_t gui_icon_wifi_not_connected = { .width = 19, .height = 16, .rows = gui_icon_wifi_not_connected_rows };
+
+static const uint32_t gui_icon_zoom_in_rows[] = {0x0070, 0x018C, 0x0202, 0x0222, 0x0421, 0x04F9, 0x0421, 0x0222, 0x0202, 0x058C, 0x0E70, 0x1C00, 0x3800, 0x7000, 0x6000, 0x0000};
+const gui_icon_asset_t gui_icon_zoom_in = { .width = 15, .height = 16, .rows = gui_icon_zoom_in_rows };
+
+static const uint32_t gui_icon_zoom_out_rows[] = {0x0070, 0x018C, 0x0202, 0x0202, 0x0401, 0x04FD, 0x0401, 0x0202, 0x0202, 0x058C, 0x0E70, 0x1C00, 0x3800, 0x7000, 0x6000, 0x0000};
+const gui_icon_asset_t gui_icon_zoom_out = { .width = 15, .height = 16, .rows = gui_icon_zoom_out_rows };
+
+static const uint32_t gui_icon_chevron_left_rows[] = {0x0010, 0x0030, 0x0060, 0x00C0, 0x00C0, 0x0060, 0x0030, 0x0010};
 const gui_icon_asset_t gui_icon_chevron_left = { .width = 8, .height = 8, .rows = gui_icon_chevron_left_rows };
 
-static const uint16_t gui_icon_chevron_right_rows[] = {0x0008, 0x000C, 0x0006, 0x0003, 0x0003, 0x0006, 0x000C, 0x0008};
+static const uint32_t gui_icon_chevron_right_rows[] = {0x0008, 0x000C, 0x0006, 0x0003, 0x0003, 0x0006, 0x000C, 0x0008};
 const gui_icon_asset_t gui_icon_chevron_right = { .width = 8, .height = 8, .rows = gui_icon_chevron_right_rows };
 
-static const uint16_t gui_icon_bolt_rows[] = {0x0018, 0x0038, 0x0078, 0x0018, 0x0030, 0x0038, 0x0030, 0x0000};
+static const uint32_t gui_icon_bolt_rows[] = {0x0018, 0x0038, 0x0078, 0x0018, 0x0030, 0x0038, 0x0030, 0x0000};
 const gui_icon_asset_t gui_icon_bolt = { .width = 8, .height = 8, .rows = gui_icon_bolt_rows };
 

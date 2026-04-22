@@ -36,6 +36,15 @@ static const char *TAG = "guimintlab";
 #define GML_DEFAULT_MAX_WIDGETS 64
 #define GML_DEFAULT_TICK_DELAY_MS 25
 
+static const gml_icon_registry_entry_t s_default_icon_entries[] = {
+#include "gui/generated/gui_icon_registry_entries.inc"
+};
+
+static const gml_icon_registry_t s_default_icon_registry = {
+    .entries = s_default_icon_entries,
+    .count = sizeof(s_default_icon_entries) / sizeof(s_default_icon_entries[0]),
+};
+
 /* Forward decl: implemented below; resolves the owning runtime from a press
  * entry pointer via the small static registry. */
 static guimintlab_t *gml_runtime_owner_of_entry(gml_press_entry_t *e);
@@ -192,6 +201,7 @@ static esp_err_t init_builder(guimintlab_t *gml) {
         .max_nodes    = max_widgets,
         .max_ids      = max_ids,
         .default_font = gml->theme.font_body,
+        .icons        = &s_default_icon_registry,
     };
     if (!gml_project_init(&gml->project, &gml->project_cfg)) {
         ESP_LOGE(TAG, "gml_project_init failed (arena too small?)");

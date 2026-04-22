@@ -392,7 +392,10 @@ static void build_widget(guimintlab_t *gml,
         break;
     case GML_WIDGET_TYPE_ICON:
         if (cJSON_IsObject(props)) {
-            const char *asset = dup_str(gml, json_string(props, "assetId", NULL));
+            const char *asset = dup_str(
+                gml,
+                json_string(props, "assetId", json_string(props, "iconId", NULL))
+            );
             if (asset != NULL) {
                 gml_project_set_icon_asset_id(&gml->project, handle, asset);
             }
