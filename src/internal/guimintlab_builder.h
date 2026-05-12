@@ -140,8 +140,10 @@ void gml_project_set_label_align(gml_project_t *project, gml_handle_t handle, gm
 void gml_project_set_label_font(gml_project_t *project, gml_handle_t handle, const gui_font_t *font);
 
 void gml_project_set_button_text(gml_project_t *project, gml_handle_t handle, const char *text);
+void gml_project_set_button_font(gml_project_t *project, gml_handle_t handle, const gui_font_t *font);
 void gml_project_set_button_pressed_bg(gml_project_t *project, gml_handle_t handle, gui_color_t color);
 void gml_project_set_button_padding(gml_project_t *project, gml_handle_t handle, uint8_t px, uint8_t py);
+void gml_project_set_button_scale(gml_project_t *project, gml_handle_t handle, uint8_t scale);
 
 void gml_project_set_icon_asset_id(gml_project_t *project, gml_handle_t handle, const char *icon_id);
 void gml_project_set_icon_color(gml_project_t *project, gml_handle_t handle, gui_color_t color);

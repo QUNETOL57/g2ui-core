@@ -348,12 +348,22 @@ void gml_project_set_label_font(gml_project_t *p, gml_handle_t h, const gui_font
     REQUIRE_NODE(p, h, node);
     if (node->type != GML_WIDGET_TYPE_LABEL || !font) return;
     node->storage.label.font = font;
+    gui_widget_request_layout(widget_base(node));
+    gui_widget_invalidate(widget_base(node));
 }
 
 void gml_project_set_button_text(gml_project_t *p, gml_handle_t h, const char *text) {
     REQUIRE_NODE(p, h, node);
     if (node->type != GML_WIDGET_TYPE_BUTTON) return;
     node->storage.button.text = text ? text : "";
+    gui_widget_invalidate(widget_base(node));
+}
+
+void gml_project_set_button_font(gml_project_t *p, gml_handle_t h, const gui_font_t *font) {
+    REQUIRE_NODE(p, h, node);
+    if (node->type != GML_WIDGET_TYPE_BUTTON || !font) return;
+    node->storage.button.font = font;
+    gui_widget_request_layout(widget_base(node));
     gui_widget_invalidate(widget_base(node));
 }
 
@@ -367,6 +377,12 @@ void gml_project_set_button_padding(gml_project_t *p, gml_handle_t h, uint8_t px
     REQUIRE_NODE(p, h, node);
     if (node->type != GML_WIDGET_TYPE_BUTTON) return;
     gui_button_set_padding(&node->storage.button, px, py);
+}
+
+void gml_project_set_button_scale(gml_project_t *p, gml_handle_t h, uint8_t scale) {
+    REQUIRE_NODE(p, h, node);
+    if (node->type != GML_WIDGET_TYPE_BUTTON) return;
+    gui_button_set_text_scale(&node->storage.button, scale);
 }
 
 void gml_project_set_icon_asset_id(gml_project_t *p, gml_handle_t h, const char *icon_id) {

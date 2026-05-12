@@ -1,195 +1,54 @@
 #!/usr/bin/env python3
 """
-Generate gui_assets_generated.c with a 5x7 bitmap font covering:
-  - ASCII printable (0x20..0x7E)
-  - Cyrillic basic (0x0401 Ё, 0x0410..0x044F А..Я а..я, 0x0451 ё)
-Icons from the previous asset file are preserved verbatim.
+Build GuiMintLab generated assets.
 
-Each glyph is described as 7 rows of 5 characters:
-  '#' = pixel on, anything else = off.
+The font pipeline accepts Adafruit GFX .h files and BDF bitmap fonts, converts
+them into a normalized .gmlfont.json manifest, then emits identical C and
+TypeScript font data for firmware and Studio preview.
 """
 
 from __future__ import annotations
+
+from dataclasses import dataclass, field
+import json
+import math
 import os
-import textwrap
+import re
+import ssl
+import urllib.request
+import urllib.error
+from pathlib import Path
 
-# ---------- glyph art --------------------------------------------------------
 
-# 7 rows of exactly 5 chars each. '#' = ink, '.' = empty.
-# Keep designs simple, consistent thickness, baseline aligned.
+ADAFRUIT_BASE = "https://raw.githubusercontent.com/adafruit/Adafruit-GFX-Library/master/Fonts"
+BDF_BASE = "https://raw.githubusercontent.com/IT-Studio-Rech/bdf-fonts/main"
 
-ASCII_GLYPHS: dict[int, list[str]] = {
-    0x20: [".....", ".....", ".....", ".....", ".....", ".....", "....."],  # space
-    0x21: ["..#..", "..#..", "..#..", "..#..", "..#..", ".....", "..#.."],  # !
-    0x22: [".#.#.", ".#.#.", ".#.#.", ".....", ".....", ".....", "....."],  # "
-    0x23: [".#.#.", ".#.#.", "#####", ".#.#.", "#####", ".#.#.", ".#.#."],  # #
-    0x24: ["..#..", ".####", "#.#..", ".###.", "..#.#", "####.", "..#.."],  # $
-    0x25: ["##...", "##..#", "...#.", "..#..", ".#...", "#..##", "...##"],  # %
-    0x26: [".##..", "#..#.", ".##..", ".#...", "#.#.#", "#..#.", ".##.#"],  # &
-    0x27: ["..#..", "..#..", "..#..", ".....", ".....", ".....", "....."],  # '
-    0x28: ["...#.", "..#..", ".#...", ".#...", ".#...", "..#..", "...#."],  # (
-    0x29: [".#...", "..#..", "...#.", "...#.", "...#.", "..#..", ".#..."],  # )
-    0x2A: [".....", "..#..", "#.#.#", ".###.", "#.#.#", "..#..", "....."],  # *
-    0x2B: [".....", "..#..", "..#..", "#####", "..#..", "..#..", "....."],  # +
-    0x2C: [".....", ".....", ".....", ".....", ".....", "..#..", ".#..."],  # ,
-    0x2D: [".....", ".....", ".....", "#####", ".....", ".....", "....."],  # -
-    0x2E: [".....", ".....", ".....", ".....", ".....", "..#..", "..#.."],  # .
-    0x2F: ["....#", "...#.", "...#.", "..#..", ".#...", ".#...", "#...."],  # /
-    0x30: [".###.", "#...#", "#..##", "#.#.#", "##..#", "#...#", ".###."],  # 0
-    0x31: ["..#..", ".##..", "..#..", "..#..", "..#..", "..#..", ".###."],  # 1
-    0x32: [".###.", "#...#", "....#", "...#.", "..#..", ".#...", "#####"],  # 2
-    0x33: [".###.", "#...#", "....#", "..##.", "....#", "#...#", ".###."],  # 3
-    0x34: ["...#.", "..##.", ".#.#.", "#..#.", "#####", "...#.", "...#."],  # 4
-    0x35: ["#####", "#....", "####.", "....#", "....#", "#...#", ".###."],  # 5
-    0x36: ["..##.", ".#...", "#....", "####.", "#...#", "#...#", ".###."],  # 6
-    0x37: ["#####", "....#", "...#.", "..#..", ".#...", ".#...", ".#..."],  # 7
-    0x38: [".###.", "#...#", "#...#", ".###.", "#...#", "#...#", ".###."],  # 8
-    0x39: [".###.", "#...#", "#...#", ".####", "....#", "...#.", ".##.."],  # 9
-    0x3A: [".....", "..#..", "..#..", ".....", "..#..", "..#..", "....."],  # :
-    0x3B: [".....", "..#..", "..#..", ".....", "..#..", "..#..", ".#..."],  # ;
-    0x3C: ["...#.", "..#..", ".#...", "#....", ".#...", "..#..", "...#."],  # <
-    0x3D: [".....", ".....", "#####", ".....", "#####", ".....", "....."],  # =
-    0x3E: [".#...", "..#..", "...#.", "....#", "...#.", "..#..", ".#..."],  # >
-    0x3F: [".###.", "#...#", "....#", "...#.", "..#..", ".....", "..#.."],  # ?
-    0x40: [".###.", "#...#", "#.###", "#.#.#", "#.###", "#....", ".###."],  # @
-    0x41: [".###.", "#...#", "#...#", "#####", "#...#", "#...#", "#...#"],  # A
-    0x42: ["####.", "#...#", "#...#", "####.", "#...#", "#...#", "####."],  # B
-    0x43: [".###.", "#...#", "#....", "#....", "#....", "#...#", ".###."],  # C
-    0x44: ["####.", "#...#", "#...#", "#...#", "#...#", "#...#", "####."],  # D
-    0x45: ["#####", "#....", "#....", "###..", "#....", "#....", "#####"],  # E
-    0x46: ["#####", "#....", "#....", "###..", "#....", "#....", "#...."],  # F
-    0x47: [".###.", "#...#", "#....", "#.###", "#...#", "#...#", ".###."],  # G
-    0x48: ["#...#", "#...#", "#...#", "#####", "#...#", "#...#", "#...#"],  # H
-    0x49: [".###.", "..#..", "..#..", "..#..", "..#..", "..#..", ".###."],  # I
-    0x4A: ["..###", "...#.", "...#.", "...#.", "...#.", "#..#.", ".##.."],  # J
-    0x4B: ["#...#", "#..#.", "#.#..", "##...", "#.#..", "#..#.", "#...#"],  # K
-    0x4C: ["#....", "#....", "#....", "#....", "#....", "#....", "#####"],  # L
-    0x4D: ["#...#", "##.##", "#.#.#", "#.#.#", "#...#", "#...#", "#...#"],  # M
-    0x4E: ["#...#", "#...#", "##..#", "#.#.#", "#..##", "#...#", "#...#"],  # N
-    0x4F: [".###.", "#...#", "#...#", "#...#", "#...#", "#...#", ".###."],  # O
-    0x50: ["####.", "#...#", "#...#", "####.", "#....", "#....", "#...."],  # P
-    0x51: [".###.", "#...#", "#...#", "#...#", "#.#.#", "#..#.", ".##.#"],  # Q
-    0x52: ["####.", "#...#", "#...#", "####.", "#.#..", "#..#.", "#...#"],  # R
-    0x53: [".####", "#....", "#....", ".###.", "....#", "....#", "####."],  # S
-    0x54: ["#####", "..#..", "..#..", "..#..", "..#..", "..#..", "..#.."],  # T
-    0x55: ["#...#", "#...#", "#...#", "#...#", "#...#", "#...#", ".###."],  # U
-    0x56: ["#...#", "#...#", "#...#", "#...#", "#...#", ".#.#.", "..#.."],  # V
-    0x57: ["#...#", "#...#", "#...#", "#.#.#", "#.#.#", "##.##", "#...#"],  # W
-    0x58: ["#...#", "#...#", ".#.#.", "..#..", ".#.#.", "#...#", "#...#"],  # X
-    0x59: ["#...#", "#...#", ".#.#.", "..#..", "..#..", "..#..", "..#.."],  # Y
-    0x5A: ["#####", "....#", "...#.", "..#..", ".#...", "#....", "#####"],  # Z
-    0x5B: [".###.", ".#...", ".#...", ".#...", ".#...", ".#...", ".###."],  # [
-    0x5C: ["#....", ".#...", ".#...", "..#..", "...#.", "...#.", "....#"],  # \
-    0x5D: [".###.", "...#.", "...#.", "...#.", "...#.", "...#.", ".###."],  # ]
-    0x5E: ["..#..", ".#.#.", "#...#", ".....", ".....", ".....", "....."],  # ^
-    0x5F: [".....", ".....", ".....", ".....", ".....", ".....", "#####"],  # _
-    0x60: [".#...", "..#..", ".....", ".....", ".....", ".....", "....."],  # `
-    0x61: [".....", ".....", ".###.", "....#", ".####", "#...#", ".####"],  # a
-    0x62: ["#....", "#....", "####.", "#...#", "#...#", "#...#", "####."],  # b
-    0x63: [".....", ".....", ".###.", "#....", "#....", "#...#", ".###."],  # c
-    0x64: ["....#", "....#", ".####", "#...#", "#...#", "#...#", ".####"],  # d
-    0x65: [".....", ".....", ".###.", "#...#", "#####", "#....", ".###."],  # e
-    0x66: ["..##.", ".#..#", ".#...", "####.", ".#...", ".#...", ".#..."],  # f
-    0x67: [".....", ".####", "#...#", "#...#", ".####", "....#", "####."],  # g
-    0x68: ["#....", "#....", "####.", "#...#", "#...#", "#...#", "#...#"],  # h
-    0x69: ["..#..", ".....", ".##..", "..#..", "..#..", "..#..", ".###."],  # i
-    0x6A: ["...#.", ".....", "..##.", "...#.", "...#.", "#..#.", ".##.."],  # j
-    0x6B: ["#....", "#....", "#..#.", "#.#..", "##...", "#.#..", "#..#."],  # k
-    0x6C: [".##..", "..#..", "..#..", "..#..", "..#..", "..#..", ".###."],  # l
-    0x6D: [".....", ".....", "##.#.", "#.#.#", "#.#.#", "#...#", "#...#"],  # m
-    0x6E: [".....", ".....", "####.", "#...#", "#...#", "#...#", "#...#"],  # n
-    0x6F: [".....", ".....", ".###.", "#...#", "#...#", "#...#", ".###."],  # o
-    0x70: [".....", "####.", "#...#", "#...#", "####.", "#....", "#...."],  # p
-    0x71: [".....", ".####", "#...#", "#...#", ".####", "....#", "....#"],  # q
-    0x72: [".....", ".....", "#.##.", "##..#", "#....", "#....", "#...."],  # r
-    0x73: [".....", ".....", ".####", "#....", ".###.", "....#", "####."],  # s
-    0x74: [".#...", ".#...", "####.", ".#...", ".#...", ".#..#", "..##."],  # t
-    0x75: [".....", ".....", "#...#", "#...#", "#...#", "#...#", ".####"],  # u
-    0x76: [".....", ".....", "#...#", "#...#", "#...#", ".#.#.", "..#.."],  # v
-    0x77: [".....", ".....", "#...#", "#...#", "#.#.#", "#.#.#", ".#.#."],  # w
-    0x78: [".....", ".....", "#...#", ".#.#.", "..#..", ".#.#.", "#...#"],  # x
-    0x79: [".....", "#...#", "#...#", "#...#", ".####", "....#", "####."],  # y
-    0x7A: [".....", ".....", "#####", "...#.", "..#..", ".#...", "#####"],  # z
-    0x7B: ["..##.", ".#...", ".#...", "##...", ".#...", ".#...", "..##."],  # {
-    0x7C: ["..#..", "..#..", "..#..", "..#..", "..#..", "..#..", "..#.."],  # |
-    0x7D: [".##..", "...#.", "...#.", "...##", "...#.", "...#.", ".##.."],  # }
-    0x7E: [".....", ".##..", "#.#.#", "..##.", ".....", ".....", "....."],  # ~
-}
+ADAFRUIT_FILES = [
+    *(f"FreeMono{suffix}{size}pt7b.h" for suffix in ["", "Bold", "Oblique", "BoldOblique"] for size in [9, 12, 18, 24]),
+    *(f"FreeSans{suffix}{size}pt7b.h" for suffix in ["", "Bold", "Oblique", "BoldOblique"] for size in [9, 12, 18, 24]),
+    *(f"FreeSerif{suffix}{size}pt7b.h" for suffix in ["", "Bold", "Italic", "BoldItalic"] for size in [9, 12, 18, 24]),
+    "Org_01.h",
+    "Picopixel.h",
+    "Tiny3x3a2pt7b.h",
+    "TomThumb.h",
+]
 
-# Cyrillic. Many shapes mirror Latin where possible.
-# 0x0401 Ё is Е + two dots on top (approximated with a dotted row).
-# 0x0410..0x044F А..Я а..я
-# 0x0451 ё as е + dots.
+BDF_FILES = [
+    "4x6.bdf",
+    "5x7.bdf",
+    "5x8.bdf",
+    "6x10.bdf",
+    "6x12.bdf",
+    "7x13.bdf",
+    "8x13.bdf",
+    "9x15.bdf",
+    "10x20.bdf",
+    "spleen-5x8.bdf",
+    "spleen-8x16.bdf",
+    "spleen-12x24.bdf",
+    "spleen-16x32.bdf",
+]
 
-CYRILLIC_GLYPHS: dict[int, list[str]] = {
-    0x0401: ["#.#.#", "#####", "#....", "###..", "#....", "#....", "#####"],  # Ё
-    0x0410: ASCII_GLYPHS[0x41],                                                # А
-    0x0411: ["#####", "#....", "#....", "####.", "#...#", "#...#", "####."],  # Б
-    0x0412: ASCII_GLYPHS[0x42],                                                # В
-    0x0413: ["#####", "#....", "#....", "#....", "#....", "#....", "#...."],  # Г
-    0x0414: [".####", "..#.#", "..#.#", "..#.#", "..#.#", "#####", "#...#"],  # Д
-    0x0415: ASCII_GLYPHS[0x45],                                                # Е
-    0x0416: ["#.#.#", "#.#.#", "#.#.#", "#####", "#.#.#", "#.#.#", "#.#.#"],  # Ж
-    0x0417: ["####.", "#...#", "....#", ".###.", "....#", "#...#", "####."],  # З
-    0x0418: ["#...#", "#...#", "#..##", "#.#.#", "##..#", "#...#", "#...#"],  # И
-    0x0419: [".#.#.", "#...#", "#..##", "#.#.#", "##..#", "#...#", "#...#"],  # Й
-    0x041A: ASCII_GLYPHS[0x4B],                                                # К
-    0x041B: [".####", "..#.#", "..#.#", "..#.#", "..#.#", "..#.#", "#...#"],  # Л
-    0x041C: ASCII_GLYPHS[0x4D],                                                # М
-    0x041D: ASCII_GLYPHS[0x48],                                                # Н
-    0x041E: ASCII_GLYPHS[0x4F],                                                # О
-    0x041F: ["#####", "#...#", "#...#", "#...#", "#...#", "#...#", "#...#"],  # П
-    0x0420: ASCII_GLYPHS[0x50],                                                # Р
-    0x0421: ASCII_GLYPHS[0x43],                                                # С
-    0x0422: ASCII_GLYPHS[0x54],                                                # Т
-    0x0423: ["#...#", "#...#", "#...#", ".####", "....#", "...#.", "##..."],  # У
-    0x0424: ["..#..", ".###.", "#.#.#", "#.#.#", "#.#.#", ".###.", "..#.."],  # Ф
-    0x0425: ASCII_GLYPHS[0x58],                                                # Х
-    0x0426: ["#...#", "#...#", "#...#", "#...#", "#...#", "#####", "....#"],  # Ц
-    0x0427: ["#...#", "#...#", "#...#", ".####", "....#", "....#", "....#"],  # Ч
-    0x0428: ["#.#.#", "#.#.#", "#.#.#", "#.#.#", "#.#.#", "#.#.#", "#####"],  # Ш
-    0x0429: ["#.#.#", "#.#.#", "#.#.#", "#.#.#", "#.#.#", "#####", "....#"],  # Щ
-    0x042A: ["##...", ".#...", ".#...", ".###.", ".#..#", ".#..#", ".###."],  # Ъ
-    0x042B: ["#...#", "#...#", "#...#", "###.#", "#.#.#", "#.#.#", "###.#"],  # Ы
-    0x042C: ["#....", "#....", "#....", "###..", "#..#.", "#..#.", "###.."],  # Ь
-    0x042D: ["####.", "....#", "....#", ".####", "....#", "....#", "####."],  # Э
-    0x042E: ["#..#.", "#.#.#", "#.#.#", "###.#", "#.#.#", "#.#.#", "#..#."],  # Ю
-    0x042F: [".####", "#...#", "#...#", ".####", "..#.#", ".#..#", "#...#"],  # Я
-    # Lowercase — use the same shapes as uppercase for bitmap clarity.
-    0x0430: ASCII_GLYPHS[0x61],                                                # а
-    0x0431: [".####", "#....", "####.", "#...#", "#...#", "#...#", "####."],  # б
-    0x0432: ["####.", "#...#", "####.", "#...#", "#...#", "####.", "....."],  # в
-    0x0433: [".....", ".....", "#####", "#....", "#....", "#....", "#...."],  # г
-    0x0434: [".....", ".####", "..#.#", "..#.#", "..#.#", "#####", "#...#"],  # д
-    0x0435: ASCII_GLYPHS[0x65],                                                # е
-    0x0436: [".....", ".....", "#.#.#", "#.#.#", "#####", "#.#.#", "#.#.#"],  # ж
-    0x0437: [".....", "####.", "....#", ".###.", "....#", "####.", "....."],  # з
-    0x0438: [".....", ".....", "#...#", "#..##", "#.#.#", "##..#", "#...#"],  # и
-    0x0439: [".#.#.", ".....", "#...#", "#..##", "#.#.#", "##..#", "#...#"],  # й
-    0x043A: [".....", ".....", "#..#.", "#.#..", "##...", "#.#..", "#..#."],  # к
-    0x043B: [".....", ".....", ".####", "..#.#", "..#.#", "..#.#", "#...#"],  # л
-    0x043C: [".....", ".....", "#...#", "##.##", "#.#.#", "#...#", "#...#"],  # м
-    0x043D: [".....", ".....", "#...#", "#...#", "#####", "#...#", "#...#"],  # н
-    0x043E: ASCII_GLYPHS[0x6F],                                                # о
-    0x043F: [".....", ".....", "#####", "#...#", "#...#", "#...#", "#...#"],  # п
-    0x0440: [".....", ".....", "####.", "#...#", "####.", "#....", "#...."],  # р
-    0x0441: ASCII_GLYPHS[0x63],                                                # с
-    0x0442: [".....", ".....", "#####", "..#..", "..#..", "..#..", "..#.."],  # т
-    0x0443: [".....", ".....", "#...#", "#...#", ".####", "....#", "####."],  # у
-    0x0444: [".....", ".###.", "#.#.#", "#.#.#", "#.#.#", ".###.", "..#.."],  # ф
-    0x0445: ASCII_GLYPHS[0x78],                                                # х
-    0x0446: [".....", ".....", "#...#", "#...#", "#...#", "#####", "....#"],  # ц
-    0x0447: [".....", ".....", "#...#", "#...#", ".####", "....#", "....#"],  # ч
-    0x0448: [".....", ".....", "#.#.#", "#.#.#", "#.#.#", "#.#.#", "#####"],  # ш
-    0x0449: [".....", ".....", "#.#.#", "#.#.#", "#.#.#", "#####", "....#"],  # щ
-    0x044A: [".....", "##...", ".#...", ".###.", ".#..#", ".#..#", ".###."],  # ъ
-    0x044B: [".....", ".....", "#...#", "###.#", "#.#.#", "#.#.#", "###.#"],  # ы
-    0x044C: [".....", ".....", "#....", "###..", "#..#.", "#..#.", "###.."],  # ь
-    0x044D: [".....", ".....", "####.", ".####", "....#", "....#", "####."],  # э
-    0x044E: [".....", ".....", "#..#.", "###.#", "#.#.#", "#.#.#", "#..#."],  # ю
-    0x044F: [".....", ".....", ".####", "#...#", ".####", "..#.#", ".#..#"],  # я
-    0x0451: ["#.#.#", ".....", ".###.", "#...#", "#####", "#....", ".###."],  # ё
-}
 
 ICONS: list[tuple[str, int, int, list[int]]] = [
     ("gui_icon_wifi_0", 10, 8, [0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0030, 0x0030, 0x0000]),
@@ -212,127 +71,479 @@ ICONS: list[tuple[str, int, int, list[int]]] = [
 ]
 
 
-def bitmap_to_row_byte(row: str, width: int) -> int:
-    assert len(row) == width, (row, width)
-    v = 0
-    for i, ch in enumerate(row):
-        if ch == "#":
-            v |= 1 << (width - 1 - i)
-    return v
+@dataclass
+class Glyph:
+    codepoint: int
+    width: int
+    height: int
+    x_offset: int
+    y_offset: int
+    advance: int
+    bitmap: list[int]
+    bitmap_offset: int = 0
 
 
-def validate_glyphs(glyphs: dict[int, list[str]], width: int, height: int) -> None:
-    for cp, rows in glyphs.items():
-        assert len(rows) == height, f"U+{cp:04X}: {len(rows)} rows, want {height}"
-        for r in rows:
-            assert len(r) == width, f"U+{cp:04X}: row '{r}' is {len(r)} wide, want {width}"
+@dataclass
+class Face:
+    id: str
+    symbol: str
+    family: str
+    size: int
+    style: str
+    source: str
+    line_height: int
+    baseline: int
+    glyphs: dict[int, Glyph] = field(default_factory=dict)
+    bytes_per_row: int = 1
+    bitmap: list[int] = field(default_factory=list)
 
 
-def emit() -> str:
-    W = 5
-    H = 7
-    ADVANCE = 6
+def snake(value: str) -> str:
+    value = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", value)
+    value = re.sub(r"[^A-Za-z0-9]+", "_", value)
+    return value.strip("_").lower()
 
-    validate_glyphs(ASCII_GLYPHS, W, H)
-    validate_glyphs(CYRILLIC_GLYPHS, W, H)
 
-    lines: list[str] = []
-    a = lines.append
-    a("/* Auto-generated by tools/gen_font.py. DO NOT EDIT. */")
-    a('#include "gui/generated/gui_assets_generated.h"')
-    a("")
+def c_symbol(value: str) -> str:
+    return re.sub(r"[^A-Za-z0-9_]", "_", value)
 
-    # ASCII contiguous 0x20..0x7E
-    ascii_first = 0x20
-    ascii_last = 0x7E
-    ascii_range = range(ascii_first, ascii_last + 1)
-    glyph_rows_symbols: list[str] = []
 
-    def emit_rows(name: str, rows: list[str]) -> None:
-        row_bytes = ", ".join(f"0x{bitmap_to_row_byte(r, W):02X}" for r in rows)
-        a(f"static const uint8_t {name}[] = {{{row_bytes}}};")
+def download(url: str, target: Path) -> None:
+    if target.exists() and target.stat().st_size > 0:
+        return
+    target.parent.mkdir(parents=True, exist_ok=True)
+    print(f"fetch {url}")
+    try:
+        with urllib.request.urlopen(url, timeout=30) as r:
+            target.write_bytes(r.read())
+    except urllib.error.URLError as exc:
+        if not isinstance(exc.reason, ssl.SSLCertVerificationError):
+            raise
+        print("  retry without certificate verification")
+        context = ssl._create_unverified_context()
+        with urllib.request.urlopen(url, timeout=30, context=context) as r:
+            target.write_bytes(r.read())
 
-    # Emit ASCII row arrays
-    for cp in ascii_range:
-        rows = ASCII_GLYPHS.get(cp)
-        if rows is None:
-            rows = ["....." for _ in range(H)]
-        sym = f"gui_font_default_5x7_ascii_{cp:02X}_rows"
-        emit_rows(sym, rows)
-        glyph_rows_symbols.append(sym)
 
-    # Emit Cyrillic row arrays
-    cyr_symbols: list[tuple[int, str]] = []
-    for cp in sorted(CYRILLIC_GLYPHS.keys()):
-        rows = CYRILLIC_GLYPHS[cp]
-        sym = f"gui_font_default_5x7_u{cp:04X}_rows"
-        emit_rows(sym, rows)
-        cyr_symbols.append((cp, sym))
+def byte_values(body: str) -> list[int]:
+    values: list[int] = []
+    for token in re.findall(r"0x[0-9A-Fa-f]+|\b\d+\b", re.sub(r"/\*.*?\*/", "", body, flags=re.S)):
+        values.append(int(token, 0) & 0xFF)
+    return values
 
-    a("")
-    a("static const gui_glyph_t gui_font_default_5x7_glyphs[] = {")
 
-    def emit_glyph_entry(sym: str) -> None:
-        a(
-            "    { "
-            f".width = {W}, .height = {H}, .x_offset = 0, .y_offset = 0, .advance = {ADVANCE}, "
-            f".rows = {sym} "
-            "},"
+def pack_rows(rows: list[list[int]], width: int) -> tuple[list[int], int]:
+    bytes_per_row = max(1, (width + 7) // 8)
+    packed: list[int] = []
+    for row in rows:
+        out = [0] * bytes_per_row
+        for x, bit in enumerate(row[:width]):
+            if bit:
+                out[x // 8] |= 0x80 >> (x % 8)
+        packed.extend(out)
+    return packed, bytes_per_row
+
+
+def bitstream_to_rows(data: list[int], bit_offset: int, width: int, height: int) -> list[list[int]]:
+    rows: list[list[int]] = []
+    for y in range(height):
+        row: list[int] = []
+        for x in range(width):
+            bit = bit_offset + y * width + x
+            byte = data[bit // 8] if bit // 8 < len(data) else 0
+            row.append(1 if byte & (0x80 >> (bit % 8)) else 0)
+        rows.append(row)
+    return rows
+
+
+def adafruit_identity(name: str) -> tuple[str, str, int, str]:
+    base = name.removesuffix(".h")
+    m = re.match(r"^(Free(?:Mono|Sans|Serif))(Bold)?(Oblique|Italic)?(\d+)pt7b$", base)
+    if m:
+        family, bold, slant, size = m.groups()
+        style = "regular"
+        if bold and slant:
+            style = "boldOblique"
+        elif bold:
+            style = "bold"
+        elif slant:
+            style = "oblique"
+        face_id = f"{snake(family)}_{snake(style)}_{size}pt"
+        return family, style, int(size), face_id
+    m = re.search(r"(\d+)", base)
+    size = int(m.group(1)) if m else 0
+    return base, "regular", size, snake(base)
+
+
+def parse_adafruit(path: Path) -> Face:
+    text = path.read_text(encoding="utf-8")
+    bitmap_match = re.search(r"const\s+uint8_t\s+\w+Bitmaps\[\]\s+PROGMEM\s*=\s*\{(.*?)\};", text, re.S)
+    glyph_match = re.search(r"const\s+GFXglyph\s+\w+Glyphs\[\]\s+PROGMEM\s*=\s*\{(.*?)\};", text, re.S)
+    font_match = re.search(r"const\s+GFXfont\s+\w+\s+PROGMEM\s*=\s*\{.*?,.*?,\s*(0x[0-9A-Fa-f]+|\d+),\s*(0x[0-9A-Fa-f]+|\d+),\s*(\d+)", text, re.S)
+    if not bitmap_match or not glyph_match or not font_match:
+        raise ValueError(f"cannot parse Adafruit font {path}")
+
+    bitmap = byte_values(bitmap_match.group(1))
+    first = int(font_match.group(1), 0)
+    y_advance = int(font_match.group(3))
+    entries = [
+        tuple(int(v, 0) for v in m)
+        for m in re.findall(r"\{\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)\s*\}", glyph_match.group(1))
+    ]
+
+    family, style, size, face_id = adafruit_identity(path.name)
+    baseline = max((-entry[5] for entry in entries if entry[2] > 0), default=0)
+    glyphs: dict[int, Glyph] = {}
+    line_height = y_advance
+    for i, (offset, width, height, advance, x_offset, y_offset) in enumerate(entries):
+        cp = first + i
+        if width <= 0 or height <= 0:
+            packed, bytes_per_row = [], max(1, (width + 7) // 8)
+        else:
+            rows = bitstream_to_rows(bitmap, offset * 8, width, height)
+            packed, bytes_per_row = pack_rows(rows, width)
+        top_offset = baseline + y_offset
+        line_height = max(line_height, top_offset + height)
+        glyphs[cp] = Glyph(cp, width, height, x_offset, top_offset, advance, packed)
+
+    face = Face(face_id, f"gui_font_{face_id}", family, size, style, "adafruit", line_height, baseline, glyphs)
+    finalize_face(face)
+    return face
+
+
+def parse_bdf(path: Path) -> Face:
+    lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+    ascent = descent = None
+    glyphs: dict[int, Glyph] = {}
+    i = 0
+    while i < len(lines):
+        line = lines[i].strip()
+        if line.startswith("FONT_ASCENT"):
+            ascent = int(line.split()[1])
+        elif line.startswith("FONT_DESCENT"):
+            descent = int(line.split()[1])
+        elif line.startswith("STARTCHAR"):
+            cp = -1
+            advance = 0
+            bbx = (0, 0, 0, 0)
+            bitmap_rows: list[str] = []
+            i += 1
+            while i < len(lines) and lines[i].strip() != "ENDCHAR":
+                part = lines[i].strip()
+                if part.startswith("ENCODING"):
+                    cp = int(part.split()[1])
+                elif part.startswith("DWIDTH"):
+                    advance = int(part.split()[1])
+                elif part.startswith("BBX"):
+                    p = part.split()
+                    bbx = (int(p[1]), int(p[2]), int(p[3]), int(p[4]))
+                elif part == "BITMAP":
+                    i += 1
+                    while i < len(lines) and lines[i].strip() != "ENDCHAR":
+                        bitmap_rows.append(lines[i].strip())
+                        i += 1
+                    break
+                i += 1
+            if cp >= 0:
+                width, height, x_offset, y_offset = bbx
+                rows: list[list[int]] = []
+                for row_hex in bitmap_rows[:height]:
+                    value = int(row_hex or "0", 16)
+                    bit_count = max(width, len(row_hex) * 4)
+                    rows.append([(value >> (bit_count - 1 - x)) & 1 for x in range(width)])
+                packed, _ = pack_rows(rows, width)
+                glyphs[cp] = Glyph(cp, width, height, x_offset, 0, advance or width, packed)
+        i += 1
+
+    if ascent is None:
+        ascent = max((g.height + max(0, g.y_offset) for g in glyphs.values()), default=8)
+    if descent is None:
+        descent = 0
+    line_height = ascent + descent
+    for g in glyphs.values():
+        # BDF y_offset is relative to baseline; renderer y_offset is from line top.
+        original_y_offset = 0
+        # Re-parse BBX y offset from packed path by scanning would be expensive; store
+        # it in a temporary way by reading again for accuracy.
+        (void_y := original_y_offset)
+        _ = void_y
+
+    # Second pass for accurate y offsets.
+    current_cp = -1
+    for line in lines:
+        part = line.strip()
+        if part.startswith("ENCODING"):
+            current_cp = int(part.split()[1])
+        elif part.startswith("BBX") and current_cp in glyphs:
+            p = part.split()
+            height = int(p[2])
+            y_offset = int(p[4])
+            glyphs[current_cp].y_offset = ascent - y_offset - height
+
+    base = path.stem
+    m = re.search(r"(\d+)x(\d+)", base)
+    size = int(m.group(2)) if m else line_height
+    family = "BDF"
+    if base.startswith("spleen-"):
+        family = "Spleen"
+    face_id = "default_5x7" if base == "5x7" else f"bdf_{snake(base)}"
+    symbol = "gui_font_default_5x7" if base == "5x7" else f"gui_font_{face_id}"
+    face = Face(face_id, symbol, family, size, "regular", "bdf", line_height, ascent, glyphs)
+    finalize_face(face)
+    return face
+
+
+def finalize_face(face: Face) -> None:
+    max_bpr = max((max(1, (g.width + 7) // 8) for g in face.glyphs.values()), default=1)
+    face.bytes_per_row = max_bpr
+    bitmap: list[int] = []
+    for cp in sorted(face.glyphs):
+        g = face.glyphs[cp]
+        old_bpr = max(1, (g.width + 7) // 8)
+        expanded: list[int] = []
+        for row in range(g.height):
+            start = row * old_bpr
+            expanded.extend(g.bitmap[start:start + old_bpr])
+            expanded.extend([0] * (max_bpr - old_bpr))
+        g.bitmap_offset = len(bitmap)
+        g.bitmap = expanded
+        bitmap.extend(expanded)
+    face.bitmap = bitmap
+
+
+def contiguous_ranges(codepoints: list[int]) -> list[tuple[int, int, int]]:
+    if not codepoints:
+        return []
+    ranges: list[tuple[int, int, int]] = []
+    start = prev = codepoints[0]
+    offset = 0
+    for cp in codepoints[1:]:
+        if cp == prev + 1:
+            prev = cp
+            continue
+        ranges.append((start, prev, offset))
+        offset += prev - start + 1
+        start = prev = cp
+    ranges.append((start, prev, offset))
+    return ranges
+
+
+def manifest(face: Face) -> dict:
+    return {
+        "id": face.id,
+        "symbol": face.symbol,
+        "family": face.family,
+        "size": face.size,
+        "style": face.style,
+        "source": face.source,
+        "lineHeight": face.line_height,
+        "baseline": face.baseline,
+        "bytesPerRow": face.bytes_per_row,
+        "glyphs": [
+            {
+                "codepoint": cp,
+                "width": g.width,
+                "height": g.height,
+                "xOffset": g.x_offset,
+                "yOffset": g.y_offset,
+                "advance": g.advance,
+                "bitmapOffset": g.bitmap_offset,
+                "bitmap": g.bitmap,
+            }
+            for cp, g in sorted(face.glyphs.items())
+        ],
+    }
+
+
+def c_array(values: list[int], width: int = 16) -> str:
+    if not values:
+        return "0x00"
+    chunks = []
+    for i in range(0, len(values), width):
+        chunks.append(", ".join(f"0x{v:02X}" for v in values[i:i + width]))
+    return ",\n    ".join(chunks)
+
+
+def emit_c(faces: list[Face], out_c: Path, out_h: Path) -> None:
+    c: list[str] = [
+        "/* Auto-generated by tools/build_assets.py. DO NOT EDIT. */",
+        '#include "gui/generated/gui_assets_generated.h"',
+        "",
+    ]
+    h: list[str] = [
+        "#pragma once",
+        "",
+        '#include "gui/core/gui_assets.h"',
+        "",
+    ]
+
+    for face in faces:
+        ranges = contiguous_ranges(sorted(face.glyphs))
+        glyph_order = [cp for start, end, _ in ranges for cp in range(start, end + 1)]
+        extra = ranges[1:]
+        bitmap_sym = f"{face.symbol}_bitmap"
+        glyph_sym = f"{face.symbol}_glyphs"
+        range_sym = f"{face.symbol}_ranges"
+        c.append(f"static const uint8_t {bitmap_sym}[] = {{\n    {c_array(face.bitmap)}\n}};")
+        c.append(f"static const gui_glyph_t {glyph_sym}[] = {{")
+        for cp in glyph_order:
+            g = face.glyphs[cp]
+            c.append(
+                "    { "
+                f".width = {g.width}, .height = {g.height}, .x_offset = {g.x_offset}, .y_offset = {g.y_offset}, "
+                f".advance = {g.advance}, .bitmap_offset = {g.bitmap_offset} "
+                "},"
+            )
+        c.append("};")
+        if extra:
+            c.append(f"static const gui_font_range_t {range_sym}[] = {{")
+            for start, end, offset in extra:
+                c.append(f"    {{ .first_codepoint = 0x{start:X}, .last_codepoint = 0x{end:X}, .glyph_offset = {offset} }},")
+            c.append("};")
+            ranges_ref = range_sym
+            range_count = f"sizeof({range_sym}) / sizeof({range_sym}[0])"
+        else:
+            ranges_ref = "NULL"
+            range_count = "0"
+        primary = ranges[0] if ranges else (0, 0, 0)
+        c.append(
+            f"const gui_font_t {face.symbol} = {{ "
+            f".first_codepoint = 0x{primary[0]:X}, .last_codepoint = 0x{primary[1]:X}, "
+            f".line_height = {face.line_height}, .baseline = {face.baseline}, .bytes_per_row = {face.bytes_per_row}, "
+            f".bitmap = {bitmap_sym}, .glyphs = {glyph_sym}, "
+            f".extra_ranges = {ranges_ref}, .extra_range_count = {range_count} "
+            "};"
         )
+        c.append("")
+        h.append(f"extern const gui_font_t {face.symbol};")
 
-    # ASCII entries (index 0..len(ascii_range)-1)
-    for sym in glyph_rows_symbols:
-        emit_glyph_entry(sym)
+    c.append("static const gui_font_registry_entry_t s_font_registry[] = {")
+    for face in faces:
+        style = {
+            "regular": "GUI_FONT_STYLE_REGULAR",
+            "bold": "GUI_FONT_STYLE_BOLD",
+            "oblique": "GUI_FONT_STYLE_OBLIQUE",
+            "boldOblique": "GUI_FONT_STYLE_BOLD_OBLIQUE",
+        }.get(face.style, "GUI_FONT_STYLE_REGULAR")
+        c.append(
+            f'    {{ .id = "{face.id}", .family = "{face.family}", .size = {face.size}, '
+            f".style = {style}, .font = &{face.symbol} }},"
+        )
+    c.append("};")
+    c.append("")
+    c.append("const gui_font_registry_entry_t *gui_font_registry(void) { return s_font_registry; }")
+    c.append("size_t gui_font_registry_count(void) { return sizeof(s_font_registry) / sizeof(s_font_registry[0]); }")
+    c.append("")
+    c.append("const gui_font_t *gui_font_find_by_id(const char *id) {")
+    c.append("    if (id == NULL) return NULL;")
+    c.append("    for (size_t i = 0; i < gui_font_registry_count(); ++i) {")
+    c.append("        if (s_font_registry[i].id != NULL && strcmp(s_font_registry[i].id, id) == 0) return s_font_registry[i].font;")
+    c.append("    }")
+    c.append("    return NULL;")
+    c.append("}")
+    c.append("")
+    c.append("const gui_font_t *gui_font_find_face(const char *family, uint16_t size, gui_font_style_t style) {")
+    c.append("    if (family == NULL) return NULL;")
+    c.append("    for (size_t i = 0; i < gui_font_registry_count(); ++i) {")
+    c.append("        if (s_font_registry[i].family != NULL && strcmp(s_font_registry[i].family, family) == 0 && s_font_registry[i].size == size && s_font_registry[i].style == style) return s_font_registry[i].font;")
+    c.append("    }")
+    c.append("    return NULL;")
+    c.append("}")
+    c.append("")
 
-    # Cyrillic entries — grouped by contiguous runs matching three known ranges
-    # Range A: 0x0401 (Ё)
-    # Range B: 0x0410..0x044F (А..я)
-    # Range C: 0x0451 (ё)
-    cyr_map = dict(cyr_symbols)
-    emit_glyph_entry(cyr_map[0x0401])
-    for cp in range(0x0410, 0x0450):
-        assert cp in cyr_map, hex(cp)
-        emit_glyph_entry(cyr_map[cp])
-    emit_glyph_entry(cyr_map[0x0451])
+    for name, w, hgt, rows in ICONS:
+        c.append(f"static const uint16_t {name}_rows[] = {{{', '.join(f'0x{r:04X}' for r in rows)}}};")
+        c.append(f"const gui_icon_asset_t {name} = {{ .width = {w}, .height = {hgt}, .rows = {name}_rows }};")
+        c.append("")
+        h.append(f"extern const gui_icon_asset_t {name};")
 
-    a("};")
-    a("")
+    h.extend([
+        "",
+        "const gui_font_registry_entry_t *gui_font_registry(void);",
+        "size_t gui_font_registry_count(void);",
+        "const gui_font_t *gui_font_find_by_id(const char *id);",
+        "const gui_font_t *gui_font_find_face(const char *family, uint16_t size, gui_font_style_t style);",
+        "",
+    ])
 
-    ascii_count = ascii_last - ascii_first + 1
-    a("static const gui_font_range_t gui_font_default_5x7_extra_ranges[] = {")
-    a(f"    {{ .first_codepoint = 0x0401, .last_codepoint = 0x0401, .glyph_offset = {ascii_count} }},")
-    a(f"    {{ .first_codepoint = 0x0410, .last_codepoint = 0x044F, .glyph_offset = {ascii_count + 1} }},")
-    a(f"    {{ .first_codepoint = 0x0451, .last_codepoint = 0x0451, .glyph_offset = {ascii_count + 1 + (0x044F - 0x0410 + 1)} }},")
-    a("};")
-    a("")
+    # strcmp is used by generated lookup helpers.
+    c.insert(2, "#include <string.h>")
+    c.insert(3, "")
+    out_c.write_text("\n".join(c) + "\n", encoding="utf-8")
+    out_h.write_text("\n".join(h) + "\n", encoding="utf-8")
 
-    a(
-        "const gui_font_t gui_font_default_5x7 = { "
-        f".first_codepoint = 0x{ascii_first:X}, .last_codepoint = 0x{ascii_last:X}, "
-        ".line_height = 8, .baseline = 7, "
-        ".glyphs = gui_font_default_5x7_glyphs, "
-        ".extra_ranges = gui_font_default_5x7_extra_ranges, "
-        ".extra_range_count = sizeof(gui_font_default_5x7_extra_ranges) / sizeof(gui_font_default_5x7_extra_ranges[0]) "
-        "};"
+
+def emit_ts(faces: list[Face], out_ts: Path) -> None:
+    out_ts.parent.mkdir(parents=True, exist_ok=True)
+    data = []
+    for face in faces:
+        ranges = contiguous_ranges(sorted(face.glyphs))
+        glyphs = []
+        for start, end, offset in ranges:
+            for cp in range(start, end + 1):
+                g = face.glyphs[cp]
+                glyphs.append({
+                    "codepoint": cp,
+                    "width": g.width,
+                    "height": g.height,
+                    "xOffset": g.x_offset,
+                    "yOffset": g.y_offset,
+                    "advance": g.advance,
+                    "bitmapOffset": g.bitmap_offset,
+                })
+        data.append({
+            "id": face.id,
+            "family": face.family,
+            "size": face.size,
+            "style": face.style,
+            "lineHeight": face.line_height,
+            "baseline": face.baseline,
+            "bytesPerRow": face.bytes_per_row,
+            "bitmap": face.bitmap,
+            "glyphs": glyphs,
+            "ranges": [{"first": a, "last": b, "glyphOffset": c} for a, b, c in ranges],
+        })
+    out_ts.write_text(
+        "/* Auto-generated by guimintlab-core/tools/build_assets.py. DO NOT EDIT. */\n"
+        "import type { BitmapFontFace } from \"../fontTypes\";\n\n"
+        f"export const FONT_FACES: BitmapFontFace[] = {json.dumps(data, separators=(',', ':'))};\n",
+        encoding="utf-8",
     )
-    a("")
 
-    for name, w, h, rows in ICONS:
-        row_list = ", ".join(f"0x{r:04X}" for r in rows)
-        a(f"static const uint16_t {name}_rows[] = {{{row_list}}};")
-        a(f"const gui_icon_asset_t {name} = {{ .width = {w}, .height = {h}, .rows = {name}_rows }};")
-        a("")
 
-    return "\n".join(lines) + "\n"
+def build_faces(root: Path) -> list[Face]:
+    upstream = root / "assets-src" / "fonts" / "upstream"
+    faces: list[Face] = []
+    for name in ADAFRUIT_FILES:
+        target = upstream / "adafruit" / name
+        download(f"{ADAFRUIT_BASE}/{name}", target)
+        faces.append(parse_adafruit(target))
+    for name in BDF_FILES:
+        target = upstream / "bdf" / name
+        download(f"{BDF_BASE}/{urllib.request.pathname2url(name)}", target)
+        faces.append(parse_bdf(target))
+    return sorted(faces, key=lambda f: (f.family, f.style, f.size, f.id))
 
 
 def main() -> None:
-    here = os.path.dirname(os.path.abspath(__file__))
-    out = os.path.normpath(os.path.join(here, "..", "src", "gui", "generated", "gui_assets_generated.c"))
-    content = emit()
-    with open(out, "w", encoding="utf-8") as f:
-        f.write(content)
-    print(f"wrote {out} ({len(content)} bytes)")
+    root = Path(__file__).resolve().parents[1]
+    faces = build_faces(root)
+    manifest_dir = root / "assets-src" / "fonts" / "generated"
+    manifest_dir.mkdir(parents=True, exist_ok=True)
+    for face in faces:
+        (manifest_dir / f"{face.id}.gmlfont.json").write_text(
+            json.dumps(manifest(face), indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+
+    generated = root / "src" / "gui" / "generated"
+    emit_c(faces, generated / "gui_assets_generated.c", generated / "gui_assets_generated.h")
+
+    studio = root.parent / "guimintlab-studio"
+    if studio.exists():
+        emit_ts(faces, studio / "src" / "features" / "fonts" / "generated" / "fontAssets.ts")
+
+    print(f"generated {len(faces)} font faces")
 
 
 if __name__ == "__main__":
