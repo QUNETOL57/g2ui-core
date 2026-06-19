@@ -1,5 +1,7 @@
 #include "gui/core/gui_assets.h"
 
+#include <string.h>
+
 uint32_t gui_utf8_next(const char **cursor)
 {
     if (cursor == NULL || *cursor == NULL) {
@@ -74,6 +76,36 @@ const gui_glyph_t *gui_font_find_glyph(const gui_font_t *font, uint32_t codepoin
     }
 
     return NULL;
+}
+
+bool gui_glyph_pixel_on(const gui_font_t *font, const gui_glyph_t *glyph, uint8_t x, uint8_t y)
+{
+    if (font == NULL || glyph == NULL || font->bitmap == NULL || x >= glyph->width || y >= glyph->height) {
+        return false;
+    }
+
+    const uint8_t bytes_per_row = font->bytes_per_row > 0 ? font->bytes_per_row : (uint8_t)((glyph->width + 7U) / 8U);
+    const uint32_t byte_index = glyph->bitmap_offset + (uint32_t)y * bytes_per_row + (uint32_t)x / 8U;
+    const uint8_t mask = (uint8_t)(0x80U >> (x % 8U));
+    return (font->bitmap[byte_index] & mask) != 0;
+}
+
+gui_font_style_t gui_font_parse_style(const char *style)
+{
+    if (style == NULL || strcmp(style, "regular") == 0) {
+        return GUI_FONT_STYLE_REGULAR;
+    }
+    if (strcmp(style, "bold") == 0) {
+        return GUI_FONT_STYLE_BOLD;
+    }
+    if (strcmp(style, "oblique") == 0 || strcmp(style, "italic") == 0) {
+        return GUI_FONT_STYLE_OBLIQUE;
+    }
+    if (strcmp(style, "boldOblique") == 0 || strcmp(style, "bold-oblique") == 0 ||
+        strcmp(style, "boldItalic") == 0 || strcmp(style, "bold-italic") == 0) {
+        return GUI_FONT_STYLE_BOLD_OBLIQUE;
+    }
+    return GUI_FONT_STYLE_REGULAR;
 }
 
 int gui_font_measure_text_width(const gui_font_t *font, const char *text)

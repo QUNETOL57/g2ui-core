@@ -145,12 +145,11 @@ esp_err_t gui_renderer_draw_text_scaled(gui_renderer_t *renderer, gui_point_t or
         if (!gui_rect_is_empty(clipped)) {
             for (int row = 0; row < clipped.height; row++) {
                 const int src_y = (clipped.y - glyph_rect.y + row) / scale;
-                const uint8_t row_bits = glyph->rows[src_y];
                 int run_start = -1;
 
                 for (int col = 0; col < clipped.width; col++) {
                     const int src_x = (clipped.x - glyph_rect.x + col) / scale;
-                    const bool pixel_on = (row_bits & (uint8_t)(1U << (glyph->width - 1 - src_x))) != 0;
+                    const bool pixel_on = gui_glyph_pixel_on(font, glyph, (uint8_t)src_x, (uint8_t)src_y);
 
                     if (pixel_on && run_start < 0) {
                         run_start = col;

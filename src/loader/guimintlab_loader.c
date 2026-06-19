@@ -172,6 +172,38 @@ static gml_label_align_t parse_label_align(const char *s) {
     return GML_LABEL_ALIGN_LEFT;
 }
 
+static const gui_font_t *resolve_font_face(const cJSON *props) {
+    if (!cJSON_IsObject(props)) {
+        return NULL;
+    }
+
+    const char *face_id = json_string(props, "fontFace", NULL);
+    if (face_id == NULL) {
+        face_id = json_string(props, "fontId", NULL);
+    }
+    if (face_id == NULL) {
+        face_id = json_string(props, "font", NULL);
+    }
+    if (face_id != NULL) {
+        const gui_font_t *font = gui_font_find_by_id(face_id);
+        if (font != NULL) {
+            return font;
+        }
+    }
+
+    const char *family = json_string(props, "fontFamily", NULL);
+    if (family == NULL) {
+        return NULL;
+    }
+
+    const int size = json_int(props, "fontSize", 0);
+    const gui_font_style_t style = gui_font_parse_style(json_string(props, "fontStyle", "regular"));
+    if (size <= 0) {
+        return NULL;
+    }
+    return gui_font_find_face(family, (uint16_t)size, style);
+}
+
 static gml_widget_type_t parse_widget_type(const char *s) {
     if (s == NULL) return GML_WIDGET_TYPE_PANEL;
     if (strcmp(s, "screen") == 0) return GML_WIDGET_TYPE_SCREEN;
@@ -366,10 +398,12 @@ static void build_widget(guimintlab_t *gml,
             if (text != NULL) {
                 gml_project_set_label_text(&gml->project, handle, text);
             }
-            gml_project_set_label_scale(&gml->project, handle,
-                                        (uint8_t)json_int(props, "scale", 1));
             gml_project_set_label_align(&gml->project, handle,
                                         parse_label_align(json_string(props, "align", "left")));
+            const gui_font_t *font = resolve_font_face(props);
+            if (font != NULL) {
+                gml_project_set_label_font(&gml->project, handle, font);
+            }
         }
         break;
     case GML_WIDGET_TYPE_BUTTON:
@@ -381,6 +415,10 @@ static void build_widget(guimintlab_t *gml,
             uint8_t px = (uint8_t)json_int(props, "paddingX", 0);
             uint8_t py = (uint8_t)json_int(props, "paddingY", 0);
             gml_project_set_button_padding(&gml->project, handle, px, py);
+            const gui_font_t *font = resolve_font_face(props);
+            if (font != NULL) {
+                gml_project_set_button_font(&gml->project, handle, font);
+            }
 
             gui_color_t pressed_bg;
             const cJSON *pb = cJSON_GetObjectItemCaseSensitive(props, "pressedBg");

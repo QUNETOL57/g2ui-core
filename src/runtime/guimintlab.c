@@ -255,6 +255,9 @@ esp_err_t guimintlab_new(const guimintlab_config_t *cfg, guimintlab_t **out) {
         .swap_xy           = cfg->display.swap_xy,
         .mirror_x          = cfg->display.mirror_x,
         .mirror_y          = cfg->display.mirror_y,
+        .gap_x             = cfg->display.gap_x,
+        .gap_y             = cfg->display.gap_y,
+        .pre_invert        = cfg->display.pre_invert,
     };
     esp_err_t err = gui_display_init(&gml->display, &display_config);
     if (err != ESP_OK) {
