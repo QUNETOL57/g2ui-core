@@ -58,7 +58,7 @@ typedef struct {
 typedef struct {
     uint8_t width;
     uint8_t height;
-    const uint16_t *rows;
+    const uint32_t *rows;
 } gui_icon_asset_t;
 
 typedef struct {

@@ -185,12 +185,12 @@ esp_err_t gui_renderer_draw_icon(gui_renderer_t *renderer, gui_point_t origin, c
 
     for (int row = 0; row < clipped.height; row++) {
         const int src_y = clipped.y - icon_rect.y + row;
-        const uint16_t row_bits = icon->rows[src_y];
+        const uint32_t row_bits = icon->rows[src_y];
         int run_start = -1;
 
         for (int col = 0; col < clipped.width; col++) {
             const int src_x = clipped.x - icon_rect.x + col;
-            const bool pixel_on = (row_bits & (uint16_t)(1U << (icon->width - 1 - src_x))) != 0;
+            const bool pixel_on = (row_bits & (uint32_t)(1UL << (icon->width - 1 - src_x))) != 0;
             if (pixel_on && run_start < 0) {
                 run_start = col;
             } else if (!pixel_on && run_start >= 0) {
