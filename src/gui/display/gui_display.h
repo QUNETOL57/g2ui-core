@@ -25,6 +25,9 @@ typedef struct {
     bool swap_xy;
     bool mirror_x;
     bool mirror_y;
+    int gap_x;          /* column offset in ST7789 internal memory */
+    int gap_y;          /* row offset in ST7789 internal memory */
+    bool pre_invert;    /* pre-invert pixel data for displays with INVON hardwired */
 } gui_display_config_t;
 
 typedef struct {

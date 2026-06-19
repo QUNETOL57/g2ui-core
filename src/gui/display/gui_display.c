@@ -8,6 +8,10 @@
 #include "esp_lcd_io_spi.h"
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_panel_st7789.h"
+
+#include "esp_log.h"
+
+static const char *DISPLAY_TAG = "gui_display";
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 
@@ -63,11 +67,15 @@ static esp_err_t gui_display_prepare_tx_chunk(gui_display_t *display, const gui_
         return ESP_ERR_INVALID_ARG;
     }
 
+    const bool invert = display->config.pre_invert;
+
     for (int row = 0; row < height; row++) {
         const gui_color_t *src_row = src + (size_t)row * source_stride;
         gui_color_t *dst_row = display->tx_chunk_buffer + (size_t)row * width;
         for (int col = 0; col < width; col++) {
-            dst_row[col] = gui_display_swap_color_bytes(src_row[col]);
+            gui_color_t c = src_row[col];
+            if (invert) c = ~c;
+            dst_row[col] = gui_display_swap_color_bytes(c);
         }
     }
 
@@ -80,10 +88,14 @@ static esp_err_t gui_display_prepare_fill_chunk(gui_display_t *display, const gu
         return ESP_ERR_INVALID_ARG;
     }
 
+    const bool invert = display->config.pre_invert;
+
     for (int row = 0; row < height; row++) {
         gui_color_t *dst_row = display->tx_chunk_buffer + (size_t)row * width;
         for (int col = 0; col < width; col++) {
-            dst_row[col] = gui_display_swap_color_bytes(src_row[col]);
+            gui_color_t c = src_row[col];
+            if (invert) c = ~c;
+            dst_row[col] = gui_display_swap_color_bytes(c);
         }
     }
 
@@ -148,6 +160,11 @@ esp_err_t gui_display_init(gui_display_t *display, const gui_display_config_t *c
     ESP_RETURN_ON_ERROR(esp_lcd_panel_init(display->panel), "gui_display", "panel basic init failed");
     ESP_RETURN_ON_ERROR(esp_lcd_panel_swap_xy(display->panel, config->swap_xy), "gui_display", "panel swap_xy failed");
     ESP_RETURN_ON_ERROR(esp_lcd_panel_mirror(display->panel, config->mirror_x, config->mirror_y), "gui_display", "panel mirror failed");
+    if (config->gap_x != 0 || config->gap_y != 0) {
+        ESP_LOGI(DISPLAY_TAG, "setting gap: x=%d y=%d", config->gap_x, config->gap_y);
+        ESP_RETURN_ON_ERROR(esp_lcd_panel_set_gap(display->panel, config->gap_x, config->gap_y), "gui_display", "panel set gap failed");
+    }
+
     ESP_RETURN_ON_ERROR(esp_lcd_panel_disp_on_off(display->panel, true), "gui_display", "panel enable failed");
 
     gui_display_set_backlight(display, true);
