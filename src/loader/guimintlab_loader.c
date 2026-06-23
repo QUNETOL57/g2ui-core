@@ -172,17 +172,39 @@ static gml_label_align_t parse_label_align(const char *s) {
     return GML_LABEL_ALIGN_LEFT;
 }
 
-static const gui_font_t *resolve_font_face(const cJSON *props) {
-    if (!cJSON_IsObject(props)) {
-        return NULL;
-    }
+static gml_vertical_align_t parse_vertical_align(const char *s) {
+    if (s == NULL) return GML_VERTICAL_ALIGN_CENTER;
+    if (strcmp(s, "top") == 0) return GML_VERTICAL_ALIGN_TOP;
+    if (strcmp(s, "bottom") == 0) return GML_VERTICAL_ALIGN_BOTTOM;
+    return GML_VERTICAL_ALIGN_CENTER;
+}
 
-    const char *face_id = json_string(props, "fontFace", NULL);
-    if (face_id == NULL) {
-        face_id = json_string(props, "fontId", NULL);
+static gml_triangle_direction_t parse_triangle_direction(const char *s) {
+    if (s == NULL) return GML_TRIANGLE_DIRECTION_UP;
+    if (strcmp(s, "right") == 0) return GML_TRIANGLE_DIRECTION_RIGHT;
+    if (strcmp(s, "down") == 0) return GML_TRIANGLE_DIRECTION_DOWN;
+    if (strcmp(s, "left") == 0) return GML_TRIANGLE_DIRECTION_LEFT;
+    return GML_TRIANGLE_DIRECTION_UP;
+}
+
+static int parse_rotation_quadrant(int rotation_degrees) {
+    const int normalized = ((rotation_degrees % 360) + 360) % 360;
+    if (normalized % 90 != 0) {
+        return 0;
     }
-    if (face_id == NULL) {
-        face_id = json_string(props, "font", NULL);
+    return normalized;
+}
+
+static const gui_font_t *resolve_font_face(const cJSON *props) {
+    const char *face_id = NULL;
+    if (cJSON_IsObject(props)) {
+        face_id = json_string(props, "fontFace", NULL);
+        if (face_id == NULL) {
+            face_id = json_string(props, "fontId", NULL);
+        }
+        if (face_id == NULL) {
+            face_id = json_string(props, "font", NULL);
+        }
     }
     if (face_id != NULL) {
         const gui_font_t *font = gui_font_find_by_id(face_id);
@@ -191,17 +213,14 @@ static const gui_font_t *resolve_font_face(const cJSON *props) {
         }
     }
 
-    const char *family = json_string(props, "fontFamily", NULL);
-    if (family == NULL) {
-        return NULL;
+    const char *family = cJSON_IsObject(props) ? json_string(props, "fontFamily", "BDF") : "BDF";
+    const int size = cJSON_IsObject(props) ? json_int(props, "fontSize", 7) : 7;
+    const gui_font_style_t style = gui_font_parse_style(cJSON_IsObject(props) ? json_string(props, "fontStyle", "regular") : "regular");
+    const gui_font_t *font = gui_font_find_face_nearest(family, (uint16_t)(size > 0 ? size : 7), style);
+    if (font != NULL) {
+        return font;
     }
-
-    const int size = json_int(props, "fontSize", 0);
-    const gui_font_style_t style = gui_font_parse_style(json_string(props, "fontStyle", "regular"));
-    if (size <= 0) {
-        return NULL;
-    }
-    return gui_font_find_face(family, (uint16_t)size, style);
+    return gui_font_find_by_id("default_5x7");
 }
 
 static gml_widget_type_t parse_widget_type(const char *s) {
@@ -214,6 +233,9 @@ static gml_widget_type_t parse_widget_type(const char *s) {
     if (strcmp(s, "image") == 0)  return GML_WIDGET_TYPE_IMAGE;
     if (strcmp(s, "line") == 0)   return GML_WIDGET_TYPE_LINE;
     if (strcmp(s, "rect") == 0)   return GML_WIDGET_TYPE_RECT;
+    if (strcmp(s, "circle") == 0) return GML_WIDGET_TYPE_CIRCLE;
+    if (strcmp(s, "triangle") == 0) return GML_WIDGET_TYPE_TRIANGLE;
+    if (strcmp(s, "freehand") == 0) return GML_WIDGET_TYPE_FREEHAND;
     return GML_WIDGET_TYPE_PANEL;
 }
 
@@ -245,7 +267,11 @@ static void apply_layout(gml_project_t *project, gml_handle_t h, const cJSON *la
     gml_project_set_layout(project, h, l);
 }
 
-static void apply_style(gml_project_t *project, gml_handle_t h, const cJSON *style, const palette_t *palette) {
+static void apply_style(gml_project_t *project,
+                        gml_handle_t h,
+                        gml_widget_type_t type,
+                        const cJSON *style,
+                        const palette_t *palette) {
     if (!cJSON_IsObject(style)) {
         return;
     }
@@ -272,6 +298,11 @@ static void apply_style(gml_project_t *project, gml_handle_t h, const cJSON *sty
         s.has_border_width = true;
         s.border_width = (uint8_t)bw->valuedouble;
     }
+    const cJSON *br = cJSON_GetObjectItemCaseSensitive(style, "borderRadius");
+    if (cJSON_IsNumber(br)) {
+        s.has_border_radius = true;
+        s.border_radius = (uint8_t)br->valuedouble;
+    }
     const cJSON *dbg = cJSON_GetObjectItemCaseSensitive(style, "drawBackground");
     if (cJSON_IsBool(dbg)) {
         s.has_draw_background = true;
@@ -281,6 +312,13 @@ static void apply_style(gml_project_t *project, gml_handle_t h, const cJSON *sty
     if (cJSON_IsBool(dbo)) {
         s.has_draw_border = true;
         s.draw_border = cJSON_IsTrue(dbo);
+    }
+
+    if ((type == GML_WIDGET_TYPE_LINE || type == GML_WIDGET_TYPE_FREEHAND) &&
+        !s.has_border_color &&
+        s.has_text_color) {
+        s.has_border_color = true;
+        s.border_color = s.text_color;
     }
 
     gml_project_set_style(project, h, s);
@@ -340,6 +378,61 @@ static gui_rect_t read_frame(const cJSON *node) {
     return r;
 }
 
+static int line_visible_y(int value, int height, int stroke_width)
+{
+    const int fallback = height / 2;
+    const int pad = stroke_width / 2;
+    const int max_y = (height - ((stroke_width + 1) / 2)) > pad
+        ? (height - ((stroke_width + 1) / 2))
+        : pad;
+    int y = value;
+    if (y < 0) {
+        y = fallback;
+    }
+    if (y < pad) {
+        y = pad;
+    }
+    if (y > max_y) {
+        y = max_y;
+    }
+    return y;
+}
+
+static void apply_bindings(guimintlab_t *gml, gml_handle_t handle, const cJSON *bindings)
+{
+    if (!cJSON_IsArray(bindings)) {
+        return;
+    }
+    int count = cJSON_GetArraySize(bindings);
+    if (count <= 0) {
+        return;
+    }
+
+    gml_binding_t stack_bindings[16];
+    if (count > (int)(sizeof(stack_bindings) / sizeof(stack_bindings[0]))) {
+        count = (int)(sizeof(stack_bindings) / sizeof(stack_bindings[0]));
+    }
+
+    int used = 0;
+    for (int i = 0; i < count; i++) {
+        const cJSON *item = cJSON_GetArrayItem(bindings, i);
+        if (!cJSON_IsObject(item)) {
+            continue;
+        }
+        const char *signal = dup_str(gml, json_string(item, "signal", NULL));
+        const char *property = dup_str(gml, json_string(item, "property", NULL));
+        if (signal == NULL || property == NULL) {
+            continue;
+        }
+        stack_bindings[used].signal = signal;
+        stack_bindings[used].property = property;
+        used++;
+    }
+    if (used > 0) {
+        gml_project_set_bindings(&gml->project, handle, stack_bindings, (uint16_t)used);
+    }
+}
+
 static void build_widget(guimintlab_t *gml,
                          gml_handle_t parent,
                          const cJSON *node,
@@ -387,8 +480,11 @@ static void build_widget(guimintlab_t *gml,
         gml_project_set_enabled(&gml->project, handle, false);
     }
 
+    const cJSON *style = cJSON_GetObjectItemCaseSensitive(node, "style");
     apply_layout(&gml->project, handle, cJSON_GetObjectItemCaseSensitive(node, "layout"));
-    apply_style(&gml->project, handle, cJSON_GetObjectItemCaseSensitive(node, "style"), palette);
+    apply_style(&gml->project, handle, type, style, palette);
+    gml_project_set_rotation(&gml->project, handle, (int16_t)parse_rotation_quadrant(json_int(node, "rotation", 0)));
+    apply_bindings(gml, handle, cJSON_GetObjectItemCaseSensitive(node, "bindings"));
 
     const cJSON *props = cJSON_GetObjectItemCaseSensitive(node, "props");
     switch (type) {
@@ -398,8 +494,18 @@ static void build_widget(guimintlab_t *gml,
             if (text != NULL) {
                 gml_project_set_label_text(&gml->project, handle, text);
             }
-            gml_project_set_label_align(&gml->project, handle,
-                                        parse_label_align(json_string(props, "align", "left")));
+        }
+        gml_project_set_label_align(&gml->project, handle,
+                                    parse_label_align(cJSON_IsObject(props) ? json_string(props, "align", "left") : "left"));
+        gml_project_set_label_vertical_align(
+            &gml->project,
+            handle,
+            parse_vertical_align(cJSON_IsObject(props) ? json_string(props, "verticalAlign", "center") : "center"));
+        gml_project_set_label_text_auto_size(
+            &gml->project,
+            handle,
+            cJSON_IsObject(props) ? json_bool(props, "textAutoSize", true) : true);
+        {
             const gui_font_t *font = resolve_font_face(props);
             if (font != NULL) {
                 gml_project_set_label_font(&gml->project, handle, font);
@@ -415,13 +521,37 @@ static void build_widget(guimintlab_t *gml,
             uint8_t px = (uint8_t)json_int(props, "paddingX", 0);
             uint8_t py = (uint8_t)json_int(props, "paddingY", 0);
             gml_project_set_button_padding(&gml->project, handle, px, py);
+            gml_project_set_button_padding_sides(
+                &gml->project,
+                handle,
+                (uint8_t)json_int(props, "paddingTop", py),
+                (uint8_t)json_int(props, "paddingRight", px),
+                (uint8_t)json_int(props, "paddingBottom", py),
+                (uint8_t)json_int(props, "paddingLeft", px));
             const gui_font_t *font = resolve_font_face(props);
             if (font != NULL) {
                 gml_project_set_button_font(&gml->project, handle, font);
             }
+            const char *icon_id = dup_str(gml, json_string(props, "iconId", NULL));
+            if (icon_id != NULL) {
+                gml_project_set_button_icon(&gml->project, handle, icon_id);
+            }
+            gml_project_set_button_icon_layout(
+                &gml->project,
+                handle,
+                json_string(props, "iconPosition", "left"),
+                (uint8_t)json_int(props, "iconGap", 2));
+            gml_project_set_button_content_align(
+                &gml->project,
+                handle,
+                parse_label_align(json_string(props, "horizontalAlign", "center")),
+                parse_vertical_align(json_string(props, "verticalAlign", "center")));
 
             gui_color_t pressed_bg;
-            const cJSON *pb = cJSON_GetObjectItemCaseSensitive(props, "pressedBg");
+            const cJSON *pb = cJSON_GetObjectItemCaseSensitive(props, "pressedBackground");
+            if (!cJSON_IsObject(pb)) {
+                pb = cJSON_GetObjectItemCaseSensitive(props, "pressedBg");
+            }
             if (resolve_color(pb, palette, &pressed_bg)) {
                 gml_project_set_button_pressed_bg(&gml->project, handle, pressed_bg);
             }
@@ -441,6 +571,73 @@ static void build_widget(guimintlab_t *gml,
             const cJSON *c = cJSON_GetObjectItemCaseSensitive(props, "color");
             if (resolve_color(c, palette, &tint)) {
                 gml_project_set_icon_color(&gml->project, handle, tint);
+            }
+        }
+        break;
+    case GML_WIDGET_TYPE_RECT:
+        if (cJSON_IsObject(props)) {
+            const cJSON *radius = cJSON_GetObjectItemCaseSensitive(props, "radius");
+            const cJSON *style_radius = cJSON_IsObject(style) ? cJSON_GetObjectItemCaseSensitive(style, "borderRadius") : NULL;
+            if (cJSON_IsNumber(radius) && !cJSON_IsNumber(style_radius)) {
+                gml_project_set_shape_radius(&gml->project, handle, (uint8_t)radius->valuedouble);
+            }
+        }
+        break;
+    case GML_WIDGET_TYPE_CIRCLE:
+        if (cJSON_IsObject(props)) {
+            const cJSON *radius = cJSON_GetObjectItemCaseSensitive(props, "radius");
+            if (cJSON_IsNumber(radius)) {
+                gml_project_set_shape_radius(&gml->project, handle, (uint8_t)radius->valuedouble);
+            }
+        }
+        break;
+    case GML_WIDGET_TYPE_TRIANGLE:
+        if (cJSON_IsObject(props)) {
+            gml_project_set_shape_triangle_direction(
+                &gml->project,
+                handle,
+                parse_triangle_direction(json_string(props, "direction", "up")));
+        }
+        break;
+    case GML_WIDGET_TYPE_LINE: {
+        const int stroke_width = cJSON_IsObject(props) ? json_int(props, "strokeWidth", 1) : 1;
+        const int view_width = frame.width > stroke_width ? frame.width : stroke_width;
+        const int view_height = frame.height > stroke_width ? frame.height : stroke_width;
+        const int fallback_y = view_height / 2;
+        const int x1 = cJSON_IsObject(props) ? json_int(props, "x1", 0) : 0;
+        const int x2 = cJSON_IsObject(props) ? json_int(props, "x2", view_width - 1) : (view_width - 1);
+        const int y1 = line_visible_y(cJSON_IsObject(props) ? json_int(props, "y1", fallback_y) : fallback_y, view_height, stroke_width);
+        const int y2 = line_visible_y(cJSON_IsObject(props) ? json_int(props, "y2", fallback_y) : fallback_y, view_height, stroke_width);
+        gml_project_set_shape_line(&gml->project,
+                                   handle,
+                                   (int16_t)x1,
+                                   (int16_t)y1,
+                                   (int16_t)x2,
+                                   (int16_t)y2,
+                                   (uint8_t)stroke_width);
+        break;
+    }
+    case GML_WIDGET_TYPE_FREEHAND:
+        if (cJSON_IsObject(props)) {
+            const cJSON *points = cJSON_GetObjectItemCaseSensitive(props, "points");
+            if (cJSON_IsArray(points)) {
+                const int point_count = cJSON_GetArraySize(points);
+                gui_point_t *stored = gml_runtime_alloc_points(gml, (uint16_t)(point_count > 0 ? point_count : 0));
+                int written = 0;
+                if (stored != NULL) {
+                    for (int i = 0; i < point_count; i++) {
+                        const cJSON *point = cJSON_GetArrayItem(points, i);
+                        if (!cJSON_IsObject(point)) continue;
+                        stored[written].x = (int16_t)json_int(point, "x", 0);
+                        stored[written].y = (int16_t)json_int(point, "y", 0);
+                        written++;
+                    }
+                }
+                gml_project_set_freehand_points(&gml->project,
+                                                handle,
+                                                stored,
+                                                (uint16_t)written,
+                                                (uint8_t)json_int(props, "strokeWidth", 1));
             }
         }
         break;
@@ -523,7 +720,7 @@ esp_err_t gml_loader_load_from_memory(guimintlab_t *gml, const void *json, size_
             continue;
         }
         apply_layout(&gml->project, sh, cJSON_GetObjectItemCaseSensitive(screen, "layout"));
-        apply_style(&gml->project, sh, cJSON_GetObjectItemCaseSensitive(screen, "style"), &palette);
+        apply_style(&gml->project, sh, GML_WIDGET_TYPE_SCREEN, cJSON_GetObjectItemCaseSensitive(screen, "style"), &palette);
         apply_children(gml, sh, cJSON_GetObjectItemCaseSensitive(screen, "children"), &palette);
         gml_project_end_screen(&gml->project);
     }

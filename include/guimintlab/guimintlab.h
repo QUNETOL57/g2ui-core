@@ -72,6 +72,7 @@ typedef struct {
     /* Runtime limits. Zero means "use defaults". */
     uint16_t max_widgets;   /* default 64 */
     uint16_t max_ids;       /* default = max_widgets */
+    uint16_t max_freehand_points; /* default = max_widgets * 64 */
 
     /* Optional: internal bookkeeping arena size. Zero means auto-sized from max_widgets. */
     size_t   arena_size;

@@ -1,5 +1,6 @@
 #include "gui/core/gui_assets.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 uint32_t gui_utf8_next(const char **cursor)
@@ -106,6 +107,93 @@ gui_font_style_t gui_font_parse_style(const char *style)
         return GUI_FONT_STYLE_BOLD_OBLIQUE;
     }
     return GUI_FONT_STYLE_REGULAR;
+}
+
+const gui_font_t *gui_font_default_face(void)
+{
+    const gui_font_t *default_face = gui_font_find_by_id("default_5x7");
+    if (default_face != NULL) {
+        return default_face;
+    }
+    const gui_font_registry_entry_t *registry = gui_font_registry();
+    const size_t count = gui_font_registry_count();
+    return count > 0 ? registry[0].font : NULL;
+}
+
+const gui_font_t *gui_font_find_face_nearest(const char *family, uint16_t size, gui_font_style_t style)
+{
+    const gui_font_registry_entry_t *registry = gui_font_registry();
+    const size_t count = gui_font_registry_count();
+    if (registry == NULL || count == 0) {
+        return gui_font_default_face();
+    }
+
+    if (family == NULL || family[0] == '\0') {
+        family = "BDF";
+    }
+    if (size == 0) {
+        size = 7;
+    }
+
+    const gui_font_t *nearest_in_style = NULL;
+    uint16_t nearest_style_distance = UINT16_MAX;
+    const gui_font_t *nearest_in_family = NULL;
+    uint16_t nearest_family_distance = UINT16_MAX;
+    const gui_font_t *smallest_in_style = NULL;
+    uint16_t smallest_style_size = UINT16_MAX;
+    const gui_font_t *smallest_in_family = NULL;
+    uint16_t smallest_family_size = UINT16_MAX;
+
+    for (size_t i = 0; i < count; ++i) {
+        const gui_font_registry_entry_t *entry = &registry[i];
+        if (entry->family == NULL || entry->font == NULL || strcmp(entry->family, family) != 0) {
+            continue;
+        }
+
+        if (entry->style == style) {
+            if (entry->size == size) {
+                return entry->font;
+            }
+            const uint16_t distance = (uint16_t)abs((int)entry->size - (int)size);
+            if (distance < nearest_style_distance) {
+                nearest_style_distance = distance;
+                nearest_in_style = entry->font;
+            }
+            if (entry->size < smallest_style_size) {
+                smallest_style_size = entry->size;
+                smallest_in_style = entry->font;
+            }
+        }
+
+        if (entry->size == size && nearest_in_family == NULL) {
+            nearest_in_family = entry->font;
+            nearest_family_distance = 0;
+        } else {
+            const uint16_t distance = (uint16_t)abs((int)entry->size - (int)size);
+            if (distance < nearest_family_distance) {
+                nearest_family_distance = distance;
+                nearest_in_family = entry->font;
+            }
+        }
+        if (entry->size < smallest_family_size) {
+            smallest_family_size = entry->size;
+            smallest_in_family = entry->font;
+        }
+    }
+
+    if (nearest_in_style != NULL) {
+        return nearest_in_style;
+    }
+    if (smallest_in_style != NULL) {
+        return smallest_in_style;
+    }
+    if (nearest_in_family != NULL) {
+        return nearest_in_family;
+    }
+    if (smallest_in_family != NULL) {
+        return smallest_in_family;
+    }
+    return gui_font_default_face();
 }
 
 int gui_font_measure_text_width(const gui_font_t *font, const char *text)

@@ -44,11 +44,27 @@ static void gui_icon_paint(gui_widget_t *widget, gui_renderer_t *renderer, gui_r
         return;
     }
 
+    const int normalized_rotation = ((widget->rotation_degrees % 360) + 360) % 360;
+    const bool rotation_enabled = (normalized_rotation % 90) == 0 && normalized_rotation != 0;
+    if (rotation_enabled) {
+        gui_renderer_push_rotation(
+            renderer,
+            (gui_renderer_rotation_t)(normalized_rotation / 90),
+            (gui_point_t){
+                .x = (int16_t)(absolute.x + absolute.width / 2),
+                .y = (int16_t)(absolute.y + absolute.height / 2),
+            });
+    }
+
     const gui_point_t origin = {
         .x = absolute.x + (absolute.width - icon_widget->icon->width) / 2,
         .y = absolute.y + (absolute.height - icon_widget->icon->height) / 2,
     };
     gui_renderer_draw_icon(renderer, origin, icon_widget->icon, icon_widget->color);
+
+    if (rotation_enabled) {
+        gui_renderer_pop_rotation(renderer);
+    }
 }
 
 static bool gui_icon_input(gui_widget_t *widget, const gui_input_event_t *event)

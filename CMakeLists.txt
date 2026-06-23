@@ -12,7 +12,9 @@ idf_component_register(
         "src/gui/widgets/gui_button.c"
         "src/gui/widgets/gui_icon.c"
         "src/gui/widgets/gui_label.c"
+        "src/gui/widgets/gui_freehand.c"
         "src/gui/widgets/gui_panel.c"
+        "src/gui/widgets/gui_shape.c"
         "src/gui/generated/gui_assets_generated.c"
     INCLUDE_DIRS
         "include"

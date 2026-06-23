@@ -37,6 +37,7 @@ typedef struct gui_widget_t {
     struct gui_widget_t *next_sibling;
     gui_rect_t frame;
     gui_size_t measured_size;
+    int16_t rotation_degrees;
     bool visible;
     bool enabled;
     bool needs_layout;
@@ -46,6 +47,7 @@ void gui_widget_init(gui_widget_t *widget, const gui_widget_vtable_t *vtable);
 void gui_widget_add_child(gui_widget_t *parent, gui_widget_t *child);
 void gui_widget_set_frame(gui_widget_t *widget, gui_rect_t frame);
 void gui_widget_set_visible(gui_widget_t *widget, bool visible);
+void gui_widget_set_rotation(gui_widget_t *widget, int16_t rotation_degrees);
 void gui_widget_request_layout(gui_widget_t *widget);
 void gui_widget_invalidate(gui_widget_t *widget);
 gui_rect_t gui_widget_absolute_rect(const gui_widget_t *widget);

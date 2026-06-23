@@ -18,6 +18,9 @@ typedef enum {
     GML_WIDGET_TYPE_IMAGE,
     GML_WIDGET_TYPE_LINE,
     GML_WIDGET_TYPE_RECT,
+    GML_WIDGET_TYPE_CIRCLE,
+    GML_WIDGET_TYPE_TRIANGLE,
+    GML_WIDGET_TYPE_FREEHAND,
     GML_WIDGET_TYPE__COUNT,
 } gml_widget_type_t;
 
@@ -40,6 +43,19 @@ typedef enum {
     GML_LABEL_ALIGN_CENTER = 1,
     GML_LABEL_ALIGN_RIGHT = 2,
 } gml_label_align_t;
+
+typedef enum {
+    GML_VERTICAL_ALIGN_TOP = 0,
+    GML_VERTICAL_ALIGN_CENTER = 1,
+    GML_VERTICAL_ALIGN_BOTTOM = 2,
+} gml_vertical_align_t;
+
+typedef enum {
+    GML_TRIANGLE_DIRECTION_UP = 0,
+    GML_TRIANGLE_DIRECTION_RIGHT,
+    GML_TRIANGLE_DIRECTION_DOWN,
+    GML_TRIANGLE_DIRECTION_LEFT,
+} gml_triangle_direction_t;
 
 typedef enum {
     GML_ACTION_NONE = 0,

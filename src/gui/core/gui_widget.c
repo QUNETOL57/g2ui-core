@@ -76,6 +76,18 @@ void gui_widget_set_visible(gui_widget_t *widget, bool visible)
     gui_widget_invalidate(widget);
 }
 
+void gui_widget_set_rotation(gui_widget_t *widget, int16_t rotation_degrees)
+{
+    if (widget == NULL) {
+        return;
+    }
+    if (widget->rotation_degrees == rotation_degrees) {
+        return;
+    }
+    widget->rotation_degrees = rotation_degrees;
+    gui_widget_invalidate(widget);
+}
+
 void gui_widget_request_layout(gui_widget_t *widget)
 {
     if (widget == NULL) {

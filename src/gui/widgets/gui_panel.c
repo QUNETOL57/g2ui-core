@@ -69,26 +69,53 @@ static void gui_panel_layout(gui_widget_t *widget)
     const int16_t inner_w = widget->frame.width - (int16_t)(panel->padding * 2);
     const int16_t inner_h = widget->frame.height - (int16_t)(panel->padding * 2);
 
-    int16_t cursor = 0;
+    int16_t cursor = panel->layout == GUI_LAYOUT_ROW ? inner_x : inner_y;
     for (gui_widget_t *child = widget->first_child; child != NULL; child = child->next_sibling) {
-        const gui_size_t available = { .width = inner_w, .height = inner_h };
-        const gui_size_t size = child->vtable != NULL && child->vtable->measure != NULL
-            ? child->vtable->measure(child, available)
-            : available;
-
         gui_rect_t frame = child->frame;
         if (panel->layout == GUI_LAYOUT_ROW) {
-            frame.x = inner_x + cursor;
-            frame.y = inner_y;
-            frame.width = frame.width > 0 ? frame.width : size.width;
-            frame.height = frame.height > 0 ? frame.height : inner_h;
-            cursor += frame.width + panel->gap;
+            const int16_t main_size = frame.width > 0 ? frame.width : 1;
+            const int16_t cross_size = frame.height > 0 ? frame.height : inner_h;
+            int16_t cross_start = inner_y;
+            switch (panel->align) {
+                case GUI_LAYOUT_ALIGN_CENTER:
+                    cross_start += (int16_t)(((inner_h - cross_size) > 0 ? (inner_h - cross_size) : 0) / 2);
+                    break;
+                case GUI_LAYOUT_ALIGN_END:
+                    cross_start += (inner_h - cross_size) > 0 ? (inner_h - cross_size) : 0;
+                    break;
+                case GUI_LAYOUT_ALIGN_STRETCH:
+                case GUI_LAYOUT_ALIGN_START:
+                case GUI_LAYOUT_ALIGN_SPACE_BETWEEN:
+                default:
+                    break;
+            }
+            frame.x = cursor;
+            frame.y = cross_start;
+            frame.width = main_size;
+            frame.height = panel->align == GUI_LAYOUT_ALIGN_STRETCH ? inner_h : cross_size;
+            cursor += (int16_t)(main_size + panel->gap);
         } else {
-            frame.x = inner_x;
-            frame.y = inner_y + cursor;
-            frame.width = frame.width > 0 ? frame.width : inner_w;
-            frame.height = frame.height > 0 ? frame.height : size.height;
-            cursor += frame.height + panel->gap;
+            const int16_t main_size = frame.height > 0 ? frame.height : 1;
+            const int16_t cross_size = frame.width > 0 ? frame.width : inner_w;
+            int16_t cross_start = inner_x;
+            switch (panel->align) {
+                case GUI_LAYOUT_ALIGN_CENTER:
+                    cross_start += (int16_t)(((inner_w - cross_size) > 0 ? (inner_w - cross_size) : 0) / 2);
+                    break;
+                case GUI_LAYOUT_ALIGN_END:
+                    cross_start += (inner_w - cross_size) > 0 ? (inner_w - cross_size) : 0;
+                    break;
+                case GUI_LAYOUT_ALIGN_STRETCH:
+                case GUI_LAYOUT_ALIGN_START:
+                case GUI_LAYOUT_ALIGN_SPACE_BETWEEN:
+                default:
+                    break;
+            }
+            frame.x = cross_start;
+            frame.y = cursor;
+            frame.width = panel->align == GUI_LAYOUT_ALIGN_STRETCH ? inner_w : cross_size;
+            frame.height = main_size;
+            cursor += (int16_t)(main_size + panel->gap);
         }
         child->frame = frame;
     }
@@ -102,11 +129,37 @@ static void gui_panel_paint(gui_widget_t *widget, gui_renderer_t *renderer, gui_
         return;
     }
 
-    if (panel->draw_background) {
-        gui_renderer_fill_rect(renderer, rect, panel->background);
+    const gui_renderer_rotation_t rotation = (gui_renderer_rotation_t)(((widget->rotation_degrees % 360) + 360) % 360 / 90);
+    const bool rotation_enabled = ((widget->rotation_degrees % 360 + 360) % 360) % 90 == 0 && rotation != GUI_RENDERER_ROTATION_0;
+    if (rotation_enabled) {
+        gui_renderer_push_rotation(renderer,
+                                   rotation,
+                                   (gui_point_t){
+                                       .x = (int16_t)(rect.x + rect.width / 2),
+                                       .y = (int16_t)(rect.y + rect.height / 2),
+                                   });
     }
-    if (panel->draw_border && panel->border_width > 0) {
-        gui_renderer_stroke_rect(renderer, rect, panel->border_width, panel->border_color);
+
+    if (panel->radius > 0) {
+        gui_renderer_fill_rounded_rect(renderer,
+                                       rect,
+                                       panel->radius,
+                                       panel->background,
+                                       panel->draw_background,
+                                       panel->border_color,
+                                       panel->border_width,
+                                       panel->draw_border);
+    } else {
+        if (panel->draw_background) {
+            gui_renderer_fill_rect(renderer, rect, panel->background);
+        }
+        if (panel->draw_border && panel->border_width > 0) {
+            gui_renderer_stroke_rect(renderer, rect, panel->border_width, panel->border_color);
+        }
+    }
+
+    if (rotation_enabled) {
+        gui_renderer_pop_rotation(renderer);
     }
 }
 
@@ -128,11 +181,21 @@ void gui_panel_init(gui_panel_t *panel)
 {
     gui_widget_init(&panel->base, &GUI_PANEL_VTABLE);
     panel->layout = GUI_LAYOUT_NONE;
+    panel->align = GUI_LAYOUT_ALIGN_START;
+    panel->justify = GUI_LAYOUT_ALIGN_START;
 }
 
 void gui_panel_set_layout(gui_panel_t *panel, gui_layout_t layout)
 {
     panel->layout = layout;
+    gui_widget_request_layout(&panel->base);
+    gui_widget_invalidate(&panel->base);
+}
+
+void gui_panel_set_align(gui_panel_t *panel, gui_layout_align_t align, gui_layout_align_t justify)
+{
+    panel->align = align;
+    panel->justify = justify;
     gui_widget_request_layout(&panel->base);
     gui_widget_invalidate(&panel->base);
 }
@@ -144,6 +207,12 @@ void gui_panel_set_style(gui_panel_t *panel, gui_color_t background, gui_color_t
     panel->border_width = border_width;
     panel->draw_background = true;
     panel->draw_border = border_width > 0;
+    gui_widget_invalidate(&panel->base);
+}
+
+void gui_panel_set_radius(gui_panel_t *panel, uint8_t radius)
+{
+    panel->radius = radius;
     gui_widget_invalidate(&panel->base);
 }
 

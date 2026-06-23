@@ -12,6 +12,7 @@
 #include "guimintlab/guimintlab.h"
 
 #include "gui/core/gui_context.h"
+#include "gui/core/gui_types.h"
 #include "gui/display/gui_display.h"
 #include "gui/theme/gui_theme.h"
 
@@ -53,6 +54,9 @@ struct guimintlab_s {
     char   *strpool;
     size_t  strpool_size;
     size_t  strpool_used;
+    gui_point_t *point_pool;
+    uint16_t point_pool_capacity;
+    uint16_t point_pool_used;
 
     /* Press bookkeeping ----------------------------------------------------*/
     gml_press_entry_t *press_entries;
@@ -65,6 +69,7 @@ struct guimintlab_s {
 /* Helpers implemented in guimintlab.c and used by the loader. */
 const char *gml_runtime_strpool_put(guimintlab_t *gml, const char *s);
 gml_press_entry_t *gml_runtime_alloc_press_entry(guimintlab_t *gml, const char *widget_id);
+gui_point_t *gml_runtime_alloc_points(guimintlab_t *gml, uint16_t point_count);
 void gml_runtime_internal_button_click(void *user_data);
 
 #ifdef __cplusplus

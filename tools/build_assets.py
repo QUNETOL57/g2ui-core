@@ -1402,7 +1402,8 @@ def emit_c(faces: list[Face], out_c: Path, out_h: Path) -> None:
     c.append("")
 
     for name, w, hgt, rows in ICONS:
-        c.append(f"static const uint16_t {name}_rows[] = {{{', '.join(f'0x{r:04X}' for r in rows)}}};")
+        hex_width = max(4, (w + 3) // 4)
+        c.append(f"static const uint32_t {name}_rows[] = {{{', '.join(f'0x{r:0{hex_width}X}' for r in rows)}}};")
         c.append(f"const gui_icon_asset_t {name} = {{ .width = {w}, .height = {hgt}, .rows = {name}_rows }};")
         c.append("")
         h.append(f"extern const gui_icon_asset_t {name};")
@@ -1512,6 +1513,10 @@ def main() -> None:
 
     generated = root / "src" / "gui" / "generated"
     emit_c(faces, generated / "gui_assets_generated.c", generated / "gui_assets_generated.h")
+    (generated / "gui_icon_registry_entries.inc").write_text(
+        emit_icon_registry_entries(),
+        encoding="utf-8",
+    )
 
     studio = root.parent / "guimintlab-studio"
     if studio.exists():

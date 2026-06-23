@@ -21,6 +21,7 @@
 #include "freertos/task.h"
 
 #include "gui/core/gui_context.h"
+#include "gui/core/gui_assets.h"
 #include "gui/display/gui_display.h"
 #include "gui/theme/gui_theme.h"
 #include "gui/generated/gui_assets_generated.h"
@@ -87,6 +88,22 @@ gml_press_entry_t *gml_runtime_alloc_press_entry(guimintlab_t *gml, const char *
     memset(e, 0, sizeof(*e));
     e->widget_id = widget_id;
     return e;
+}
+
+gui_point_t *gml_runtime_alloc_points(guimintlab_t *gml, uint16_t point_count)
+{
+    if (gml == NULL || point_count == 0) {
+        return NULL;
+    }
+    if ((uint32_t)gml->point_pool_used + point_count > gml->point_pool_capacity) {
+        ESP_LOGW(TAG, "point pool exhausted (need %u, left %u)",
+                 point_count,
+                 (unsigned)(gml->point_pool_capacity - gml->point_pool_used));
+        return NULL;
+    }
+    gui_point_t *ptr = &gml->point_pool[gml->point_pool_used];
+    gml->point_pool_used = (uint16_t)(gml->point_pool_used + point_count);
+    return ptr;
 }
 
 static gml_press_entry_t *find_press_entry(const guimintlab_t *gml, const char *widget_id) {
@@ -200,9 +217,12 @@ static esp_err_t init_builder(guimintlab_t *gml) {
         .context      = &gml->context,
         .max_nodes    = max_widgets,
         .max_ids      = max_ids,
-        .default_font = gml->theme.font_body,
+        .default_font = gui_font_find_face_nearest("BDF", 7, GUI_FONT_STYLE_REGULAR),
         .icons        = &s_default_icon_registry,
     };
+    if (gml->project_cfg.default_font == NULL) {
+        gml->project_cfg.default_font = gml->theme.font_body;
+    }
     if (!gml_project_init(&gml->project, &gml->project_cfg)) {
         ESP_LOGE(TAG, "gml_project_init failed (arena too small?)");
         return ESP_ERR_NO_MEM;
@@ -212,6 +232,7 @@ static esp_err_t init_builder(guimintlab_t *gml) {
 
 static void reset_runtime_tables(guimintlab_t *gml) {
     gml->strpool_used = 0;
+    gml->point_pool_used = 0;
     gml->press_entry_count = 0;
     if (gml->press_entries != NULL) {
         memset(gml->press_entries, 0,
@@ -230,12 +251,15 @@ esp_err_t guimintlab_new(const guimintlab_config_t *cfg, guimintlab_t **out) {
     gml->cfg = *cfg;
 
     uint16_t max_widgets = gml->cfg.max_widgets ? gml->cfg.max_widgets : GML_DEFAULT_MAX_WIDGETS;
+    uint16_t max_points = gml->cfg.max_freehand_points ? gml->cfg.max_freehand_points : (uint16_t)(max_widgets * 64);
     gml->press_entry_capacity = max_widgets;
+    gml->point_pool_capacity = max_points;
     gml->press_entries = heap_caps_calloc(max_widgets, sizeof(*gml->press_entries),
                                           MALLOC_CAP_8BIT);
+    gml->point_pool = heap_caps_calloc(max_points, sizeof(*gml->point_pool), MALLOC_CAP_8BIT);
     gml->strpool_size  = (size_t)max_widgets * 48; /* ~48 bytes/widget of strings */
     gml->strpool       = heap_caps_malloc(gml->strpool_size, MALLOC_CAP_8BIT);
-    if (gml->press_entries == NULL || gml->strpool == NULL) {
+    if (gml->press_entries == NULL || gml->point_pool == NULL || gml->strpool == NULL) {
         goto oom;
     }
 
@@ -294,6 +318,7 @@ void guimintlab_free(guimintlab_t *gml) {
     registry_remove(gml);
     free(gml->project_arena);
     free(gml->press_entries);
+    free(gml->point_pool);
     free(gml->strpool);
     /* display + context teardown is intentionally omitted — gui_display_t has
      * no public deinit today; add one in gui_display.c if this ever matters. */

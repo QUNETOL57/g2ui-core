@@ -72,6 +72,8 @@ const gui_font_registry_entry_t *gui_font_registry(void);
 size_t gui_font_registry_count(void);
 const gui_font_t *gui_font_find_by_id(const char *id);
 const gui_font_t *gui_font_find_face(const char *family, uint16_t size, gui_font_style_t style);
+const gui_font_t *gui_font_find_face_nearest(const char *family, uint16_t size, gui_font_style_t style);
+const gui_font_t *gui_font_default_face(void);
 gui_font_style_t gui_font_parse_style(const char *style);
 int gui_font_measure_text_width(const gui_font_t *font, const char *text);
 int gui_font_measure_text_width_scaled(const gui_font_t *font, const char *text, int scale);

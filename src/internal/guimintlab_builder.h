@@ -77,6 +77,7 @@ typedef struct {
     bool has_border_color; gui_color_t border_color;
     bool has_text_color;   gui_color_t text_color;
     bool has_border_width; uint8_t     border_width;
+    bool has_border_radius; uint8_t    border_radius;
     bool has_draw_background; bool     draw_background;
     bool has_draw_border;     bool     draw_border;
 } gml_style_t;
@@ -88,6 +89,11 @@ typedef struct {
     gml_align_t align;
     gml_align_t justify;
 } gml_layout_t;
+
+typedef struct {
+    const char *signal;
+    const char *property;
+} gml_binding_t;
 
 /* ----- lifecycle ---------------------------------------------------------- */
 
@@ -137,16 +143,55 @@ void gml_project_set_style(gml_project_t *project, gml_handle_t handle, gml_styl
 void gml_project_set_label_text(gml_project_t *project, gml_handle_t handle, const char *text);
 void gml_project_set_label_scale(gml_project_t *project, gml_handle_t handle, uint8_t scale);
 void gml_project_set_label_align(gml_project_t *project, gml_handle_t handle, gml_label_align_t align);
+void gml_project_set_label_vertical_align(gml_project_t *project, gml_handle_t handle, gml_vertical_align_t align);
+void gml_project_set_label_text_auto_size(gml_project_t *project, gml_handle_t handle, bool enabled);
 void gml_project_set_label_font(gml_project_t *project, gml_handle_t handle, const gui_font_t *font);
 
 void gml_project_set_button_text(gml_project_t *project, gml_handle_t handle, const char *text);
 void gml_project_set_button_font(gml_project_t *project, gml_handle_t handle, const gui_font_t *font);
 void gml_project_set_button_pressed_bg(gml_project_t *project, gml_handle_t handle, gui_color_t color);
 void gml_project_set_button_padding(gml_project_t *project, gml_handle_t handle, uint8_t px, uint8_t py);
+void gml_project_set_button_padding_sides(gml_project_t *project,
+                                          gml_handle_t handle,
+                                          uint8_t top,
+                                          uint8_t right,
+                                          uint8_t bottom,
+                                          uint8_t left);
 void gml_project_set_button_scale(gml_project_t *project, gml_handle_t handle, uint8_t scale);
+void gml_project_set_button_icon(gml_project_t *project, gml_handle_t handle, const char *icon_id);
+void gml_project_set_button_icon_layout(gml_project_t *project,
+                                        gml_handle_t handle,
+                                        const char *position,
+                                        uint8_t gap);
+void gml_project_set_button_content_align(gml_project_t *project,
+                                          gml_handle_t handle,
+                                          gml_label_align_t horizontal,
+                                          gml_vertical_align_t vertical);
 
 void gml_project_set_icon_asset_id(gml_project_t *project, gml_handle_t handle, const char *icon_id);
 void gml_project_set_icon_color(gml_project_t *project, gml_handle_t handle, gui_color_t color);
+
+void gml_project_set_shape_radius(gml_project_t *project, gml_handle_t handle, uint8_t radius);
+void gml_project_set_shape_triangle_direction(gml_project_t *project,
+                                              gml_handle_t handle,
+                                              gml_triangle_direction_t direction);
+void gml_project_set_shape_line(gml_project_t *project,
+                                gml_handle_t handle,
+                                int16_t x1,
+                                int16_t y1,
+                                int16_t x2,
+                                int16_t y2,
+                                uint8_t stroke_width);
+void gml_project_set_freehand_points(gml_project_t *project,
+                                     gml_handle_t handle,
+                                     const gui_point_t *points,
+                                     uint16_t point_count,
+                                     uint8_t stroke_width);
+void gml_project_set_rotation(gml_project_t *project, gml_handle_t handle, int16_t rotation_degrees);
+void gml_project_set_bindings(gml_project_t *project,
+                              gml_handle_t handle,
+                              const gml_binding_t *bindings,
+                              uint16_t count);
 
 void gml_project_set_on_press(gml_project_t *project,
                               gml_handle_t handle,

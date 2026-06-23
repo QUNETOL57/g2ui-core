@@ -1,0 +1,222 @@
+{
+  "schemaVersion": "0.1.0",
+  "id": "kitchen_sink",
+  "name": "Kitchen Sink",
+  "display": {
+    "width": 240,
+    "height": 320,
+    "colorFormat": "rgb565"
+  },
+  "palette": [
+    { "token": "bg", "hex": "#10131A" },
+    { "token": "surface", "hex": "#1C2230" },
+    { "token": "accent", "hex": "#4DA3FF" },
+    { "token": "ok", "hex": "#59D98E" },
+    { "token": "warn", "hex": "#FFC66D" },
+    { "token": "text", "hex": "#F5F7FF" }
+  ],
+  "initialScreenId": "main",
+  "screens": [
+    {
+      "id": "main",
+      "type": "screen",
+      "width": 240,
+      "height": 320,
+      "style": {
+        "background": { "kind": "token", "token": "bg" },
+        "drawBackground": true
+      },
+      "children": [
+        {
+          "id": "header",
+          "type": "panel",
+          "frame": { "x": 8, "y": 8, "width": 224, "height": 56 },
+          "layout": { "mode": "row", "padding": 8, "gap": 8, "align": "center" },
+          "style": {
+            "background": { "kind": "token", "token": "surface" },
+            "borderColor": { "kind": "token", "token": "accent" },
+            "borderWidth": 1,
+            "borderRadius": 6,
+            "drawBackground": true,
+            "drawBorder": true
+          },
+          "children": [
+            {
+              "id": "title",
+              "type": "label",
+              "frame": { "x": 0, "y": 0, "width": 120, "height": 24 },
+              "style": { "textColor": { "kind": "token", "token": "text" } },
+              "props": {
+                "text": "g2ui-core parity",
+                "align": "left",
+                "verticalAlign": "center",
+                "fontFamily": "BDF",
+                "fontSize": 7,
+                "fontStyle": "regular",
+                "textAutoSize": false
+              }
+            },
+            {
+              "id": "icon_wifi",
+              "type": "icon",
+              "frame": { "x": 0, "y": 0, "width": 16, "height": 16 },
+              "style": { "textColor": { "kind": "token", "token": "accent" } },
+              "props": { "iconId": "wifi" }
+            },
+            {
+              "id": "value_label",
+              "type": "label",
+              "frame": { "x": 0, "y": 0, "width": 72, "height": 24 },
+              "style": { "textColor": { "kind": "token", "token": "warn" } },
+              "props": {
+                "text": "0",
+                "align": "right",
+                "verticalAlign": "center",
+                "fontFamily": "BDF",
+                "fontSize": 7,
+                "fontStyle": "regular",
+                "textAutoSize": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "btn_setvalue",
+          "type": "button",
+          "frame": { "x": 8, "y": 72, "width": 224, "height": 44 },
+          "style": {
+            "background": { "kind": "token", "token": "surface" },
+            "textColor": { "kind": "token", "token": "text" },
+            "borderColor": { "kind": "token", "token": "accent" },
+            "borderWidth": 1,
+            "borderRadius": 6,
+            "drawBackground": true,
+            "drawBorder": true
+          },
+          "props": {
+            "text": "Set value -> 42",
+            "iconId": "bolt",
+            "iconPosition": "left",
+            "iconGap": 3,
+            "horizontalAlign": "center",
+            "verticalAlign": "center",
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 6,
+            "paddingBottom": 6,
+            "fontFamily": "BDF",
+            "fontSize": 7,
+            "fontStyle": "regular"
+          },
+          "bindings": [
+            { "signal": "demo.signal", "property": "text" }
+          ],
+          "onPress": {
+            "kind": "setValue",
+            "target": "value_label",
+            "value": "42"
+          }
+        },
+        {
+          "id": "rect_rounded",
+          "type": "rect",
+          "rotation": 90,
+          "frame": { "x": 12, "y": 124, "width": 60, "height": 34 },
+          "style": {
+            "background": { "kind": "token", "token": "accent" },
+            "borderColor": { "kind": "token", "token": "text" },
+            "borderWidth": 1,
+            "drawBackground": true,
+            "drawBorder": true
+          },
+          "props": { "radius": 5 }
+        },
+        {
+          "id": "circle",
+          "type": "circle",
+          "frame": { "x": 84, "y": 124, "width": 34, "height": 34 },
+          "style": {
+            "background": { "kind": "token", "token": "ok" },
+            "borderColor": { "kind": "token", "token": "text" },
+            "borderWidth": 1,
+            "drawBackground": true,
+            "drawBorder": true
+          },
+          "props": { "radius": 16 }
+        },
+        {
+          "id": "triangle",
+          "type": "triangle",
+          "frame": { "x": 128, "y": 124, "width": 40, "height": 34 },
+          "style": {
+            "background": { "kind": "token", "token": "warn" },
+            "borderColor": { "kind": "token", "token": "text" },
+            "borderWidth": 1,
+            "drawBackground": true,
+            "drawBorder": true
+          },
+          "props": { "direction": "up" }
+        },
+        {
+          "id": "line",
+          "type": "line",
+          "frame": { "x": 176, "y": 124, "width": 52, "height": 34 },
+          "style": {
+            "borderColor": { "kind": "token", "token": "accent" },
+            "borderWidth": 2
+          },
+          "props": { "x1": 0, "y1": 2, "x2": 50, "y2": 30, "strokeWidth": 2 }
+        },
+        {
+          "id": "freehand",
+          "type": "freehand",
+          "frame": { "x": 8, "y": 168, "width": 224, "height": 56 },
+          "style": {
+            "borderColor": { "kind": "token", "token": "ok" },
+            "borderWidth": 2
+          },
+          "props": {
+            "strokeWidth": 2,
+            "points": [
+              { "x": 3, "y": 28 },
+              { "x": 9, "y": 24 },
+              { "x": 15, "y": 20 },
+              { "x": 21, "y": 18 },
+              { "x": 27, "y": 17 },
+              { "x": 33, "y": 19 },
+              { "x": 39, "y": 24 },
+              { "x": 45, "y": 30 },
+              { "x": 51, "y": 35 },
+              { "x": 57, "y": 36 },
+              { "x": 63, "y": 32 },
+              { "x": 69, "y": 25 },
+              { "x": 75, "y": 20 },
+              { "x": 81, "y": 18 },
+              { "x": 87, "y": 21 },
+              { "x": 93, "y": 28 },
+              { "x": 99, "y": 34 },
+              { "x": 105, "y": 36 },
+              { "x": 111, "y": 32 },
+              { "x": 117, "y": 25 }
+            ]
+          }
+        },
+        {
+          "id": "footer_label",
+          "type": "label",
+          "frame": { "x": 8, "y": 232, "width": 224, "height": 20 },
+          "style": { "textColor": { "kind": "token", "token": "text" } },
+          "props": {
+            "text": "No image widget in this demo",
+            "align": "center",
+            "verticalAlign": "center",
+            "fontFamily": "BDF",
+            "fontSize": 7,
+            "fontStyle": "regular",
+            "textAutoSize": false
+          }
+        }
+      ]
+    }
+  ]
+}
