@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * GuiMintLab schema mirror for C runtime.
+ * G2UI schema mirror for C runtime.
  *
  * This file MUST match `ui-ir/src/schema.ts`. If the IR version
  * bumps, bump `GML_IR_SCHEMA_VERSION` here and re-run codegen.

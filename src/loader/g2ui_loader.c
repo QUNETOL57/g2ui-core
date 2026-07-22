@@ -1,5 +1,5 @@
 /*
- * GuiMintLab IR JSON loader.
+ * G2UI IR JSON loader.
  *
  * Walks a cJSON tree shaped like `ui-ir/src/schema.ts` and drives
  * the builder API to assemble the widget tree. Strings referenced by the
@@ -7,7 +7,7 @@
  * into the runtime's string pool so they survive cJSON_Delete.
  */
 
-#include "guimintlab_loader.h"
+#include "g2ui_loader.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -17,9 +17,9 @@
 
 #include "gui/widgets/gui_button.h"
 
-#include "guimintlab_builder.h"
-#include "guimintlab_runtime_internal.h"
-#include "guimintlab_schema.h"
+#include "g2ui_builder.h"
+#include "g2ui_runtime_internal.h"
+#include "g2ui_schema.h"
 
 static const char *TAG = "gml_loader";
 
@@ -52,7 +52,7 @@ static bool json_bool(const cJSON *obj, const char *key, bool dflt) {
 }
 
 /* Duplicate string into runtime strpool. NULL input -> NULL output. */
-static const char *dup_str(guimintlab_t *gml, const char *s) {
+static const char *dup_str(g2ui_t *gml, const char *s) {
     if (s == NULL) {
         return NULL;
     }
@@ -223,6 +223,31 @@ static const gui_font_t *resolve_font_face(const cJSON *props) {
     return gui_font_find_by_id("default_5x7");
 }
 
+static uint8_t resolve_font_scale(const cJSON *props, const gui_font_t *font) {
+    if (!cJSON_IsObject(props) || font == NULL || font->line_height == 0) {
+        return 1;
+    }
+
+    const int requested_size = json_int(props, "fontSize", font->line_height);
+    if (requested_size <= 0) {
+        return 1;
+    }
+
+    /*
+     * Bitmap faces such as Org_01 have one native size (7 px high), while the
+     * IR expresses the rendered pixel height. Scale the selected face to the
+     * nearest integer multiple so Org_01 63 px becomes 9x and 28 px becomes
+     * 4x. Families that provide the requested size resolve to scale 1.
+     */
+    int scale = (requested_size + (font->line_height / 2)) / font->line_height;
+    if (scale < 1) {
+        scale = 1;
+    } else if (scale > UINT8_MAX) {
+        scale = UINT8_MAX;
+    }
+    return (uint8_t)scale;
+}
+
 static gml_widget_type_t parse_widget_type(const char *s) {
     if (s == NULL) return GML_WIDGET_TYPE_PANEL;
     if (strcmp(s, "screen") == 0) return GML_WIDGET_TYPE_SCREEN;
@@ -328,7 +353,7 @@ static void apply_style(gml_project_t *project,
  * onPress handling — stores action into press table and wires trampoline.
  * --------------------------------------------------------------------------*/
 
-static void apply_on_press(guimintlab_t *gml,
+static void apply_on_press(g2ui_t *gml,
                            gml_handle_t handle,
                            const char *widget_id,
                            const cJSON *on_press)
@@ -398,7 +423,7 @@ static int line_visible_y(int value, int height, int stroke_width)
     return y;
 }
 
-static void apply_bindings(guimintlab_t *gml, gml_handle_t handle, const cJSON *bindings)
+static void apply_bindings(g2ui_t *gml, gml_handle_t handle, const cJSON *bindings)
 {
     if (!cJSON_IsArray(bindings)) {
         return;
@@ -433,12 +458,12 @@ static void apply_bindings(guimintlab_t *gml, gml_handle_t handle, const cJSON *
     }
 }
 
-static void build_widget(guimintlab_t *gml,
+static void build_widget(g2ui_t *gml,
                          gml_handle_t parent,
                          const cJSON *node,
                          const palette_t *palette);
 
-static void apply_children(guimintlab_t *gml,
+static void apply_children(g2ui_t *gml,
                            gml_handle_t parent,
                            const cJSON *children,
                            const palette_t *palette)
@@ -452,7 +477,7 @@ static void apply_children(guimintlab_t *gml,
     }
 }
 
-static void build_widget(guimintlab_t *gml,
+static void build_widget(g2ui_t *gml,
                          gml_handle_t parent,
                          const cJSON *node,
                          const palette_t *palette)
@@ -509,6 +534,10 @@ static void build_widget(guimintlab_t *gml,
             const gui_font_t *font = resolve_font_face(props);
             if (font != NULL) {
                 gml_project_set_label_font(&gml->project, handle, font);
+                gml_project_set_label_scale(
+                    &gml->project,
+                    handle,
+                    resolve_font_scale(props, font));
             }
         }
         break;
@@ -531,6 +560,10 @@ static void build_widget(guimintlab_t *gml,
             const gui_font_t *font = resolve_font_face(props);
             if (font != NULL) {
                 gml_project_set_button_font(&gml->project, handle, font);
+                gml_project_set_button_scale(
+                    &gml->project,
+                    handle,
+                    resolve_font_scale(props, font));
             }
             const char *icon_id = dup_str(gml, json_string(props, "iconId", NULL));
             if (icon_id != NULL) {
@@ -669,7 +702,7 @@ static void load_palette(const cJSON *project_json, palette_t *palette) {
     }
 }
 
-esp_err_t gml_loader_load_from_memory(guimintlab_t *gml, const void *json, size_t size)
+esp_err_t gml_loader_load_from_memory(g2ui_t *gml, const void *json, size_t size)
 {
     if (gml == NULL || json == NULL || size == 0) {
         return ESP_ERR_INVALID_ARG;

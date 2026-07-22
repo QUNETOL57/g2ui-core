@@ -1,7 +1,7 @@
 #pragma once
 
 /*
- * Internal runtime state — the concrete definition of guimintlab_s.
+ * Internal runtime state — the concrete definition of g2ui_s.
  * Not exposed to library users.
  */
 
@@ -9,15 +9,15 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "guimintlab/guimintlab.h"
+#include "g2ui/g2ui.h"
 
 #include "gui/core/gui_context.h"
 #include "gui/core/gui_types.h"
 #include "gui/display/gui_display.h"
 #include "gui/theme/gui_theme.h"
 
-#include "guimintlab_builder.h"
-#include "guimintlab_schema.h"
+#include "g2ui_builder.h"
+#include "g2ui_schema.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,12 +31,12 @@ typedef struct {
     const char *action_target;    /* strpool pointer or NULL              */
     const char *action_value;     /* strpool pointer or NULL              */
 
-    guimintlab_press_cb_t user_cb;
+    g2ui_press_cb_t user_cb;
     void *user_data;
 } gml_press_entry_t;
 
-struct guimintlab_s {
-    guimintlab_config_t cfg;
+struct g2ui_s {
+    g2ui_config_t cfg;
 
     /* Display + GUI core ---------------------------------------------------*/
     gui_display_t display;
@@ -66,10 +66,10 @@ struct guimintlab_s {
     bool loaded;
 };
 
-/* Helpers implemented in guimintlab.c and used by the loader. */
-const char *gml_runtime_strpool_put(guimintlab_t *gml, const char *s);
-gml_press_entry_t *gml_runtime_alloc_press_entry(guimintlab_t *gml, const char *widget_id);
-gui_point_t *gml_runtime_alloc_points(guimintlab_t *gml, uint16_t point_count);
+/* Helpers implemented in g2ui.c and used by the loader. */
+const char *gml_runtime_strpool_put(g2ui_t *gml, const char *s);
+gml_press_entry_t *gml_runtime_alloc_press_entry(g2ui_t *gml, const char *widget_id);
+gui_point_t *gml_runtime_alloc_points(g2ui_t *gml, uint16_t point_count);
 void gml_runtime_internal_button_click(void *user_data);
 
 #ifdef __cplusplus

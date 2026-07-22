@@ -1,10 +1,10 @@
 version: "0.1.0"
 description: |
-  GuiMintLab runtime — single ESP-IDF component that loads UI definitions
-  (JSON IR authored in guimintlab-studio) at runtime and renders them on
+  G2UI runtime — single ESP-IDF component that loads UI definitions
+  (JSON IR authored in g2ui-studio) at runtime and renders them on
   an SPI TFT display. Includes the display driver, dirty-rect renderer,
   retained-mode widget tree and JSON loader.
-url: https://github.com/qunetol/guimintlab-core
+url: https://github.com/qunetol/g2ui-core
 
 # Managed targets — tested on ESP32 classic. Should build on every Xtensa/RISC-V
 # target that has esp_lcd + the SPI master peripheral.

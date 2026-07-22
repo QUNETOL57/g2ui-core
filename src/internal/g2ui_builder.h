@@ -9,15 +9,15 @@
 #include "gui/core/gui_widget.h"
 #include "gui/theme/gui_theme.h"
 
-#include "guimintlab_schema.h"
+#include "g2ui_schema.h"
 
 /**
- * GuiMintLab declarative builder API.
+ * G2UI declarative builder API.
  *
- * Generated C code (produced by `@guimintlab/ui-codegen-c`) ONLY speaks this
+ * Generated C code (produced by `@g2ui/ui-codegen-c`) ONLY speaks this
  * API. Hand-written firmware code may use it too, but ad-hoc widget
  * allocation is the old path and must be avoided for anything that comes
- * from a project.guimintlab.json.
+ * from a project.g2ui.json.
  *
  * Arena model:
  *   - the caller provides a byte arena sized for all widgets and internal

@@ -1,16 +1,16 @@
 /*
- * GuiMintLab public runtime.
+ * G2UI public runtime.
  *
- * This file implements the guimintlab public API by wiring together:
+ * This file implements the g2ui public API by wiring together:
  *   - the display driver + context (src/gui/...)
- *   - the declarative builder (src/internal/guimintlab_builder.c/.h)
- *   - the IR JSON loader (src/loader/guimintlab_loader.c/.h)
+ *   - the declarative builder (src/internal/g2ui_builder.c/.h)
+ *   - the IR JSON loader (src/loader/g2ui_loader.c/.h)
  *
- * The idea is that application code depends ONLY on <guimintlab/guimintlab.h>
+ * The idea is that application code depends ONLY on <g2ui/g2ui.h>
  * and a project.json blob — everything else lives inside this component.
  */
 
-#include "guimintlab/guimintlab.h"
+#include "g2ui/g2ui.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -27,12 +27,12 @@
 #include "gui/generated/gui_assets_generated.h"
 #include "gui/widgets/gui_button.h"
 
-#include "guimintlab_builder.h"
-#include "guimintlab_runtime_internal.h"
-#include "guimintlab_schema.h"
-#include "guimintlab_loader.h"
+#include "g2ui_builder.h"
+#include "g2ui_runtime_internal.h"
+#include "g2ui_schema.h"
+#include "g2ui_loader.h"
 
-static const char *TAG = "guimintlab";
+static const char *TAG = "g2ui";
 
 #define GML_DEFAULT_MAX_WIDGETS 64
 #define GML_DEFAULT_TICK_DELAY_MS 25
@@ -48,7 +48,7 @@ static const gml_icon_registry_t s_default_icon_registry = {
 
 /* Forward decl: implemented below; resolves the owning runtime from a press
  * entry pointer via the small static registry. */
-static guimintlab_t *gml_runtime_owner_of_entry(gml_press_entry_t *e);
+static g2ui_t *gml_runtime_owner_of_entry(gml_press_entry_t *e);
 
 /* Arena needs to hold widget nodes + id table + growable storage inside the
  * builder. This bound is empirical — it assumes every node costs roughly
@@ -64,7 +64,7 @@ static size_t arena_bytes_for(uint16_t max_widgets) {
  * Internal helpers exposed to the loader.
  * --------------------------------------------------------------------------*/
 
-const char *gml_runtime_strpool_put(guimintlab_t *gml, const char *s) {
+const char *gml_runtime_strpool_put(g2ui_t *gml, const char *s) {
     if (gml == NULL || s == NULL) {
         return NULL;
     }
@@ -80,7 +80,7 @@ const char *gml_runtime_strpool_put(guimintlab_t *gml, const char *s) {
     return dst;
 }
 
-gml_press_entry_t *gml_runtime_alloc_press_entry(guimintlab_t *gml, const char *widget_id) {
+gml_press_entry_t *gml_runtime_alloc_press_entry(g2ui_t *gml, const char *widget_id) {
     if (gml->press_entry_count >= gml->press_entry_capacity) {
         return NULL;
     }
@@ -90,7 +90,7 @@ gml_press_entry_t *gml_runtime_alloc_press_entry(guimintlab_t *gml, const char *
     return e;
 }
 
-gui_point_t *gml_runtime_alloc_points(guimintlab_t *gml, uint16_t point_count)
+gui_point_t *gml_runtime_alloc_points(g2ui_t *gml, uint16_t point_count)
 {
     if (gml == NULL || point_count == 0) {
         return NULL;
@@ -106,12 +106,12 @@ gui_point_t *gml_runtime_alloc_points(guimintlab_t *gml, uint16_t point_count)
     return ptr;
 }
 
-static gml_press_entry_t *find_press_entry(const guimintlab_t *gml, const char *widget_id) {
+static gml_press_entry_t *find_press_entry(const g2ui_t *gml, const char *widget_id) {
     if (widget_id == NULL) {
         return NULL;
     }
     for (uint16_t i = 0; i < gml->press_entry_count; ++i) {
-        gml_press_entry_t *e = &((guimintlab_t *)gml)->press_entries[i];
+        gml_press_entry_t *e = &((g2ui_t *)gml)->press_entries[i];
         if (e->widget_id != NULL && strcmp(e->widget_id, widget_id) == 0) {
             return e;
         }
@@ -124,7 +124,7 @@ void gml_runtime_internal_button_click(void *user_data) {
     if (e == NULL) {
         return;
     }
-    /* Resolve the enclosing guimintlab_t. Entries live inside gml->press_entries,
+    /* Resolve the enclosing g2ui_t. Entries live inside gml->press_entries,
      * but we don't keep a back-pointer — instead we stashed it via on_press(). */
     /* For simplicity we use the strpool invariant: action_target / value live
      * inside gml, and press callbacks carry their own user_data pointing here.
@@ -135,8 +135,8 @@ void gml_runtime_internal_button_click(void *user_data) {
      * resolve it by walking up through the gml list kept by this module. */
 
     /* We keep a small list of active runtimes so trampolines can find the
-     * owning guimintlab_t from an entry pointer. */
-    guimintlab_t *gml = gml_runtime_owner_of_entry(e);
+     * owning g2ui_t from an entry pointer. */
+    g2ui_t *gml = gml_runtime_owner_of_entry(e);
     if (gml == NULL) {
         return;
     }
@@ -153,23 +153,23 @@ void gml_runtime_internal_button_click(void *user_data) {
 
 /* ---------------------------------------------------------------------------
  * Active runtime registry — tiny static list so trampolines can resolve their
- * owning guimintlab_t from a press-entry pointer.
+ * owning g2ui_t from a press-entry pointer.
  * --------------------------------------------------------------------------*/
 
 #define GML_REGISTRY_MAX 4
-static guimintlab_t *s_registry[GML_REGISTRY_MAX];
+static g2ui_t *s_registry[GML_REGISTRY_MAX];
 
-static void registry_add(guimintlab_t *gml) {
+static void registry_add(g2ui_t *gml) {
     for (int i = 0; i < GML_REGISTRY_MAX; ++i) {
         if (s_registry[i] == NULL) {
             s_registry[i] = gml;
             return;
         }
     }
-    ESP_LOGE(TAG, "registry full; too many concurrent guimintlab_t instances");
+    ESP_LOGE(TAG, "registry full; too many concurrent g2ui_t instances");
 }
 
-static void registry_remove(guimintlab_t *gml) {
+static void registry_remove(g2ui_t *gml) {
     for (int i = 0; i < GML_REGISTRY_MAX; ++i) {
         if (s_registry[i] == gml) {
             s_registry[i] = NULL;
@@ -178,9 +178,9 @@ static void registry_remove(guimintlab_t *gml) {
     }
 }
 
-static guimintlab_t *gml_runtime_owner_of_entry(gml_press_entry_t *e) {
+static g2ui_t *gml_runtime_owner_of_entry(gml_press_entry_t *e) {
     for (int i = 0; i < GML_REGISTRY_MAX; ++i) {
-        guimintlab_t *g = s_registry[i];
+        g2ui_t *g = s_registry[i];
         if (g == NULL) continue;
         if (e >= g->press_entries && e < g->press_entries + g->press_entry_capacity) {
             return g;
@@ -193,7 +193,7 @@ static guimintlab_t *gml_runtime_owner_of_entry(gml_press_entry_t *e) {
  * Project lifecycle.
  * --------------------------------------------------------------------------*/
 
-static esp_err_t init_builder(guimintlab_t *gml) {
+static esp_err_t init_builder(g2ui_t *gml) {
     uint16_t max_widgets = gml->cfg.max_widgets ? gml->cfg.max_widgets : GML_DEFAULT_MAX_WIDGETS;
     uint16_t max_ids     = gml->cfg.max_ids     ? gml->cfg.max_ids     : max_widgets;
 
@@ -230,7 +230,7 @@ static esp_err_t init_builder(guimintlab_t *gml) {
     return ESP_OK;
 }
 
-static void reset_runtime_tables(guimintlab_t *gml) {
+static void reset_runtime_tables(g2ui_t *gml) {
     gml->strpool_used = 0;
     gml->point_pool_used = 0;
     gml->press_entry_count = 0;
@@ -240,11 +240,11 @@ static void reset_runtime_tables(guimintlab_t *gml) {
     }
 }
 
-esp_err_t guimintlab_new(const guimintlab_config_t *cfg, guimintlab_t **out) {
+esp_err_t g2ui_new(const g2ui_config_t *cfg, g2ui_t **out) {
     if (cfg == NULL || out == NULL) {
         return ESP_ERR_INVALID_ARG;
     }
-    guimintlab_t *gml = heap_caps_calloc(1, sizeof(*gml), MALLOC_CAP_8BIT);
+    g2ui_t *gml = heap_caps_calloc(1, sizeof(*gml), MALLOC_CAP_8BIT);
     if (gml == NULL) {
         return ESP_ERR_NO_MEM;
     }
@@ -307,11 +307,11 @@ esp_err_t guimintlab_new(const guimintlab_config_t *cfg, guimintlab_t **out) {
 oom:
     err = ESP_ERR_NO_MEM;
 fail:
-    guimintlab_free(gml);
+    g2ui_free(gml);
     return err;
 }
 
-void guimintlab_free(guimintlab_t *gml) {
+void g2ui_free(g2ui_t *gml) {
     if (gml == NULL) {
         return;
     }
@@ -325,7 +325,7 @@ void guimintlab_free(guimintlab_t *gml) {
     free(gml);
 }
 
-esp_err_t guimintlab_load_from_memory(guimintlab_t *gml, const void *json, size_t size) {
+esp_err_t g2ui_load_from_memory(g2ui_t *gml, const void *json, size_t size) {
     if (gml == NULL) {
         return ESP_ERR_INVALID_ARG;
     }
@@ -342,7 +342,7 @@ esp_err_t guimintlab_load_from_memory(guimintlab_t *gml, const void *json, size_
     return err;
 }
 
-esp_err_t guimintlab_show_screen(guimintlab_t *gml, const char *screen_id) {
+esp_err_t g2ui_show_screen(g2ui_t *gml, const char *screen_id) {
     if (gml == NULL || screen_id == NULL) {
         return ESP_ERR_INVALID_ARG;
     }
@@ -353,15 +353,15 @@ esp_err_t guimintlab_show_screen(guimintlab_t *gml, const char *screen_id) {
     return ESP_OK;
 }
 
-guimintlab_widget_t guimintlab_find(const guimintlab_t *gml, const char *widget_id) {
+g2ui_widget_t g2ui_find(const g2ui_t *gml, const char *widget_id) {
     if (gml == NULL || widget_id == NULL) {
-        return GUIMINTLAB_WIDGET_INVALID;
+        return G2UI_WIDGET_INVALID;
     }
     gml_handle_t h = gml_project_find(&gml->project, widget_id);
-    return (h == GML_HANDLE_INVALID) ? GUIMINTLAB_WIDGET_INVALID : (guimintlab_widget_t)h;
+    return (h == GML_HANDLE_INVALID) ? G2UI_WIDGET_INVALID : (g2ui_widget_t)h;
 }
 
-esp_err_t guimintlab_set_text(guimintlab_t *gml, const char *widget_id, const char *text) {
+esp_err_t g2ui_set_text(g2ui_t *gml, const char *widget_id, const char *text) {
     if (gml == NULL || widget_id == NULL) {
         return ESP_ERR_INVALID_ARG;
     }
@@ -384,7 +384,7 @@ esp_err_t guimintlab_set_text(guimintlab_t *gml, const char *widget_id, const ch
     return ESP_OK;
 }
 
-esp_err_t guimintlab_set_visible(guimintlab_t *gml, const char *widget_id, bool visible) {
+esp_err_t g2ui_set_visible(g2ui_t *gml, const char *widget_id, bool visible) {
     if (gml == NULL || widget_id == NULL) {
         return ESP_ERR_INVALID_ARG;
     }
@@ -396,9 +396,9 @@ esp_err_t guimintlab_set_visible(guimintlab_t *gml, const char *widget_id, bool 
     return ESP_OK;
 }
 
-esp_err_t guimintlab_on_press(guimintlab_t *gml,
+esp_err_t g2ui_on_press(g2ui_t *gml,
                               const char *widget_id,
-                              guimintlab_press_cb_t cb,
+                              g2ui_press_cb_t cb,
                               void *user_data)
 {
     if (gml == NULL || widget_id == NULL) {
@@ -436,7 +436,7 @@ esp_err_t guimintlab_on_press(guimintlab_t *gml,
     return ESP_OK;
 }
 
-esp_err_t guimintlab_tick(guimintlab_t *gml) {
+esp_err_t g2ui_tick(g2ui_t *gml) {
     if (gml == NULL) {
         return ESP_ERR_INVALID_ARG;
     }
@@ -444,7 +444,7 @@ esp_err_t guimintlab_tick(guimintlab_t *gml) {
     return ESP_OK;
 }
 
-void guimintlab_run(guimintlab_t *gml) {
+void g2ui_run(g2ui_t *gml) {
     if (gml == NULL) {
         return;
     }

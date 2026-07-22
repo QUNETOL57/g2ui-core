@@ -1,4 +1,4 @@
-#include "guimintlab_builder.h"
+#include "g2ui_builder.h"
 
 #include <string.h>
 
@@ -185,7 +185,7 @@ static void init_widget_for_type(gml_node_t *node, const gml_theme_t *theme, con
                                      theme->surface_raised,
                                      theme->accent_soft,
                                      theme->line_strong,
-                                     theme->border_thin);
+                                     0);
             }
             break;
         }

@@ -7,7 +7,7 @@ void gui_theme_init_default(gui_theme_t *theme)
     theme->screen_bg = gui_color_rgb565(4, 4, 4);
     theme->screen_grid = gui_color_rgb565(20, 20, 20);
     theme->surface_base = gui_color_rgb565(10, 10, 10);
-    theme->surface_raised = gui_color_rgb565(18, 18, 18);
+    theme->surface_raised = gui_color_rgb565(51, 51, 51);
     theme->surface_inverse = gui_color_rgb565(232, 232, 232);
     theme->line_soft = gui_color_rgb565(34, 34, 34);
     theme->line_strong = gui_color_rgb565(92, 92, 92);

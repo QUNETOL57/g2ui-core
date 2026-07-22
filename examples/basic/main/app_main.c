@@ -5,7 +5,7 @@
 #include "esp_log.h"
 #include "driver/spi_common.h"
 
-#include "guimintlab/guimintlab.h"
+#include "g2ui/g2ui.h"
 
 static const char *TAG = "g2ui_basic";
 
@@ -14,8 +14,8 @@ extern const uint8_t project_json_end[] asm("_binary_project_json_end");
 
 void app_main(void)
 {
-    guimintlab_t *gml = NULL;
-    const guimintlab_config_t cfg = {
+    g2ui_t *gml = NULL;
+    const g2ui_config_t cfg = {
         .display = {
             .host = SPI2_HOST,
             .pin_mosi = 11,
@@ -41,13 +41,13 @@ void app_main(void)
         .max_freehand_points = 512,
     };
 
-    ESP_ERROR_CHECK(guimintlab_new(&cfg, &gml));
-    ESP_ERROR_CHECK(guimintlab_load_from_memory(
+    ESP_ERROR_CHECK(g2ui_new(&cfg, &gml));
+    ESP_ERROR_CHECK(g2ui_load_from_memory(
         gml,
         project_json_start,
         (size_t)(project_json_end - project_json_start)));
-    ESP_ERROR_CHECK(guimintlab_show_screen(gml, "main"));
+    ESP_ERROR_CHECK(g2ui_show_screen(gml, "main"));
 
-    ESP_LOGI(TAG, "GuiMintLab basic example running");
-    guimintlab_run(gml);
+    ESP_LOGI(TAG, "G2UI basic example running");
+    g2ui_run(gml);
 }

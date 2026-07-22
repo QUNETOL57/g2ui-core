@@ -1,8 +1,8 @@
 idf_component_register(
     SRCS
-        "src/runtime/guimintlab.c"
-        "src/loader/guimintlab_loader.c"
-        "src/internal/guimintlab_builder.c"
+        "src/runtime/g2ui.c"
+        "src/loader/g2ui_loader.c"
+        "src/internal/g2ui_builder.c"
         "src/gui/core/gui_assets.c"
         "src/gui/core/gui_context.c"
         "src/gui/core/gui_widget.c"
