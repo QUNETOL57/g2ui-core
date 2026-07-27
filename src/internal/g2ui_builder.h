@@ -78,6 +78,7 @@ typedef struct {
     bool has_text_color;   gui_color_t text_color;
     bool has_border_width; uint8_t     border_width;
     bool has_border_radius; uint8_t    border_radius;
+    bool has_draw_corners;    bool     draw_corners;
     bool has_draw_background; bool     draw_background;
     bool has_draw_border;     bool     draw_border;
 } gml_style_t;

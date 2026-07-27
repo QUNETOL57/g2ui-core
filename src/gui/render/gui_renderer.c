@@ -142,24 +142,40 @@ static bool triangle_scanline(int y,
         return false;
     }
 
+    /*
+     * Classic pixel-art isosceles triangle (matches g2ui editor pixelTriangle.ts).
+     * Up/down grow a centered pyramid so both sides step together. Tip width is
+     * 1 for odd bases and 2 for even bases, keeping symmetry while filling the
+     * full frame. Left/right use one middle row for odd heights and two for even.
+     */
     if (direction == GUI_TRIANGLE_DIRECTION_UP || direction == GUI_TRIANGLE_DIRECTION_DOWN) {
-        const int source_y = (direction == GUI_TRIANGLE_DIRECTION_UP) ? y : (height - 1 - y);
-        const double progress = (height <= 1) ? 1.0 : ((double)source_y / (double)(height - 1));
-        const int row_width = (int)fmax(1.0, (double)gui_round_to_int(1.0 + progress * (double)(width - 1)));
-        const int x = (int)fmax(0.0, floor((double)(width - row_width) / 2.0));
-        *out_x = x;
-        *out_width = row_width > (width - x) ? (width - x) : row_width;
-        return *out_width > 0;
+        const int tip_width = (width % 2 == 0) ? 2 : 1;
+        const int max_half = (width - tip_width) / 2;
+        const int row_from_tip = (direction == GUI_TRIANGLE_DIRECTION_UP) ? y : (height - 1 - y);
+        const int half = (height <= 1)
+            ? max_half
+            : gui_round_to_int((double)(row_from_tip * max_half) / (double)(height - 1));
+        const int row_width = tip_width + 2 * half;
+        *out_x = (width - row_width) / 2;
+        *out_width = row_width;
+        return row_width > 0;
     }
 
-    const double progress = (height <= 1)
-        ? 1.0
-        : (direction == GUI_TRIANGLE_DIRECTION_RIGHT
-              ? (double)y / (double)((height - 1) > 0 ? (height - 1) : 1)
-              : 1.0 - (double)y / (double)((height - 1) > 0 ? (height - 1) : 1));
-    const int row_width = (int)fmax(1.0, (double)gui_round_to_int((double)width * (1.0 - fabs(progress - 0.5) * 2.0)));
-    const int x = direction == GUI_TRIANGLE_DIRECTION_RIGHT ? 0 : width - row_width;
-    *out_x = x;
+    const int middle_rows = (height % 2 == 0) ? 2 : 1;
+    const int middle_start = (height - middle_rows) / 2;
+    const int middle_end = middle_start + middle_rows - 1;
+    const int distance_from_base = (y <= middle_start) ? y : (height - 1 - y);
+    const int distance_to_middle = (y <= middle_start) ? middle_start : (height - 1 - middle_end);
+    const int grow = (distance_to_middle <= 0)
+        ? (width - 1)
+        : gui_round_to_int((double)(distance_from_base * (width - 1)) / (double)distance_to_middle);
+    int row_width = 1 + grow;
+    if (row_width < 1) {
+        row_width = 1;
+    } else if (row_width > width) {
+        row_width = width;
+    }
+    *out_x = (direction == GUI_TRIANGLE_DIRECTION_RIGHT) ? 0 : (width - row_width);
     *out_width = row_width;
     return row_width > 0;
 }

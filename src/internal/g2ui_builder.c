@@ -338,6 +338,11 @@ void gml_project_set_layout(gml_project_t *p, gml_handle_t h, gml_layout_t layou
 
 void gml_project_set_style(gml_project_t *p, gml_handle_t h, gml_style_t style) {
     REQUIRE_NODE(p, h, node);
+
+    /* Match editor isCornersEnabled / effectiveBorderRadius. */
+    const bool corners_explicitly_off = style.has_draw_corners && !style.draw_corners;
+    const bool apply_radius = style.has_draw_corners || style.has_border_radius;
+
     switch (node->type) {
         case GML_WIDGET_TYPE_SCREEN:
         case GML_WIDGET_TYPE_PANEL:
@@ -350,7 +355,14 @@ void gml_project_set_style(gml_project_t *p, gml_handle_t h, gml_style_t style) 
             if (style.has_background)    bg = style.background;
             if (style.has_border_color)  border = style.border_color;
             if (style.has_border_width)  border_w = style.border_width;
-            if (style.has_border_radius) radius = style.border_radius;
+            if (apply_radius) {
+                if (corners_explicitly_off) {
+                    radius = 0;
+                } else if (style.has_border_radius) {
+                    radius = style.border_radius;
+                }
+                /* drawCorners=true without borderRadius: keep existing radius as fallback. */
+            }
             gui_panel_set_style(panel, bg, border, border_w);
             gui_panel_set_radius(panel, radius);
             bool draw_bg = panel->draw_background;
@@ -375,8 +387,14 @@ void gml_project_set_style(gml_project_t *p, gml_handle_t h, gml_style_t style) 
             if (style.has_border_width) stroke_w = style.border_width;
             if (style.has_draw_background) draw_fill = style.draw_background;
             if (style.has_draw_border) draw_border = style.draw_border;
-            if (style.has_border_radius && node->type == GML_WIDGET_TYPE_RECT) {
-                gui_shape_set_radius(shape, style.border_radius);
+            if (apply_radius && node->type == GML_WIDGET_TYPE_RECT) {
+                uint8_t radius = shape->radius;
+                if (corners_explicitly_off) {
+                    radius = 0;
+                } else if (style.has_border_radius) {
+                    radius = style.border_radius;
+                }
+                gui_shape_set_radius(shape, radius);
             }
             gui_shape_set_style(shape, fill, draw_fill, stroke, stroke_w, draw_border);
             break;
@@ -402,8 +420,14 @@ void gml_project_set_style(gml_project_t *p, gml_handle_t h, gml_style_t style) 
                                  btn->pressed_background,
                                  style.has_border_color ? style.border_color : btn->border_color,
                                  style.has_border_width ? style.border_width : btn->border_width);
-            if (style.has_border_radius) {
-                gui_button_set_radius(btn, style.border_radius);
+            if (apply_radius) {
+                uint8_t radius = btn->radius;
+                if (corners_explicitly_off) {
+                    radius = 0;
+                } else if (style.has_border_radius) {
+                    radius = style.border_radius;
+                }
+                gui_button_set_radius(btn, radius);
             }
             bool draw_bg = btn->draw_background;
             bool draw_bd = btn->draw_border;

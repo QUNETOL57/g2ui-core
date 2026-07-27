@@ -104,7 +104,7 @@ void gui_label_init(gui_label_t *label, const gui_font_t *font, const char *text
     label->color = color;
     label->scale = 1;
     label->align = GUI_LABEL_ALIGN_LEFT;
-    label->vertical_align = GUI_LABEL_VERTICAL_ALIGN_CENTER;
+    label->vertical_align = GUI_LABEL_VERTICAL_ALIGN_TOP;
     label->text_auto_size = true;
 }
 

@@ -256,9 +256,9 @@
       "codepoint": 49,
       "width": 1,
       "height": 5,
-      "xOffset": 0,
+      "xOffset": 4,
       "yOffset": 0,
-      "advance": 2,
+      "advance": 6,
       "bitmapOffset": 57,
       "bitmap": [
         128,

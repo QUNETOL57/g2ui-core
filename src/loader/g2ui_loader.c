@@ -328,6 +328,11 @@ static void apply_style(gml_project_t *project,
         s.has_border_radius = true;
         s.border_radius = (uint8_t)br->valuedouble;
     }
+    const cJSON *dc = cJSON_GetObjectItemCaseSensitive(style, "drawCorners");
+    if (cJSON_IsBool(dc)) {
+        s.has_draw_corners = true;
+        s.draw_corners = cJSON_IsTrue(dc);
+    }
     const cJSON *dbg = cJSON_GetObjectItemCaseSensitive(style, "drawBackground");
     if (cJSON_IsBool(dbg)) {
         s.has_draw_background = true;
@@ -525,7 +530,7 @@ static void build_widget(g2ui_t *gml,
         gml_project_set_label_vertical_align(
             &gml->project,
             handle,
-            parse_vertical_align(cJSON_IsObject(props) ? json_string(props, "verticalAlign", "center") : "center"));
+            parse_vertical_align(cJSON_IsObject(props) ? json_string(props, "verticalAlign", "top") : "top"));
         gml_project_set_label_text_auto_size(
             &gml->project,
             handle,
