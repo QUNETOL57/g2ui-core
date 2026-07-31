@@ -22,6 +22,7 @@
 
 #include "gui/core/gui_context.h"
 #include "gui/core/gui_assets.h"
+#include "gui/core/gui_types.h"
 #include "gui/display/gui_display.h"
 #include "gui/theme/gui_theme.h"
 #include "gui/generated/gui_assets_generated.h"
@@ -381,6 +382,24 @@ esp_err_t g2ui_set_text(g2ui_t *gml, const char *widget_id, const char *text) {
     } else {
         return ESP_ERR_INVALID_STATE;
     }
+    return ESP_OK;
+}
+
+esp_err_t g2ui_set_text_color(g2ui_t *gml, const char *widget_id, uint32_t rgb) {
+    if (gml == NULL || widget_id == NULL) {
+        return ESP_ERR_INVALID_ARG;
+    }
+    gml_handle_t h = gml_project_find(&gml->project, widget_id);
+    if (h == GML_HANDLE_INVALID) {
+        return ESP_ERR_NOT_FOUND;
+    }
+    if (gml_project_widget_type(&gml->project, h) != GML_WIDGET_TYPE_LABEL) {
+        return ESP_ERR_INVALID_STATE;
+    }
+    const uint8_t r = (uint8_t)((rgb >> 16) & 0xFFU);
+    const uint8_t g = (uint8_t)((rgb >> 8) & 0xFFU);
+    const uint8_t b = (uint8_t)(rgb & 0xFFU);
+    gml_project_set_label_color(&gml->project, h, gui_color_rgb565(r, g, b));
     return ESP_OK;
 }
 

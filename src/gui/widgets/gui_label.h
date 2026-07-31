@@ -16,6 +16,7 @@ typedef struct {
 
 void gui_label_init(gui_label_t *label, const gui_font_t *font, const char *text, gui_color_t color);
 void gui_label_set_text(gui_label_t *label, const char *text);
+void gui_label_set_color(gui_label_t *label, gui_color_t color);
 void gui_label_set_scale(gui_label_t *label, uint8_t scale);
 void gui_label_set_align(gui_label_t *label, uint8_t align);
 void gui_label_set_vertical_align(gui_label_t *label, uint8_t vertical_align);

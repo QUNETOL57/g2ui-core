@@ -450,6 +450,12 @@ void gml_project_set_label_text(gml_project_t *p, gml_handle_t h, const char *te
     gui_label_set_text(&node->storage.label, text);
 }
 
+void gml_project_set_label_color(gml_project_t *p, gml_handle_t h, gui_color_t color) {
+    REQUIRE_NODE(p, h, node);
+    if (node->type != GML_WIDGET_TYPE_LABEL) return;
+    gui_label_set_color(&node->storage.label, color);
+}
+
 void gml_project_set_label_scale(gml_project_t *p, gml_handle_t h, uint8_t scale) {
     REQUIRE_NODE(p, h, node);
     if (node->type != GML_WIDGET_TYPE_LABEL) return;

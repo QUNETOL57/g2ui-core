@@ -142,6 +142,7 @@ void gml_project_set_style(gml_project_t *project, gml_handle_t handle, gml_styl
 
 /* Type-specific setters (no-op if handle is not of that type) */
 void gml_project_set_label_text(gml_project_t *project, gml_handle_t handle, const char *text);
+void gml_project_set_label_color(gml_project_t *project, gml_handle_t handle, gui_color_t color);
 void gml_project_set_label_scale(gml_project_t *project, gml_handle_t handle, uint8_t scale);
 void gml_project_set_label_align(gml_project_t *project, gml_handle_t handle, gml_label_align_t align);
 void gml_project_set_label_vertical_align(gml_project_t *project, gml_handle_t handle, gml_vertical_align_t align);

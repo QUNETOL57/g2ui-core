@@ -120,6 +120,15 @@ void gui_label_set_text(gui_label_t *label, const char *text)
     gui_widget_invalidate(&label->base);
 }
 
+void gui_label_set_color(gui_label_t *label, gui_color_t color)
+{
+    if (label->color == color) {
+        return;
+    }
+    label->color = color;
+    gui_widget_invalidate(&label->base);
+}
+
 void gui_label_set_scale(gui_label_t *label, uint8_t scale)
 {
     if (scale == 0) {
