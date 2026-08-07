@@ -261,7 +261,27 @@ static gml_widget_type_t parse_widget_type(const char *s) {
     if (strcmp(s, "circle") == 0) return GML_WIDGET_TYPE_CIRCLE;
     if (strcmp(s, "triangle") == 0) return GML_WIDGET_TYPE_TRIANGLE;
     if (strcmp(s, "freehand") == 0) return GML_WIDGET_TYPE_FREEHAND;
+    if (strcmp(s, "qrcode") == 0) return GML_WIDGET_TYPE_QRCODE;
     return GML_WIDGET_TYPE_PANEL;
+}
+
+static gml_qrcode_ecc_t parse_qrcode_ecc(const char *s) {
+    if (s == NULL) return GML_QRCODE_ECC_MEDIUM;
+    if (strcmp(s, "l") == 0 || strcmp(s, "L") == 0) return GML_QRCODE_ECC_LOW;
+    if (strcmp(s, "q") == 0 || strcmp(s, "Q") == 0) return GML_QRCODE_ECC_QUARTILE;
+    if (strcmp(s, "h") == 0 || strcmp(s, "H") == 0) return GML_QRCODE_ECC_HIGH;
+    return GML_QRCODE_ECC_MEDIUM;
+}
+
+static gml_qrcode_size_t parse_qrcode_size(const char *s) {
+    if (s == NULL) return GML_QRCODE_SIZE_M;
+    if (strcmp(s, "xxs") == 0) return GML_QRCODE_SIZE_XXS;
+    if (strcmp(s, "xs") == 0) return GML_QRCODE_SIZE_XS;
+    if (strcmp(s, "s") == 0) return GML_QRCODE_SIZE_S;
+    if (strcmp(s, "l") == 0) return GML_QRCODE_SIZE_L;
+    if (strcmp(s, "xl") == 0) return GML_QRCODE_SIZE_XL;
+    if (strcmp(s, "xxl") == 0) return GML_QRCODE_SIZE_XXL;
+    return GML_QRCODE_SIZE_M;
 }
 
 static gml_action_kind_t parse_action_kind(const char *s) {
@@ -327,6 +347,11 @@ static void apply_style(gml_project_t *project,
     if (cJSON_IsNumber(br)) {
         s.has_border_radius = true;
         s.border_radius = (uint8_t)br->valuedouble;
+    }
+    const cJSON *dc = cJSON_GetObjectItemCaseSensitive(style, "drawCorners");
+    if (cJSON_IsBool(dc)) {
+        s.has_draw_corners = true;
+        s.draw_corners = cJSON_IsTrue(dc);
     }
     const cJSON *dbg = cJSON_GetObjectItemCaseSensitive(style, "drawBackground");
     if (cJSON_IsBool(dbg)) {
@@ -525,7 +550,7 @@ static void build_widget(g2ui_t *gml,
         gml_project_set_label_vertical_align(
             &gml->project,
             handle,
-            parse_vertical_align(cJSON_IsObject(props) ? json_string(props, "verticalAlign", "center") : "center"));
+            parse_vertical_align(cJSON_IsObject(props) ? json_string(props, "verticalAlign", "top") : "top"));
         gml_project_set_label_text_auto_size(
             &gml->project,
             handle,
@@ -672,6 +697,17 @@ static void build_widget(g2ui_t *gml,
                                                 (uint16_t)written,
                                                 (uint8_t)json_int(props, "strokeWidth", 1));
             }
+        }
+        break;
+    case GML_WIDGET_TYPE_QRCODE:
+        if (cJSON_IsObject(props)) {
+            const char *text = dup_str(gml, json_string(props, "text", ""));
+            gml_project_set_qrcode(&gml->project,
+                                   handle,
+                                   text != NULL ? text : "",
+                                   (uint8_t)json_int(props, "version", 1),
+                                   parse_qrcode_ecc(json_string(props, "ecc", "m")),
+                                   parse_qrcode_size(json_string(props, "size", "m")));
         }
         break;
     default:

@@ -7,6 +7,7 @@
 #include "gui/widgets/gui_icon.h"
 #include "gui/widgets/gui_label.h"
 #include "gui/widgets/gui_panel.h"
+#include "gui/widgets/gui_qrcode.h"
 #include "gui/widgets/gui_shape.h"
 
 /*
@@ -28,6 +29,7 @@ typedef union {
     gui_icon_widget_t icon;
     gui_shape_t shape;
     gui_freehand_t freehand;
+    gui_qrcode_t qrcode;
 } gml_widget_storage_t;
 
 typedef struct {
@@ -80,6 +82,8 @@ static gui_widget_t *widget_base(gml_node_t *node) {
             return &node->storage.shape.base;
         case GML_WIDGET_TYPE_FREEHAND:
             return &node->storage.freehand.base;
+        case GML_WIDGET_TYPE_QRCODE:
+            return &node->storage.qrcode.base;
         case GML_WIDGET_TYPE_LABEL:
             return &node->storage.label.base;
         case GML_WIDGET_TYPE_BUTTON:
@@ -168,6 +172,9 @@ static void init_widget_for_type(gml_node_t *node, const gml_theme_t *theme, con
             break;
         case GML_WIDGET_TYPE_FREEHAND:
             gui_freehand_init(&node->storage.freehand);
+            break;
+        case GML_WIDGET_TYPE_QRCODE:
+            gui_qrcode_init(&node->storage.qrcode);
             break;
         case GML_WIDGET_TYPE_LABEL: {
             const gui_font_t *font = default_font;
@@ -338,6 +345,11 @@ void gml_project_set_layout(gml_project_t *p, gml_handle_t h, gml_layout_t layou
 
 void gml_project_set_style(gml_project_t *p, gml_handle_t h, gml_style_t style) {
     REQUIRE_NODE(p, h, node);
+
+    /* Match editor isCornersEnabled / effectiveBorderRadius. */
+    const bool corners_explicitly_off = style.has_draw_corners && !style.draw_corners;
+    const bool apply_radius = style.has_draw_corners || style.has_border_radius;
+
     switch (node->type) {
         case GML_WIDGET_TYPE_SCREEN:
         case GML_WIDGET_TYPE_PANEL:
@@ -350,7 +362,14 @@ void gml_project_set_style(gml_project_t *p, gml_handle_t h, gml_style_t style) 
             if (style.has_background)    bg = style.background;
             if (style.has_border_color)  border = style.border_color;
             if (style.has_border_width)  border_w = style.border_width;
-            if (style.has_border_radius) radius = style.border_radius;
+            if (apply_radius) {
+                if (corners_explicitly_off) {
+                    radius = 0;
+                } else if (style.has_border_radius) {
+                    radius = style.border_radius;
+                }
+                /* drawCorners=true without borderRadius: keep existing radius as fallback. */
+            }
             gui_panel_set_style(panel, bg, border, border_w);
             gui_panel_set_radius(panel, radius);
             bool draw_bg = panel->draw_background;
@@ -375,8 +394,14 @@ void gml_project_set_style(gml_project_t *p, gml_handle_t h, gml_style_t style) 
             if (style.has_border_width) stroke_w = style.border_width;
             if (style.has_draw_background) draw_fill = style.draw_background;
             if (style.has_draw_border) draw_border = style.draw_border;
-            if (style.has_border_radius && node->type == GML_WIDGET_TYPE_RECT) {
-                gui_shape_set_radius(shape, style.border_radius);
+            if (apply_radius && node->type == GML_WIDGET_TYPE_RECT) {
+                uint8_t radius = shape->radius;
+                if (corners_explicitly_off) {
+                    radius = 0;
+                } else if (style.has_border_radius) {
+                    radius = style.border_radius;
+                }
+                gui_shape_set_radius(shape, radius);
             }
             gui_shape_set_style(shape, fill, draw_fill, stroke, stroke_w, draw_border);
             break;
@@ -391,6 +416,29 @@ void gml_project_set_style(gml_project_t *p, gml_handle_t h, gml_style_t style) 
             gui_freehand_set_style(freehand, color, stroke_w);
             break;
         }
+        case GML_WIDGET_TYPE_QRCODE: {
+            gui_qrcode_t *qrcode = &node->storage.qrcode;
+            gui_color_t foreground = qrcode->foreground;
+            gui_color_t background = qrcode->background;
+            gui_color_t border = qrcode->border_color;
+            uint8_t border_w = qrcode->border_width;
+            bool draw_background = qrcode->draw_background;
+            bool draw_border = qrcode->draw_border;
+            if (style.has_text_color) foreground = style.text_color;
+            if (style.has_background) background = style.background;
+            if (style.has_border_color) border = style.border_color;
+            if (style.has_border_width) border_w = style.border_width;
+            if (style.has_draw_background) draw_background = style.draw_background;
+            if (style.has_draw_border) draw_border = style.draw_border;
+            gui_qrcode_set_style(qrcode,
+                                 foreground,
+                                 background,
+                                 draw_background,
+                                 border,
+                                 border_w,
+                                 draw_border);
+            break;
+        }
         case GML_WIDGET_TYPE_LABEL:
             if (style.has_text_color) node->storage.label.color = style.text_color;
             break;
@@ -402,8 +450,14 @@ void gml_project_set_style(gml_project_t *p, gml_handle_t h, gml_style_t style) 
                                  btn->pressed_background,
                                  style.has_border_color ? style.border_color : btn->border_color,
                                  style.has_border_width ? style.border_width : btn->border_width);
-            if (style.has_border_radius) {
-                gui_button_set_radius(btn, style.border_radius);
+            if (apply_radius) {
+                uint8_t radius = btn->radius;
+                if (corners_explicitly_off) {
+                    radius = 0;
+                } else if (style.has_border_radius) {
+                    radius = style.border_radius;
+                }
+                gui_button_set_radius(btn, radius);
             }
             bool draw_bg = btn->draw_background;
             bool draw_bd = btn->draw_border;
@@ -424,6 +478,12 @@ void gml_project_set_label_text(gml_project_t *p, gml_handle_t h, const char *te
     REQUIRE_NODE(p, h, node);
     if (node->type != GML_WIDGET_TYPE_LABEL) return;
     gui_label_set_text(&node->storage.label, text);
+}
+
+void gml_project_set_label_color(gml_project_t *p, gml_handle_t h, gui_color_t color) {
+    REQUIRE_NODE(p, h, node);
+    if (node->type != GML_WIDGET_TYPE_LABEL) return;
+    gui_label_set_color(&node->storage.label, color);
 }
 
 void gml_project_set_label_scale(gml_project_t *p, gml_handle_t h, uint8_t scale) {
@@ -590,6 +650,54 @@ void gml_project_set_freehand_points(gml_project_t *p,
     if (node->type != GML_WIDGET_TYPE_FREEHAND) return;
     gui_freehand_set_points(&node->storage.freehand, points, point_count);
     gui_freehand_set_style(&node->storage.freehand, node->storage.freehand.color, stroke_width);
+}
+
+void gml_project_set_qrcode(gml_project_t *p,
+                            gml_handle_t h,
+                            const char *text,
+                            uint8_t version,
+                            gml_qrcode_ecc_t ecc,
+                            gml_qrcode_size_t size) {
+    REQUIRE_NODE(p, h, node);
+    if (node->type != GML_WIDGET_TYPE_QRCODE) return;
+
+    gui_qrcode_t *qrcode = &node->storage.qrcode;
+    const uint16_t required = gui_qrcode_buffer_len_for_version(version);
+    if (qrcode->qrcode == NULL || qrcode->qrcode_capacity < required) {
+        uint8_t *buffer = arena_alloc(p, required, _Alignof(uint8_t));
+        if (buffer != NULL) {
+            gui_qrcode_set_buffer(qrcode, buffer, required);
+        }
+    }
+
+    gui_qrcode_ecc_t gui_ecc = GUI_QRCODE_ECC_MEDIUM;
+    switch (ecc) {
+        case GML_QRCODE_ECC_LOW:
+            gui_ecc = GUI_QRCODE_ECC_LOW;
+            break;
+        case GML_QRCODE_ECC_QUARTILE:
+            gui_ecc = GUI_QRCODE_ECC_QUARTILE;
+            break;
+        case GML_QRCODE_ECC_HIGH:
+            gui_ecc = GUI_QRCODE_ECC_HIGH;
+            break;
+        case GML_QRCODE_ECC_MEDIUM:
+        default:
+            gui_ecc = GUI_QRCODE_ECC_MEDIUM;
+            break;
+    }
+    gui_qrcode_set_config(qrcode, text, version, gui_ecc, (gui_qrcode_size_t)size);
+}
+
+void gml_project_set_qrcode_text(gml_project_t *p, gml_handle_t h, const char *text) {
+    REQUIRE_NODE(p, h, node);
+    if (node->type != GML_WIDGET_TYPE_QRCODE) return;
+    gui_qrcode_t *qrcode = &node->storage.qrcode;
+    gui_qrcode_set_config(qrcode,
+                          text,
+                          qrcode->version,
+                          qrcode->ecc,
+                          (gui_qrcode_size_t)qrcode->module_scale);
 }
 
 void gml_project_set_rotation(gml_project_t *p, gml_handle_t h, int16_t rotation_degrees) {

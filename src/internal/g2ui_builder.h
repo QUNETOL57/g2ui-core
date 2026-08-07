@@ -78,6 +78,7 @@ typedef struct {
     bool has_text_color;   gui_color_t text_color;
     bool has_border_width; uint8_t     border_width;
     bool has_border_radius; uint8_t    border_radius;
+    bool has_draw_corners;    bool     draw_corners;
     bool has_draw_background; bool     draw_background;
     bool has_draw_border;     bool     draw_border;
 } gml_style_t;
@@ -141,6 +142,7 @@ void gml_project_set_style(gml_project_t *project, gml_handle_t handle, gml_styl
 
 /* Type-specific setters (no-op if handle is not of that type) */
 void gml_project_set_label_text(gml_project_t *project, gml_handle_t handle, const char *text);
+void gml_project_set_label_color(gml_project_t *project, gml_handle_t handle, gui_color_t color);
 void gml_project_set_label_scale(gml_project_t *project, gml_handle_t handle, uint8_t scale);
 void gml_project_set_label_align(gml_project_t *project, gml_handle_t handle, gml_label_align_t align);
 void gml_project_set_label_vertical_align(gml_project_t *project, gml_handle_t handle, gml_vertical_align_t align);
@@ -187,6 +189,13 @@ void gml_project_set_freehand_points(gml_project_t *project,
                                      const gui_point_t *points,
                                      uint16_t point_count,
                                      uint8_t stroke_width);
+void gml_project_set_qrcode(gml_project_t *project,
+                            gml_handle_t handle,
+                            const char *text,
+                            uint8_t version,
+                            gml_qrcode_ecc_t ecc,
+                            gml_qrcode_size_t size);
+void gml_project_set_qrcode_text(gml_project_t *project, gml_handle_t handle, const char *text);
 void gml_project_set_rotation(gml_project_t *project, gml_handle_t handle, int16_t rotation_degrees);
 void gml_project_set_bindings(gml_project_t *project,
                               gml_handle_t handle,

@@ -22,11 +22,11 @@ Mark each checkbox when the device matches the preview.
 
 9. - [ ] **`fre_2`** (freehand) — White 1 px stroke; curved path in upper-center region, frame (75,11) 137×34. *Compare: curve shape and continuity (no gaps/drops).*
 
-10. - [ ] **`tri_2`** (triangle) — Up-pointing triangle, white fill, 1 px accent border (`#1E90FF`), frame (263,32) 36×32. *Compare: direction, fill, and blue outline.*
+10. - [ ] **`tri_2`** (triangle) — Up-pointing triangle, white fill, 1 px accent border (`#1E90FF`), frame (263,32) 36×32. *Compare: direction, fill, blue outline, and even-width pyramid symmetry (tip width 2).*
 
 11. - [ ] **`pan_4`** (panel, screen) — Transparent center panel (1,53) 318×86; no visible panel chrome, children only. *Compare: center area shows readout/button, not a boxed panel.*
 
-12. - [ ] **`lab_2`** (label) — Large white `89`, Org_01 63 px, centered in panel at (108,0) 109×63 relative to `pan_4`. *Compare: digit size, weight, and horizontal centering.*
+12. - [ ] **`lab_2`** (label) — Large white `89`, Org_01 63 px, centered in panel at (108,0) 109×63 relative to `pan_4`. *Compare: digit size, weight, horizontal centering, and tabular digit spacing (including right-aligned `1`).*
 
 13. - [ ] **`lab_3`** (label) — White `g`, Org_01 28 px, at (279,17) 21×28 to the right of the main value. *Compare: unit glyph alignment with `89`.*
 

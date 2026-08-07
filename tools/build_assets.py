@@ -1261,6 +1261,21 @@ def finalize_face(face: Face) -> None:
     face.bitmap = bitmap
 
 
+def normalize_tabular_digits(face: Face) -> None:
+    """Make digits 0–9 share one advance (tabular), right-aligning narrow glyphs like '1'.
+
+    Matches g2ui editor scripts/patch-org01-fonts.mjs so counters stay aligned.
+    """
+    digits = [face.glyphs[cp] for cp in range(ord("0"), ord("9") + 1) if cp in face.glyphs]
+    if not digits:
+        return
+    target_advance = max(g.advance for g in digits)
+    content_width = max(g.width for g in digits)
+    for glyph in digits:
+        glyph.advance = target_advance
+        glyph.x_offset = max(0, content_width - glyph.width)
+
+
 def contiguous_ranges(codepoints: list[int]) -> list[tuple[int, int, int]]:
     if not codepoints:
         return []
@@ -1473,6 +1488,9 @@ def build_faces(root: Path) -> list[Face]:
         target = upstream / "bdf" / name
         download(f"{BDF_BASE}/{urllib.request.pathname2url(name)}", target)
         faces.append(parse_bdf(target))
+    for face in faces:
+        if face.family == "Org_01":
+            normalize_tabular_digits(face)
     return sorted(faces, key=lambda f: (f.family, f.style, f.size, f.id))
 
 

@@ -89809,7 +89809,7 @@ static const gui_glyph_t gui_font_org_01_glyphs[] = {
     { .width = 1, .height = 1, .x_offset = 0, .y_offset = 4, .advance = 2, .bitmap_offset = 46 },
     { .width = 5, .height = 5, .x_offset = 0, .y_offset = 0, .advance = 6, .bitmap_offset = 47 },
     { .width = 5, .height = 5, .x_offset = 0, .y_offset = 0, .advance = 6, .bitmap_offset = 52 },
-    { .width = 1, .height = 5, .x_offset = 0, .y_offset = 0, .advance = 2, .bitmap_offset = 57 },
+    { .width = 1, .height = 5, .x_offset = 4, .y_offset = 0, .advance = 6, .bitmap_offset = 57 },
     { .width = 5, .height = 5, .x_offset = 0, .y_offset = 0, .advance = 6, .bitmap_offset = 62 },
     { .width = 5, .height = 5, .x_offset = 0, .y_offset = 0, .advance = 6, .bitmap_offset = 67 },
     { .width = 5, .height = 5, .x_offset = 0, .y_offset = 0, .advance = 6, .bitmap_offset = 72 },

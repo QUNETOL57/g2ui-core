@@ -12,6 +12,7 @@
  * Anywhere after load, you can:
  *   - g2ui_find(gml, "btn_1")             -> widget handle
  *   - g2ui_set_text(gml, "btn_1", "...")
+ *   - g2ui_set_text_color(gml, "lab_1", 0xFF8702)
  *   - g2ui_set_visible(gml, "panel", false)
  *   - g2ui_on_press(gml, "btn_1", cb, user)
  *
@@ -119,6 +120,10 @@ esp_err_t g2ui_show_screen(g2ui_t *gml, const char *screen_id);
 g2ui_widget_t g2ui_find(const g2ui_t *gml, const char *widget_id);
 
 esp_err_t g2ui_set_text(g2ui_t *gml, const char *widget_id, const char *text);
+
+/* Set label text color. rgb is 0xRRGGBB (e.g. 0xFF8702). */
+esp_err_t g2ui_set_text_color(g2ui_t *gml, const char *widget_id, uint32_t rgb);
+
 esp_err_t g2ui_set_visible(g2ui_t *gml, const char *widget_id, bool visible);
 
 esp_err_t g2ui_on_press(g2ui_t *gml,

@@ -35,6 +35,7 @@ typedef struct gui_widget_t {
     struct gui_widget_t *first_child;
     struct gui_widget_t *last_child;
     struct gui_widget_t *next_sibling;
+    struct gui_widget_t *prev_sibling;
     gui_rect_t frame;
     gui_size_t measured_size;
     int16_t rotation_degrees;

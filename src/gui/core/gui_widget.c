@@ -34,6 +34,7 @@ void gui_widget_add_child(gui_widget_t *parent, gui_widget_t *child)
 
     child->parent = parent;
     child->next_sibling = NULL;
+    child->prev_sibling = parent->last_child;
     if (parent->last_child != NULL) {
         parent->last_child->next_sibling = child;
     } else {
@@ -155,7 +156,11 @@ void gui_widget_paint_tree(gui_widget_t *widget, struct gui_renderer_t *renderer
         widget->vtable->paint(widget, renderer, clipped);
     }
 
-    for (gui_widget_t *child = widget->first_child; child != NULL; child = child->next_sibling) {
+    /*
+     * Match g2ui editor stack order: earlier siblings (first in children[])
+     * paint last and appear on top. Hit-test already prefers first_child.
+     */
+    for (gui_widget_t *child = widget->last_child; child != NULL; child = child->prev_sibling) {
         gui_widget_paint_tree(child, renderer, clipped);
     }
 }
