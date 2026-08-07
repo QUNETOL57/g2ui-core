@@ -261,7 +261,27 @@ static gml_widget_type_t parse_widget_type(const char *s) {
     if (strcmp(s, "circle") == 0) return GML_WIDGET_TYPE_CIRCLE;
     if (strcmp(s, "triangle") == 0) return GML_WIDGET_TYPE_TRIANGLE;
     if (strcmp(s, "freehand") == 0) return GML_WIDGET_TYPE_FREEHAND;
+    if (strcmp(s, "qrcode") == 0) return GML_WIDGET_TYPE_QRCODE;
     return GML_WIDGET_TYPE_PANEL;
+}
+
+static gml_qrcode_ecc_t parse_qrcode_ecc(const char *s) {
+    if (s == NULL) return GML_QRCODE_ECC_MEDIUM;
+    if (strcmp(s, "l") == 0 || strcmp(s, "L") == 0) return GML_QRCODE_ECC_LOW;
+    if (strcmp(s, "q") == 0 || strcmp(s, "Q") == 0) return GML_QRCODE_ECC_QUARTILE;
+    if (strcmp(s, "h") == 0 || strcmp(s, "H") == 0) return GML_QRCODE_ECC_HIGH;
+    return GML_QRCODE_ECC_MEDIUM;
+}
+
+static gml_qrcode_size_t parse_qrcode_size(const char *s) {
+    if (s == NULL) return GML_QRCODE_SIZE_M;
+    if (strcmp(s, "xxs") == 0) return GML_QRCODE_SIZE_XXS;
+    if (strcmp(s, "xs") == 0) return GML_QRCODE_SIZE_XS;
+    if (strcmp(s, "s") == 0) return GML_QRCODE_SIZE_S;
+    if (strcmp(s, "l") == 0) return GML_QRCODE_SIZE_L;
+    if (strcmp(s, "xl") == 0) return GML_QRCODE_SIZE_XL;
+    if (strcmp(s, "xxl") == 0) return GML_QRCODE_SIZE_XXL;
+    return GML_QRCODE_SIZE_M;
 }
 
 static gml_action_kind_t parse_action_kind(const char *s) {
@@ -677,6 +697,17 @@ static void build_widget(g2ui_t *gml,
                                                 (uint16_t)written,
                                                 (uint8_t)json_int(props, "strokeWidth", 1));
             }
+        }
+        break;
+    case GML_WIDGET_TYPE_QRCODE:
+        if (cJSON_IsObject(props)) {
+            const char *text = dup_str(gml, json_string(props, "text", ""));
+            gml_project_set_qrcode(&gml->project,
+                                   handle,
+                                   text != NULL ? text : "",
+                                   (uint8_t)json_int(props, "version", 1),
+                                   parse_qrcode_ecc(json_string(props, "ecc", "m")),
+                                   parse_qrcode_size(json_string(props, "size", "m")));
         }
         break;
     default:

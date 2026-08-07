@@ -258,7 +258,10 @@ esp_err_t g2ui_new(const g2ui_config_t *cfg, g2ui_t **out) {
     gml->press_entries = heap_caps_calloc(max_widgets, sizeof(*gml->press_entries),
                                           MALLOC_CAP_8BIT);
     gml->point_pool = heap_caps_calloc(max_points, sizeof(*gml->point_pool), MALLOC_CAP_8BIT);
-    gml->strpool_size  = (size_t)max_widgets * 48; /* ~48 bytes/widget of strings */
+    gml->strpool_size  = (size_t)max_widgets * 64;
+    if (gml->strpool_size < 4096) {
+        gml->strpool_size = 4096; /* QR payloads can be much longer than labels. */
+    }
     gml->strpool       = heap_caps_malloc(gml->strpool_size, MALLOC_CAP_8BIT);
     if (gml->press_entries == NULL || gml->point_pool == NULL || gml->strpool == NULL) {
         goto oom;
@@ -379,6 +382,8 @@ esp_err_t g2ui_set_text(g2ui_t *gml, const char *widget_id, const char *text) {
         gml_project_set_label_text(&gml->project, h, stored);
     } else if (type == GML_WIDGET_TYPE_BUTTON) {
         gml_project_set_button_text(&gml->project, h, stored);
+    } else if (type == GML_WIDGET_TYPE_QRCODE) {
+        gml_project_set_qrcode_text(&gml->project, h, stored);
     } else {
         return ESP_ERR_INVALID_STATE;
     }

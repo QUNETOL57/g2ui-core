@@ -189,6 +189,13 @@ void gml_project_set_freehand_points(gml_project_t *project,
                                      const gui_point_t *points,
                                      uint16_t point_count,
                                      uint8_t stroke_width);
+void gml_project_set_qrcode(gml_project_t *project,
+                            gml_handle_t handle,
+                            const char *text,
+                            uint8_t version,
+                            gml_qrcode_ecc_t ecc,
+                            gml_qrcode_size_t size);
+void gml_project_set_qrcode_text(gml_project_t *project, gml_handle_t handle, const char *text);
 void gml_project_set_rotation(gml_project_t *project, gml_handle_t handle, int16_t rotation_degrees);
 void gml_project_set_bindings(gml_project_t *project,
                               gml_handle_t handle,

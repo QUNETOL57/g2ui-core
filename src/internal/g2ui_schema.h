@@ -21,6 +21,7 @@ typedef enum {
     GML_WIDGET_TYPE_CIRCLE,
     GML_WIDGET_TYPE_TRIANGLE,
     GML_WIDGET_TYPE_FREEHAND,
+    GML_WIDGET_TYPE_QRCODE,
     GML_WIDGET_TYPE__COUNT,
 } gml_widget_type_t;
 
@@ -56,6 +57,23 @@ typedef enum {
     GML_TRIANGLE_DIRECTION_DOWN,
     GML_TRIANGLE_DIRECTION_LEFT,
 } gml_triangle_direction_t;
+
+typedef enum {
+    GML_QRCODE_ECC_LOW = 0,
+    GML_QRCODE_ECC_MEDIUM,
+    GML_QRCODE_ECC_QUARTILE,
+    GML_QRCODE_ECC_HIGH,
+} gml_qrcode_ecc_t;
+
+typedef enum {
+    GML_QRCODE_SIZE_XXS = 1,
+    GML_QRCODE_SIZE_XS = 2,
+    GML_QRCODE_SIZE_S = 3,
+    GML_QRCODE_SIZE_M = 4,
+    GML_QRCODE_SIZE_L = 5,
+    GML_QRCODE_SIZE_XL = 6,
+    GML_QRCODE_SIZE_XXL = 7,
+} gml_qrcode_size_t;
 
 typedef enum {
     GML_ACTION_NONE = 0,
