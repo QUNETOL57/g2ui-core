@@ -5,6 +5,8 @@
 
 typedef void (*gui_button_click_fn)(void *user_data);
 
+#define GUI_BUTTON_MAX_ICONS 8
+
 typedef enum {
     GUI_BUTTON_ICON_POSITION_LEFT = 0,
     GUI_BUTTON_ICON_POSITION_RIGHT,
@@ -25,10 +27,23 @@ typedef enum {
 } gui_button_vertical_align_t;
 
 typedef struct {
+    const gui_icon_asset_t *icon;
+    gui_color_t color;
+    bool has_color;
+    uint8_t position;
+    uint8_t padding_top;
+    uint8_t padding_right;
+    uint8_t padding_bottom;
+    uint8_t padding_left;
+} gui_button_icon_slot_t;
+
+typedef struct {
     gui_widget_t base;
     const gui_font_t *font;
     const char *text;
     const gui_icon_asset_t *icon;
+    gui_button_icon_slot_t icons[GUI_BUTTON_MAX_ICONS];
+    uint8_t icon_count;
     gui_color_t text_color;
     gui_color_t background;
     gui_color_t pressed_background;
@@ -68,6 +83,7 @@ void gui_button_set_text_scale(gui_button_t *button, uint8_t text_scale);
 void gui_button_set_chrome(gui_button_t *button, bool draw_background, bool draw_border);
 void gui_button_set_icon(gui_button_t *button, const gui_icon_asset_t *icon);
 void gui_button_set_icon_layout(gui_button_t *button, gui_button_icon_position_t position, uint8_t icon_gap);
+void gui_button_set_icons(gui_button_t *button, const gui_button_icon_slot_t *slots, uint8_t count);
 void gui_button_set_content_align(gui_button_t *button,
                                   gui_button_align_t horizontal_align,
                                   gui_button_vertical_align_t vertical_align);

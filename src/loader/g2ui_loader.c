@@ -590,15 +590,51 @@ static void build_widget(g2ui_t *gml,
                     handle,
                     resolve_font_scale(props, font));
             }
-            const char *icon_id = dup_str(gml, json_string(props, "iconId", NULL));
-            if (icon_id != NULL) {
-                gml_project_set_button_icon(&gml->project, handle, icon_id);
+            const cJSON *icons = cJSON_GetObjectItemCaseSensitive(props, "icons");
+            if (cJSON_IsArray(icons)) {
+                gml_button_icon_slot_t slots[GUI_BUTTON_MAX_ICONS] = { 0 };
+                uint8_t count = 0;
+                const int icon_count = cJSON_GetArraySize(icons);
+                for (int i = 0; i < icon_count && count < GUI_BUTTON_MAX_ICONS; i++) {
+                    const cJSON *item = cJSON_GetArrayItem(icons, i);
+                    if (!cJSON_IsObject(item)) {
+                        continue;
+                    }
+                    const char *icon_id = dup_str(gml, json_string(item, "iconId", NULL));
+                    if (icon_id == NULL) {
+                        continue;
+                    }
+                    const char *position = json_string(item, "position", "left");
+                    uint8_t side = GUI_BUTTON_ICON_POSITION_LEFT;
+                    if (position != NULL) {
+                        if (strcmp(position, "right") == 0) side = GUI_BUTTON_ICON_POSITION_RIGHT;
+                        else if (strcmp(position, "top") == 0) side = GUI_BUTTON_ICON_POSITION_TOP;
+                        else if (strcmp(position, "bottom") == 0) side = GUI_BUTTON_ICON_POSITION_BOTTOM;
+                    }
+                    slots[count].icon_id = icon_id;
+                    slots[count].has_color = resolve_color(
+                        cJSON_GetObjectItemCaseSensitive(item, "color"),
+                        palette,
+                        &slots[count].color);
+                    slots[count].position = side;
+                    slots[count].padding_top = (uint8_t)json_int(item, "paddingTop", 0);
+                    slots[count].padding_right = (uint8_t)json_int(item, "paddingRight", 0);
+                    slots[count].padding_bottom = (uint8_t)json_int(item, "paddingBottom", 0);
+                    slots[count].padding_left = (uint8_t)json_int(item, "paddingLeft", 0);
+                    count++;
+                }
+                gml_project_set_button_icons(&gml->project, handle, slots, count);
+            } else {
+                const char *icon_id = dup_str(gml, json_string(props, "iconId", NULL));
+                if (icon_id != NULL) {
+                    gml_project_set_button_icon(&gml->project, handle, icon_id);
+                }
+                gml_project_set_button_icon_layout(
+                    &gml->project,
+                    handle,
+                    json_string(props, "iconPosition", "left"),
+                    (uint8_t)json_int(props, "iconGap", 2));
             }
-            gml_project_set_button_icon_layout(
-                &gml->project,
-                handle,
-                json_string(props, "iconPosition", "left"),
-                (uint8_t)json_int(props, "iconGap", 2));
             gml_project_set_button_content_align(
                 &gml->project,
                 handle,

@@ -68,14 +68,20 @@ static void encode(gui_qrcode_t *qrcode)
     }
 }
 
+static int qr_border_inset(const gui_qrcode_t *qrcode)
+{
+    return (qrcode->draw_border && qrcode->border_width > 0) ? qrcode->border_width : 0;
+}
+
 static gui_size_t gui_qrcode_measure(gui_widget_t *widget, gui_size_t available)
 {
     gui_qrcode_t *qrcode = (gui_qrcode_t *)widget;
     const int modules = qrcode->module_count > 0 ? qrcode->module_count : (21 + 4 * (clamp_version(qrcode->version) - 1));
     const int rendered = modules * (qrcode->module_scale > 0 ? qrcode->module_scale : 1);
+    const int total = rendered + qr_border_inset(qrcode) * 2;
     gui_size_t size = {
-        .width = widget->frame.width > 0 ? widget->frame.width : (int16_t)rendered,
-        .height = widget->frame.height > 0 ? widget->frame.height : (int16_t)rendered,
+        .width = widget->frame.width > 0 ? widget->frame.width : (int16_t)total,
+        .height = widget->frame.height > 0 ? widget->frame.height : (int16_t)total,
     };
     if (size.width <= 0) {
         size.width = available.width;
@@ -102,7 +108,12 @@ static void gui_qrcode_paint(gui_widget_t *widget, gui_renderer_t *renderer, gui
     const int module_scale = qrcode->module_scale > 0 ? qrcode->module_scale : 1;
     const int modules = qrcode->module_count > 0 ? qrcode->module_count : (21 + 4 * (clamp_version(qrcode->version) - 1));
     const int rendered = modules * module_scale;
-    const gui_rect_t rendered_rect = gui_rect_make(absolute.x, absolute.y, rendered, rendered);
+    const int border_width = qr_border_inset(qrcode);
+    const bool border_inside = border_width > 0 &&
+                               absolute.width >= rendered + border_width * 2 &&
+                               absolute.height >= rendered + border_width * 2;
+    const int inset = border_inside ? border_width : 0;
+    const gui_rect_t rendered_rect = gui_rect_make(absolute.x + inset, absolute.y + inset, rendered, rendered);
 
     const int normalized_rotation = ((widget->rotation_degrees % 360) + 360) % 360;
     const bool rotation_enabled = (normalized_rotation % 90) == 0 && normalized_rotation != 0;
@@ -128,8 +139,8 @@ static void gui_qrcode_paint(gui_widget_t *widget, gui_renderer_t *renderer, gui
                 }
                 gui_renderer_fill_rect(
                     renderer,
-                    gui_rect_make(absolute.x + x * module_scale,
-                                  absolute.y + y * module_scale,
+                    gui_rect_make(rendered_rect.x + x * module_scale,
+                                  rendered_rect.y + y * module_scale,
                                   module_scale,
                                   module_scale),
                     qrcode->foreground);
@@ -137,16 +148,14 @@ static void gui_qrcode_paint(gui_widget_t *widget, gui_renderer_t *renderer, gui
         }
     }
 
-    if (qrcode->draw_border && qrcode->border_width > 0) {
-        const int border_width = qrcode->border_width;
-        gui_renderer_stroke_rect(
-            renderer,
-            gui_rect_make((int16_t)(rendered_rect.x - border_width),
-                          (int16_t)(rendered_rect.y - border_width),
-                          (int16_t)(rendered_rect.width + border_width * 2),
-                          (int16_t)(rendered_rect.height + border_width * 2)),
-            border_width,
-            qrcode->border_color);
+    if (border_width > 0) {
+        const gui_rect_t border_rect = border_inside
+            ? absolute
+            : gui_rect_make((int16_t)(rendered_rect.x - border_width),
+                            (int16_t)(rendered_rect.y - border_width),
+                            (int16_t)(rendered_rect.width + border_width * 2),
+                            (int16_t)(rendered_rect.height + border_width * 2));
+        gui_renderer_stroke_rect(renderer, border_rect, border_width, qrcode->border_color);
     }
 
     if (rotation_enabled) {
@@ -175,11 +184,11 @@ void gui_qrcode_init(gui_qrcode_t *qrcode)
     qrcode->version = 1;
     qrcode->module_scale = GUI_QRCODE_SIZE_M;
     qrcode->ecc = GUI_QRCODE_ECC_MEDIUM;
-    qrcode->foreground = 0x0000u;
+    qrcode->foreground = 0xFFFFu;
     qrcode->background = 0xFFFFu;
     qrcode->border_color = 0xFFFFu;
     qrcode->border_width = 1;
-    qrcode->draw_background = true;
+    qrcode->draw_background = false;
     qrcode->draw_border = false;
 }
 

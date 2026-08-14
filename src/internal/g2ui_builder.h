@@ -165,6 +165,22 @@ void gml_project_set_button_icon_layout(gml_project_t *project,
                                         gml_handle_t handle,
                                         const char *position,
                                         uint8_t gap);
+
+typedef struct {
+    const char *icon_id;
+    gui_color_t color;
+    bool has_color;
+    uint8_t position;
+    uint8_t padding_top;
+    uint8_t padding_right;
+    uint8_t padding_bottom;
+    uint8_t padding_left;
+} gml_button_icon_slot_t;
+
+void gml_project_set_button_icons(gml_project_t *project,
+                                  gml_handle_t handle,
+                                  const gml_button_icon_slot_t *slots,
+                                  uint8_t count);
 void gml_project_set_button_content_align(gml_project_t *project,
                                           gml_handle_t handle,
                                           gml_label_align_t horizontal,

@@ -583,6 +583,35 @@ void gml_project_set_button_icon_layout(gml_project_t *p,
     gui_button_set_icon_layout(&node->storage.button, icon_position, gap);
 }
 
+void gml_project_set_button_icons(gml_project_t *p,
+                                  gml_handle_t h,
+                                  const gml_button_icon_slot_t *slots,
+                                  uint8_t count) {
+    REQUIRE_NODE(p, h, node);
+    if (node->type != GML_WIDGET_TYPE_BUTTON) return;
+    gui_button_icon_slot_t resolved[GUI_BUTTON_MAX_ICONS] = { 0 };
+    uint8_t used = 0;
+    if (slots != NULL) {
+        const uint8_t limit = count > GUI_BUTTON_MAX_ICONS ? GUI_BUTTON_MAX_ICONS : count;
+        for (uint8_t i = 0; i < limit; i++) {
+            const gui_icon_asset_t *asset = find_icon_asset(p, slots[i].icon_id);
+            if (asset == NULL) {
+                continue;
+            }
+            resolved[used].icon = asset;
+            resolved[used].color = slots[i].color;
+            resolved[used].has_color = slots[i].has_color;
+            resolved[used].position = slots[i].position;
+            resolved[used].padding_top = slots[i].padding_top;
+            resolved[used].padding_right = slots[i].padding_right;
+            resolved[used].padding_bottom = slots[i].padding_bottom;
+            resolved[used].padding_left = slots[i].padding_left;
+            used++;
+        }
+    }
+    gui_button_set_icons(&node->storage.button, resolved, used);
+}
+
 void gml_project_set_button_content_align(gml_project_t *p,
                                           gml_handle_t h,
                                           gml_label_align_t horizontal,
